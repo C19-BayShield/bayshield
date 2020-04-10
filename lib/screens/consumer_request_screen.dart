@@ -154,7 +154,7 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                         onChange:(String newValue) => setState((){q1Ans = newValue;}),
                         value: q1Ans,
                         ),
-                      Text('Does your facility have any reported, if so how many?'),
+                      Text('Does your facility have any reported Covid-19 cases, if so how many?'),
                       this._buildGenericDropDown(
                         options:hasCasesQChoices, 
                         onChange:(String newValue) => setState((){q2Ans = newValue;}),
@@ -166,7 +166,7 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                         onChange:(String newValue) => setState((){q3Ans = newValue;}),
                         value: q3Ans,
                         ),
-                      Text('How many patients off all types(Covid & non-Covid) does your facility process each day?'),
+                      Text('How many patients off all types(Covid & non-Covid related) does your facility process each day?'),
                       this._buildGenericDropDown(
                         options:sizeQChoices, 
                         onChange:(String newValue) => setState((){q4Ans = newValue;}),

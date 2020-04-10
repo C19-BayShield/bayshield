@@ -17,7 +17,6 @@ class MyApp extends StatelessWidget {
         HOME_ROUTE: (BuildContext context) => ConsumerScreen(),
         LOGIN_SCREEN: (BuildContext context) => ConsumerScreen(),
         REQUEST_SCREEN: (BuildContext context) => OrderRequestPage(),
-
       }
     );
   }

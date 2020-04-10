@@ -5,6 +5,7 @@ enum Status {
   ordered,
   pending,
   shipped,
+  arrived,
   delivered
 }
 
@@ -24,9 +25,10 @@ class SupplyRequest {
         return 'Delivered';
       case Status.ordered:
         return 'Ordered';
+      case Status.arrived:
+        return 'Arrived at Distribution';
       default: return 'TBD';
     }
-    
   }
 }
 
