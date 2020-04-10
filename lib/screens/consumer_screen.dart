@@ -9,45 +9,63 @@ class ConsumerScreen extends StatelessWidget {
 
   ConsumerScreen({Key key}) : super(key: key);
 
-  _buildRequestItem(SupplyRequest req, BuildContext context) {
-    return Container(
-      child: Column(
+  TextStyle orderStyle = TextStyle(fontSize: 16.0,letterSpacing: .5, color: Color(0xFF263151));
+  TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
+
+
+  Widget _buildRequestItem(SupplyRequest req, BuildContext context) {
+    double c_width = MediaQuery.of(context).size.width;
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget> [
-          Row(
-            children: <Widget>[
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.0),
-                child: Image.network('http://via.placeholder.com/64', 
-                  width: 64, 
-                  height: 64,
-                  fit: BoxFit.fill
-                ),
-              ),
-              Column(
-                children: <Widget>[
-                  Row(children: <Widget>[Text(req.item.name, style: Theme.of(context).textTheme.headline3,), SizedBox(width: 16),],),
-                  Text('${req.amtOrdered.toString()} Ordered', style: Theme.of(context).textTheme.subtitle2 ),
-                  Text('${req.statusToString()}', style: Theme.of(context).textTheme.subtitle2)
-                ],
-              )
-            ],
-        ),
         Container(
-          color: Color(0xFFF6F6F7),
+          width: c_width * .8,
+          color: Color(0xFF313F84),
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          child: 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(right: 16),
+                  child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.network(req.item.imageUrl, 
+                    width: 64, 
+                    height: 64,
+                    fit: BoxFit.fill
+                  ),
+                ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(mainAxisSize: MainAxisSize.min,children: <Widget>[Text(req.item.name, style: Theme.of(context).textTheme.headline3,), SizedBox(width: 16),],),
+                    Text('${req.amtOrdered.toString()} Ordered', style: Theme.of(context).textTheme.subtitle2 ),
+                    Text('${req.statusToString()}', style: Theme.of(context).textTheme.subtitle2)
+                  ],
+                )
+              ],
+            ),
+          ),
+        Container(
+          color: Color(0xFFFFFFFF),
+          width: c_width * .8,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text('Order #DOJF837D', style: Theme.of(context).textTheme.subtitle2),
-                Text('Order Date - 06 May 2020', style: Theme.of(context).textTheme.subtitle2)
+                Text('Order #DOJF837D', style: this.orderStyle,),
+                Text('Order Date - 06 May 2020', style: this.orderSubtitleStyle)
               ],
             )
           ),
         )
         ]
-      )
-    );
+      );
 
   }
 
@@ -72,9 +90,7 @@ class ConsumerScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 16),
                     ),
                     for(final req in TEST_REQS)
-                      Padding(child: _buildRequestItem(req, context),padding: EdgeInsets.symmetric(vertical: 8)),
-                    
-                    Text('Yo hope this dont repeat')
+                      Padding(child: _buildRequestItem(req, context),padding: EdgeInsets.symmetric(vertical: 8)),                    
                   ]),
                 )
                 
