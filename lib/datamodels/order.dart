@@ -19,7 +19,6 @@ class SupplyRequest {
   Status status;
 
   String statusToString(){
-    print(status);
     switch (status) {
       case Status.delivered:
         return 'Delivered';
