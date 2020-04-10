@@ -6,7 +6,7 @@ final ThemeData SupplySideTheme = new ThemeData(
     primaryColor: Colors.lightBlue[800],
     accentColor: Color(0xFFF4BA5B),
     backgroundColor: Color(0xFFEDEDEF),
-    buttonColor: Color(0xFF7364FF),
+    buttonColor: Color(0xFFD58032),
     primaryIconTheme: IconThemeData(color: Color(0xFF209E9E), size: 24, opacity: 1.0),
     iconTheme: IconThemeData(color: Color(0xFF209E9E), size: 24, opacity: 1.0),
     accentIconTheme: IconThemeData(color: Color(0xFF209E9E), size: 24, opacity: 1.0),

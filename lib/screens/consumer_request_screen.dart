@@ -27,9 +27,17 @@ class OrderRequestPage extends StatefulWidget {
 class _OrderRequestPageState extends State<OrderRequestPage> {
   int _counter = 0;
   Item itemRequested = faceShield;
+  String q1Ans;
+  String q2Ans;
+  String q3Ans;
+  String q4Ans;
+  final List<String> ppeQChoices = ["All of staff","75% of staff", "50% of staff", "25% of staff", "Less than 25% of staff"];
+  final List<String> hasCasesQChoices = ["Yes, Less than 100","Yes, 100-500","Yes, Greater than 500","No"];
+  final List<String> urgQChoices = ["As Soon As Possible", "Very Urgently", "Extremely Urgently"];
+  final List<String> sizeQChoices = ["Less than 500","500-1,000","1,000-5,000", "5,000-10,000", "10,0000+"];
+
 
   _buildItemDropDown() {
-
   return DropdownButton<String>(
             value: itemRequested.name,
             icon: Icon(Icons.arrow_downward),
@@ -37,11 +45,11 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
             iconSize: 24,
             elevation: 16,
             style: TextStyle(
-              color: Colors.deepPurple
+              color: Color(0xFFE6B819)
             ),
             underline: Container(
               height: 2,
-              color: Colors.deepPurpleAccent,
+              color: Color(0xFFD58032),
             ),
             onChanged: (String newValue) {
               setState(() {
@@ -59,16 +67,30 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
           );
   }
 
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  Widget  _buildGenericDropDown({List<String> options, String value, Function(String) onChange, String hintText="Select Option"}) {
+    return DropdownButton<String>(
+              value: value,
+              icon: Icon(Icons.arrow_downward),
+              hint: Text(hintText),
+              iconSize: 24,
+              elevation: 16,
+              style: TextStyle(
+                color: Color(0xFFE6B819)
+              ),
+              underline: Container(
+                height: 2,
+                color: Color(0xFFD58032),
+              ),
+              onChanged: onChange,
+              items: 
+                options.map<DropdownMenuItem<String>>((String option) {
+                  return DropdownMenuItem<String>(
+                    value: option,
+                    child: Text(option),
+                  );
+                })
+                .toList(),
+            );
   }
 
   @override
@@ -83,42 +105,82 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
     return Scaffold(
       body: SafeArea(
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[Text('Select Requested Item'), SizedBox(width: 16,), _buildItemDropDown()],
+            child: CustomScrollView(
+              scrollDirection: Axis.vertical,
+              slivers: <Widget>[
+                SliverList(
+                  delegate: SliverChildListDelegate([
+                  Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Text('Request Parts Form', style: Theme.of(context).textTheme.headline2,),
+                    ),
                   ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    IntrinsicWidth(
-                      child:       
-                        Container(
-                          width: c_width * .5,
-                          height: 100,
-                          child: TextField(
-                            textAlign: TextAlign.center,
-                            scrollPadding: EdgeInsets.symmetric(horizontal: 16),
-                            maxLines: 1,
-                            autofocus: false,
-                            maxLength: 4,
-                            maxLengthEnforced: true,
-                            decoration: new InputDecoration(labelText: "Amount Requested"),
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                                  WhitelistingTextInputFormatter.digitsOnly
-                              ], // Only numbers can be entered
-                          ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[Text('Select Requested Item'), SizedBox(width: 16,), _buildItemDropDown()],
                         ),
-                    )
-                ],)
-              ],
-            ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          IntrinsicWidth(
+                            child:       
+                              Container(
+                                width: c_width * .5,
+                                height: 100,
+                                child: TextField(
+                                  textAlign: TextAlign.center,
+                                  scrollPadding: EdgeInsets.symmetric(horizontal: 16),
+                                  maxLines: 1,
+                                  autofocus: false,
+                                  maxLength: 4,
+                                  maxLengthEnforced: true,
+                                  decoration: new InputDecoration(labelText: "Amount Requested"),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                        WhitelistingTextInputFormatter.digitsOnly
+                                    ], // Only numbers can be entered
+                                ),
+                              ),
+                          )
+                      ],),
+                      Text('How much of your staff currently has protective equipment?'),
+                      this._buildGenericDropDown(
+                        options:ppeQChoices, 
+                        onChange:(String newValue) => setState((){q1Ans = newValue;}),
+                        value: q1Ans,
+                        ),
+                      Text('Does your facility have any reported, if so how many?'),
+                      this._buildGenericDropDown(
+                        options:hasCasesQChoices, 
+                        onChange:(String newValue) => setState((){q2Ans = newValue;}),
+                        value: q2Ans,
+                        ),
+                      Text('How soon do you require your protective equipment?'),
+                      this._buildGenericDropDown(
+                        options:urgQChoices, 
+                        onChange:(String newValue) => setState((){q3Ans = newValue;}),
+                        value: q3Ans,
+                        ),
+                      Text('How many patients off all types(Covid & non-Covid) does your facility process each day?'),
+                      this._buildGenericDropDown(
+                        options:sizeQChoices, 
+                        onChange:(String newValue) => setState((){q4Ans = newValue;}),
+                        value: q4Ans,
+                        ),
+                      
+                      RaisedButton(child: Text('Submit Request'), onPressed: () => null,)
+                    ],
+                  ),
+                ])
+              )]
+            )
           ),
-      )   
+        )   
       );
   }
 }
