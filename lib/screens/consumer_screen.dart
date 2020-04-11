@@ -3,11 +3,25 @@ import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:supplyside/datamodels/order.dart';
 import 'package:supplyside/util/consts.dart';
 import 'package:supplyside/util/mock_consts.dart';
+import 'package:supplyside/util/authentication.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 
-class ConsumerScreen extends StatelessWidget {
+class ConsumerScreen extends StatefulWidget {
 
-  ConsumerScreen({Key key}) : super(key: key);
+  ConsumerScreen({Key key, this.auth, this.userId, this.logoutCallback}) : super(key: key);
+
+  final BaseAuth auth;
+  final VoidCallback logoutCallback;
+  final String userId;
+
+  @override
+  State<StatefulWidget> createState() => new _ConsumerScreenState();
+}
+
+class _ConsumerScreenState extends State<ConsumerScreen> {
+
+  final FirebaseDatabase _database = FirebaseDatabase.instance;
 
   TextStyle orderStyle = TextStyle(fontSize: 16.0,letterSpacing: .5, color: Color(0xFF263151));
   TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
@@ -69,9 +83,28 @@ class ConsumerScreen extends StatelessWidget {
 
   }
 
+   signOut() async {
+    try {
+      await widget.auth.signOut();
+      widget.logoutCallback();
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: new AppBar(
+          title: new Text('Medical Facility Home'),
+          backgroundColor: Color(0xFF313F84),
+          actions: <Widget>[
+            new FlatButton(
+                child: new Text('Logout',
+                    style: new TextStyle(fontSize: 17.0, color: Colors.white)),
+                onPressed: signOut)
+          ],
+        ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0),
