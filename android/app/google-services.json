@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "226984467738",
+    "firebase_url": "https://bay-shield.firebaseio.com",
+    "project_id": "bay-shield",
+    "storage_bucket": "bay-shield.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:226984467738:android:5c175f04a8ac32a7d660a3",
+        "android_client_info": {
+          "package_name": "com.bnbsy.supplyside"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "226984467738-5nrndhulaeau2plchna4jo10g1e3hgpt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmGSayKWXWi3oY716LcPDhVQ6mgaDxs-s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "226984467738-5nrndhulaeau2plchna4jo10g1e3hgpt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
