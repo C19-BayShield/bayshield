@@ -75,7 +75,7 @@ class _RootScreenState extends State<RootScreen> {
           loginCallback: loginCallback,
         );
         break;
-      case AuthStatus.LOGGED_IN:
+      case AuthStatus.LOGGED_IN: // TODO: redirect to different screens depending on user role
         if (_userId.length > 0 && _userId != null) {
           return new ConsumerScreen(
             userId: _userId,

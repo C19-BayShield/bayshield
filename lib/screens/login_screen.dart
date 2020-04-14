@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supplyside/util/authentication.dart';
+import 'package:supplyside/screens/user_type_screen.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   LoginSignupScreen({this.auth, this.loginCallback});
@@ -32,6 +33,16 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
     return false;
   }
 
+  // Go to user type screen when succesfully signed up
+  Future navigateToUserType(context, String userId) async {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => UserTypeScreen(userId: userId,
+            auth: widget.auth,
+            loginCallback: widget.loginCallback,
+            )
+            ))
+          ;
+  }
+
   // Perform login or signup
   void validateAndSubmit() async {
     setState(() {
@@ -47,12 +58,14 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
         } else {
           userId = await widget.auth.signUp(_email, _password);
           print('Signed up user: $userId');
+          await widget.auth.signIn(_email, _password);
+          navigateToUserType(context, userId);
         }
         setState(() {
           _isLoading = false;
         });
 
-        if (userId.length > 0 && userId != null && _isLoginForm) {
+        if (userId.length > 0 && userId != null) {
           widget.loginCallback();
         }
       } catch (e) {
@@ -91,7 +104,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text('BayShield Medical Facility Login'),
+          title: new Text('BayShield Login'),
           backgroundColor: Color(0xFF313F84),
         ),
         body: Stack(
