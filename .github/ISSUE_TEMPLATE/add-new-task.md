@@ -13,4 +13,9 @@ Required Data Fields:
 - [ ]
 - [ ]
 
-**Don't forget to add at least one label that determines the urgency**
+Add one of these labels:
+- Very Urgent
+- Urgent 
+- Not Urgent
+
+cc\  @
