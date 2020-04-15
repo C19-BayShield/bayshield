@@ -35,9 +35,4 @@ lib/generated_plugin_registrant.dart
 
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
-ios/Flutter/Debug.xcconfig
-ios/Flutter/Release.xcconfig
-ios/Podfile
-pubspec.lock
-*.xcconfig
 *.lock
