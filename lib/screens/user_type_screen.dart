@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/screens/root_screen.dart';
+import 'package:supplyside/util/firestore_users.dart';
+import 'package:supplyside/locator.dart';
 
 class UserTypeScreen extends StatefulWidget {
-  UserTypeScreen({this.userId, this.auth, this.loginCallback});
+  UserTypeScreen({this.userId, this.auth});
 
   final BaseAuth auth;
   final String userId;
-  final VoidCallback loginCallback;
 
   @override
   State<StatefulWidget> createState() => new _UserTypeScreenState();
@@ -15,6 +16,15 @@ class UserTypeScreen extends StatefulWidget {
 }
 
 class _UserTypeScreenState extends State<UserTypeScreen>{
+  final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
+
+  Future updateUserType(String userId, String type) async {
+    try {
+      await _firestoreUsers.updateUserType(userId, type);
+    } catch (e) {
+      return e.message;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +60,8 @@ class _UserTypeScreenState extends State<UserTypeScreen>{
             child: new Text(label,
                 style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: () {
-              widget.loginCallback();
-              Navigator.push(
+              updateUserType(widget.userId, label);
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => RootScreen(auth: widget.auth)),
               );
