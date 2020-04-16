@@ -1,6 +1,9 @@
 # supplyside
 
-Connecting 3d-printers to 
+Connecting 3d-printers to those in need efficiently.
+
+## Build Status
+[![Codemagic build status](https://api.codemagic.io/apps/5e98c3b77af7f34416b51c35/5e98c3b77af7f34416b51c34/status_badge.svg)](https://codemagic.io/apps/5e98c3b77af7f34416b51c35/5e98c3b77af7f34416b51c34/latest_build)
 
 ## Getting Started
 
