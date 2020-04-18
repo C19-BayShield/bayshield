@@ -69,6 +69,15 @@ class FirestoreUsers {
     }
   }
 
+  Future setMedicalFacilityName(String id, String medicalFacilityName) async {
+    try {
+      await _usersCollectionReference.document(id).updateData({"medicalFacilityName": medicalFacilityName});
+      print('Saved medical facility name: $medicalFacilityName');
+    } catch (e) {
+      return e.message;
+    }
+  }
+
   Future setUserAddress(String id, String address) async {
     try {
       await _usersCollectionReference.document(id).updateData({"address": address});
