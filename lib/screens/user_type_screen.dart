@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:supplyside/screens/signup_screen.dart';
 import 'package:supplyside/util/authentication.dart';
-import 'package:supplyside/screens/root_screen.dart';
 import 'package:supplyside/util/firestore_users.dart';
 import 'package:supplyside/locator.dart';
 
@@ -61,9 +61,10 @@ class _UserTypeScreenState extends State<UserTypeScreen>{
                 style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: () {
               updateUserType(widget.userId, label);
+
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => RootScreen(auth: widget.auth)),
+                MaterialPageRoute(builder: (context) => SignUpScreen(userId: widget.userId, auth: widget.auth, label: label)),
               );
             }
           ),
