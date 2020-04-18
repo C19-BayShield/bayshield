@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:supplyside/util/authentication.dart';
+import 'package:supplyside/screens/hub_signup_screen.dart';
 import 'package:supplyside/screens/root_screen.dart';
+import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/util/firestore_users.dart';
 import 'package:supplyside/locator.dart';
 
@@ -61,10 +62,23 @@ class _UserTypeScreenState extends State<UserTypeScreen>{
                 style: new TextStyle(fontSize: 20.0, color: Colors.white)),
             onPressed: () {
               updateUserType(widget.userId, label);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => RootScreen(auth: widget.auth)),
-              );
+
+              if (label == 'Medical Facility') {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => RootScreen(auth: widget.auth)),
+                );
+              } else if (label == 'Collection Hub') {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => HubSignUpScreen(userId: widget.userId, auth: widget.auth)),
+                );
+              } else if (label == 'Maker') {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => RootScreen(auth: widget.auth)),
+                );
+              }
             }
           ),
         ))
