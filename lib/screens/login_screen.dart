@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supplyside/util/authentication.dart';
+import 'package:supplyside/screens/user_type_screen.dart';
+import 'package:supplyside/util/firestore_users.dart';
+import 'package:supplyside/datamodels/user.dart';
+import 'package:supplyside/locator.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   LoginSignupScreen({this.auth, this.loginCallback});
@@ -14,6 +18,7 @@ class LoginSignupScreen extends StatefulWidget {
 
 class _LoginSignupScreenState extends State<LoginSignupScreen>{
   final _formKey = new GlobalKey<FormState>();
+  final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
 
   String _email;
   String _password;
@@ -32,6 +37,18 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
     return false;
   }
 
+  // Go to user type screen when succesfully signed up
+  Future navigateToUserType(context, String userId) async {
+    if (userId.length > 0 && userId != null) {
+      widget.loginCallback();
+    }
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => UserTypeScreen(userId: userId,
+      auth: widget.auth,
+      )
+      ))
+    ;
+  }
+
   // Perform login or signup
   void validateAndSubmit() async {
     setState(() {
@@ -45,14 +62,18 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
           userId = await widget.auth.signIn(_email, _password);
           print('Signed in: $userId');
         } else {
+          // Sign up process
           userId = await widget.auth.signUp(_email, _password);
           print('Signed up user: $userId');
+          await widget.auth.signIn(_email, _password);
+          await _firestoreUsers.createUser(User(id: userId, email: _email, type: ""));
+          navigateToUserType(context, userId);
         }
         setState(() {
           _isLoading = false;
         });
 
-        if (userId.length > 0 && userId != null && _isLoginForm) {
+        if (userId.length > 0 && userId != null) {
           widget.loginCallback();
         }
       } catch (e) {
@@ -91,7 +112,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text('BayShield Medical Facility Login'),
+          title: new Text('BayShield Login'),
           backgroundColor: Color(0xFF313F84),
         ),
         body: Stack(

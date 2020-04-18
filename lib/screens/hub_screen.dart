@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-class MakerScreen extends StatefulWidget {
+class HubScreen extends StatefulWidget {
 
-  MakerScreen({Key key, this.auth, this.userId, this.logoutCallback}) : super(key: key);
+  HubScreen({Key key, this.auth, this.userId, this.logoutCallback}) : super(key: key);
 
   final BaseAuth auth;
   final VoidCallback logoutCallback;
   final String userId;
 
   @override
-  State<StatefulWidget> createState() => new _MakerScreenState();
+  State<StatefulWidget> createState() => new _HubScreenState();
 
 }
 
-class _MakerScreenState extends State<MakerScreen>{
+class _HubScreenState extends State<HubScreen>{
 
   signOut() async {
     try {
@@ -30,7 +30,7 @@ class _MakerScreenState extends State<MakerScreen>{
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text("Maker Home"),
+        title: new Text("Collection Hub Home"),
         backgroundColor: Color(0xFF313F84),
         actions: <Widget>[
             new FlatButton(

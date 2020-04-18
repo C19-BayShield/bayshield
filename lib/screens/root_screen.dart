@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:supplyside/screens/login_screen.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/screens/consumer_screen.dart';
+import 'package:supplyside/screens/maker_screen.dart';
+import 'package:supplyside/screens/hub_screen.dart';
+import 'package:supplyside/util/firestore_users.dart';
+import 'package:supplyside/datamodels/user.dart';
+import 'package:supplyside/locator.dart';
 
 enum AuthStatus {
   NOT_DETERMINED,
@@ -19,8 +24,11 @@ class RootScreen extends StatefulWidget {
 }
 
 class _RootScreenState extends State<RootScreen> {
+  final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
   AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
   String _userId = "";
+  User user;
+  String _userType = "";
 
   @override
   void initState() {
@@ -51,7 +59,23 @@ class _RootScreenState extends State<RootScreen> {
     setState(() {
       authStatus = AuthStatus.NOT_LOGGED_IN;
       _userId = "";
+      user = null;
+      _userType = '';
     });
+  }
+
+  Future _getUserType(String id) async {
+    try {
+      User temp = await _firestoreUsers.getUser(_userId);
+      if (temp != null) {
+        setState(() {
+          user = temp;
+          _userType = temp.getType();
+        });
+      }     
+    } catch (e) {
+      return e.message;
+    }      
   }
 
   Widget buildWaitingScreen() {
@@ -75,13 +99,39 @@ class _RootScreenState extends State<RootScreen> {
           loginCallback: loginCallback,
         );
         break;
-      case AuthStatus.LOGGED_IN:
+      case AuthStatus.LOGGED_IN: 
+         _getUserType(_userId);
         if (_userId.length > 0 && _userId != null) {
-          return new ConsumerScreen(
-            userId: _userId,
-            auth: widget.auth,
-            logoutCallback: logoutCallback,
-          );
+          switch(_userType) { 
+              case 'Medical Facility': { 
+                return new ConsumerScreen(
+                  userId: _userId,
+                  auth: widget.auth,
+                  logoutCallback: logoutCallback,
+                );
+              } 
+              break; 
+              case 'Maker': { 
+                return new MakerScreen(
+                userId: _userId,
+                auth: widget.auth,
+                logoutCallback: logoutCallback,
+                );
+              } 
+              break; 
+              case 'Collection Hub': { 
+                return new HubScreen(
+                userId: _userId,
+                auth: widget.auth,
+                logoutCallback: logoutCallback,
+                );
+              } 
+              break;      
+              default: { 
+                return buildWaitingScreen();
+              }
+              break; 
+            } 
         } else
           return buildWaitingScreen();
         break;

@@ -4,17 +4,38 @@ import 'package:flutter/cupertino.dart';
 
 class User {
 
+  String id;
   String email;
-  int phoneNumber;
-  User(this.email, this.phoneNumber);
-  User.named({this.email, this.phoneNumber});
+  String type;
+  User({this.id, this.email, this.type});
 
+  User.fromData(Map<String, dynamic> data)
+    : id = data['id'],
+      email = data['email'],
+      type = data['type'] ?? '';
+      
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'type': type,
+    };
+  }
+
+  String getType() {
+    return this.type;
+  }
+ 
 }
 
 class MedicalFacility extends User {
 
-  MedicalFacility({String email, int phoneNumber, this.address, @required this.orgName, this.staffSize}) :
-    super(email, phoneNumber);
+  MedicalFacility({String id, String email, int phoneNumber, this.address, @required this.orgName, this.staffSize}) :
+    super(
+      id: id, 
+      email: email, 
+      type: "Medical Facility"
+    );
 
   String address;
   String orgName;
