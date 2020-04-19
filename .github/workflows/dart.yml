@@ -18,10 +18,8 @@ jobs:
           channel: 'stable'
 
       - uses: actions/checkout@v2.0.0
-      - name: Dart/Flutter Package Analyzer
-        uses: axel-op/dart-package-analyzer@v2.0.0
       - run: flutter doctor -v
-      - run : flutter channel dev
+      - run: flutter channel dev
       - run: flutter upgrade
       - run: flutter pub get
       - run: flutter test
