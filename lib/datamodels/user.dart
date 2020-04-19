@@ -7,12 +7,16 @@ class User {
   String id;
   String email;
   String type;
+  String name;
+  String address;
   User({this.id, this.email, this.type});
 
   User.fromData(Map<String, dynamic> data)
     : id = data['id'],
       email = data['email'],
-      type = data['type'] ?? '';
+      type = data['type'] ?? '',
+      name = data['name'],
+      address = data['address'];
       
   Map<String, dynamic> toJson() {
     return {
@@ -24,6 +28,14 @@ class User {
 
   String getType() {
     return this.type;
+  }
+
+  String getName() {
+    return this.name;
+  }
+
+  String getAddress() {
+    return this.address;
   }
  
 }

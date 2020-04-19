@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 import 'package:supplyside/datamodels/order.dart';
+import 'package:supplyside/datamodels/user.dart';
 import 'package:supplyside/util/consts.dart';
 import 'package:supplyside/util/mock_consts.dart';
 import 'package:supplyside/util/authentication.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:supplyside/util/firestore_users.dart';
+import 'package:supplyside/locator.dart';
 
 
 class ConsumerScreen extends StatefulWidget {
@@ -21,11 +22,98 @@ class ConsumerScreen extends StatefulWidget {
 
 class _ConsumerScreenState extends State<ConsumerScreen> {
 
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
+  final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
+  User user;
 
   TextStyle orderStyle = TextStyle(fontSize: 16.0,letterSpacing: .5, color: Color(0xFF263151));
   TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
 
+  Future getUser() async {
+    User currUser = await _firestoreUsers.getUser(widget.userId);
+    setState(() {
+      if (currUser != null) {
+        user = currUser;
+      }
+    });
+  }
+
+  Widget _buildCoverImage(Size screenSize) {
+    return Container(
+      height: screenSize.height / 3.6,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/bgcover.png'),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileImage() {
+    return Center(
+      child: Container(
+        width: 140.0,
+        height: 140.0,
+        margin: const EdgeInsets.only(bottom: 15.0),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/default_hospital.jpg'),
+            fit: BoxFit.cover,
+          ),
+          borderRadius: BorderRadius.circular(80.0),
+          border: Border.all(
+            color: Colors.white,
+            width: 5.0,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              blurRadius: 10.0, // has the effect of softening the shadow
+              spreadRadius: 1.0, // has the effect of extending the shadow
+              offset: Offset(
+                0.0, // horizontal, move right 10
+                0.0, // vertical, move down 10
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFullName() {
+    TextStyle _nameTextStyle = TextStyle(
+      fontFamily: 'Roboto',
+      color: Colors.black,
+      fontSize: 24.0,
+      fontWeight: FontWeight.w400,
+    );
+
+    return Text(
+      user.getName(),
+      style: _nameTextStyle,
+    );
+  }
+
+  Widget _buildAddress() {
+    TextStyle bioTextStyle = TextStyle(
+      fontFamily: 'Spectral',
+      fontWeight: FontWeight.w400,//try changing weight to w500 if not thin
+      fontStyle: FontStyle.italic,
+      color: Color(0xFF799497),
+      fontSize: 16.0,
+    );
+
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.all(8.0),
+      child: Text(
+        user.getAddress(),
+        textAlign: TextAlign.center,
+        style: bioTextStyle,
+      ),
+    );
+  }
 
   Widget _buildRequestItem(SupplyRequest req, BuildContext context) {
     double c_width = MediaQuery.of(context).size.width;
@@ -80,7 +168,54 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
         )
         ]
       );
+  }
 
+  Widget _buildType() {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4.0),
+      ),
+      child: Text(
+        user.getType(),
+        style: TextStyle(
+          fontFamily: 'Spectral',
+          color: Colors.black,
+          fontSize: 20.0,
+          fontWeight: FontWeight.w300,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRequestButton() {
+    return RaisedButton(
+      child: Text('ORDER'),
+      onPressed: () => Navigator.pushNamed(context, REQUEST_SCREEN),
+      padding: EdgeInsets.symmetric(horizontal: 32),
+    );
+  }
+
+  Widget _buildRequestList() {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+            for(final req in TEST_REQS)
+        Padding(child: _buildRequestItem(req, context),padding: EdgeInsets.symmetric(vertical: 8)),         
+        ],
+      ), 
+    );
+  }
+
+  Widget buildWaitingScreen() {
+    return Scaffold(
+      body: Container(
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 
    signOut() async {
@@ -94,44 +229,47 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: new AppBar(
-          title: new Text('Medical Facility Home'),
-          backgroundColor: Color(0xFF313F84),
-          actions: <Widget>[
-            new FlatButton(
-                child: new Text('Logout',
-                    style: new TextStyle(fontSize: 17.0, color: Colors.white)),
-                onPressed: signOut)
-          ],
-        ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: LiquidPullToRefresh(
-            onRefresh: () => null,
-            child: CustomScrollView(
-              scrollDirection: Axis.vertical,
-              slivers: <Widget>[
-                SliverList(
-                  delegate: SliverChildListDelegate([
-                    Center(child: Icon(Icons.arrow_upward)),
-                    Center(child: Text('Pull down to refresh')),
-                    RaisedButton(
-                      child: Text('New Request'),
-                      onPressed: () => Navigator.pushNamed(context, REQUEST_SCREEN),
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+    getUser();
+    Size screenSize = MediaQuery.of(context).size;
+    if (user == null) {
+      return buildWaitingScreen();
+    } else {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: new AppBar(
+            title: new Text('Medical Facility Home'),
+            backgroundColor: Color(0xFF313F84),
+            actions: <Widget>[
+              new FlatButton(
+                  child: new Text('Logout',
+                      style: new TextStyle(fontSize: 17.0, color: Colors.white)),
+                  onPressed: signOut)
+            ],
+          ),
+        body: Stack(
+          children: <Widget>[
+            _buildCoverImage(screenSize),
+            SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: screenSize.height / 6.4.floor(),
                     ),
-                    for(final req in TEST_REQS)
-                      Padding(child: _buildRequestItem(req, context),padding: EdgeInsets.symmetric(vertical: 8)),                    
-                  ]),
-                )
-                
-              ],
-            )
-          )
-        )
+                    _buildProfileImage(),
+                    _buildFullName(),
+                    _buildType(),
+                    _buildAddress(),
+                    _buildRequestButton(),
+                    SizedBox(height: 8.0),
+                    _buildRequestList(),
+                  ],
+                ),
+              ),
+          ),
+        ],
       ),
-    );
+      );
+    }
   }
 }
