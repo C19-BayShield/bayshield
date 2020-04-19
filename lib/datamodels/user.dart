@@ -42,15 +42,30 @@ class User {
 
 class MedicalFacility extends User {
 
-  MedicalFacility({String id, String email, int phoneNumber, this.address, @required this.orgName, this.staffSize}) :
+  MedicalFacility({id, String email, int phoneNumber, this.address, @required this.medicalFacilityName, this.staffSize}) :
     super(
       id: id, 
       email: email, 
       type: "Medical Facility"
     );
 
+  @override
+  MedicalFacility.fromData(Map<String, dynamic> data)
+    : id= data['id'],
+      email = data['email'],
+      name = data['name'],
+      address = data['address'],
+      medicalFacilityName = data['medicalFacilityName'];
+
+  String getFacilityName() {
+    return this.medicalFacilityName;
+  }
+
+  String id;
+  String email;
+  String name;
   String address;
-  String orgName;
+  String medicalFacilityName;
   int staffSize;
   String contactPersonName;
   String contactPersonTitle;

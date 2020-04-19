@@ -23,23 +23,23 @@ class ConsumerScreen extends StatefulWidget {
 class _ConsumerScreenState extends State<ConsumerScreen> {
 
   final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
-  User user;
+  MedicalFacility user;
 
   TextStyle orderStyle = TextStyle(fontSize: 16.0,letterSpacing: .5, color: Color(0xFF263151));
   TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
 
   Future getUser() async {
-    User currUser = await _firestoreUsers.getUser(widget.userId);
-    setState(() {
-      if (currUser != null) {
-        user = currUser;
-      }
-    });
+    MedicalFacility currUser = await _firestoreUsers.getMedicalFacility(widget.userId);
+    if (currUser != null && user == null) {
+      setState(() {
+          user = currUser;
+      });
+    }
   }
 
   Widget _buildCoverImage(Size screenSize) {
     return Container(
-      height: screenSize.height / 3.6,
+      height: screenSize.height / 2.8,
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/bgcover.png'),
@@ -170,7 +170,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
       );
   }
 
-  Widget _buildType() {
+  Widget _buildFacilityName() {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
       decoration: BoxDecoration(
@@ -178,7 +178,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
         borderRadius: BorderRadius.circular(4.0),
       ),
       child: Text(
-        user.getType(),
+        user.getFacilityName(),
         style: TextStyle(
           fontFamily: 'Spectral',
           color: Colors.black,
@@ -198,14 +198,13 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
   }
 
   Widget _buildRequestList() {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return ListView(
+      shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(),
         children: <Widget>[
             for(final req in TEST_REQS)
         Padding(child: _buildRequestItem(req, context),padding: EdgeInsets.symmetric(vertical: 8)),         
-        ],
-      ), 
+        ], 
     );
   }
 
@@ -216,6 +215,24 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
         child: CircularProgressIndicator(),
       ),
     );
+  }
+
+   Widget _buildAppBar() {
+    return Positioned(
+      top: 0.0,
+      left: 0.0,
+      right: 0.0,
+      child: AppBar(
+        title: new Text('Medical Facility Home'),
+        backgroundColor: Colors.black.withOpacity(0.5),
+        actions: <Widget>[
+          new FlatButton(
+              child: new Text('Logout',
+                  style: new TextStyle(fontSize: 17.0, color: Colors.white)),
+              onPressed: signOut)
+        ],
+      ),
+    ); 
   }
 
    signOut() async {
@@ -236,37 +253,28 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     } else {
       return Scaffold(
         backgroundColor: Colors.white,
-        appBar: new AppBar(
-            title: new Text('Medical Facility Home'),
-            backgroundColor: Color(0xFF313F84),
-            actions: <Widget>[
-              new FlatButton(
-                  child: new Text('Logout',
-                      style: new TextStyle(fontSize: 17.0, color: Colors.white)),
-                  onPressed: signOut)
-            ],
-          ),
         body: Stack(
           children: <Widget>[
             _buildCoverImage(screenSize),
             SafeArea(
-              child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
                     SizedBox(
-                      height: screenSize.height / 6.4.floor(),
+                      height: screenSize.height / 4.7,
                     ),
                     _buildProfileImage(),
                     _buildFullName(),
-                    _buildType(),
+                    _buildFacilityName(),
                     _buildAddress(),
                     _buildRequestButton(),
-                    SizedBox(height: 8.0),
-                    _buildRequestList(),
+                    Container(
+                      height: screenSize.height / 3.3, 
+                      child: _buildRequestList(),
+                    ),
                   ],
                 ),
-              ),
           ),
+          _buildAppBar()
         ],
       ),
       );
