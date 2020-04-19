@@ -30,9 +30,10 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
 
   Future getUser() async {
     MedicalFacility currUser = await _firestoreUsers.getMedicalFacility(widget.userId);
-    if (currUser != null && user == null) {
+    if (currUser != null) {
+      if (!mounted) return;
       setState(() {
-          user = currUser;
+        user = currUser;
       });
     }
   }
