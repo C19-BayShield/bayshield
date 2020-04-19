@@ -6,7 +6,7 @@ on: [pull_request]
 jobs:
 
   build-upload:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
 
       - uses: actions/setup-java@v1.3.0
