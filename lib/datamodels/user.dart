@@ -7,12 +7,16 @@ class User {
   String id;
   String email;
   String type;
+  String name;
+  String address;
   User({this.id, this.email, this.type});
 
   User.fromData(Map<String, dynamic> data)
     : id = data['id'],
       email = data['email'],
-      type = data['type'] ?? '';
+      type = data['type'] ?? '',
+      name = data['name'],
+      address = data['address'];
       
   Map<String, dynamic> toJson() {
     return {
@@ -25,20 +29,43 @@ class User {
   String getType() {
     return this.type;
   }
+
+  String getName() {
+    return this.name;
+  }
+
+  String getAddress() {
+    return this.address;
+  }
  
 }
 
 class MedicalFacility extends User {
 
-  MedicalFacility({String id, String email, int phoneNumber, this.address, @required this.orgName, this.staffSize}) :
+  MedicalFacility({id, String email, int phoneNumber, this.address, @required this.medicalFacilityName, this.staffSize}) :
     super(
       id: id, 
       email: email, 
       type: "Medical Facility"
     );
 
+  @override
+  MedicalFacility.fromData(Map<String, dynamic> data)
+    : id= data['id'],
+      email = data['email'],
+      name = data['name'],
+      address = data['address'],
+      medicalFacilityName = data['medicalFacilityName'];
+
+  String getFacilityName() {
+    return this.medicalFacilityName;
+  }
+
+  String id;
+  String email;
+  String name;
   String address;
-  String orgName;
+  String medicalFacilityName;
   int staffSize;
   String contactPersonName;
   String contactPersonTitle;
