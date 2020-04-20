@@ -1,4 +1,4 @@
-package com.bnbsy.supplyside;
+package org.c19bayshield.c19bayshield;
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity;
