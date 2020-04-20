@@ -52,39 +52,45 @@ android {
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    signingConfigs {  
-        file(rootProject.file('key.properties')).with { propFile ->  
-            if (propFile.canRead()) {  
-        release {  
-            keyAlias keystoreProperties['keyAlias']  
-            keyPassword keystoreProperties['keyPassword']  
-            storeFile file(keystoreProperties['storeFile'])  
-            storePassword keystoreProperties['storePassword']
-            
-        }}  
-            else {  
-                print('not signed')  
+    signingConfigs { 
+        if (System.getenv('CONTINUOUS_INTEGRATION') == true ){
+            file(rootProject.file('key.properties')).with { propFile ->  
+                if (propFile.canRead()) {  
+            release {  
+                keyAlias keystoreProperties['keyAlias']  
+                keyPassword keystoreProperties['keyPassword']  
+                storeFile file(keystoreProperties['storeFile'])  
+                storePassword keystoreProperties['storePassword']
+                
+            }}  
+                else {  
+                    print('not signed')  
+                }  
             }  
-        }  
+        }
     }  
   
     buildTypes {  
-        release {  
-            file(rootProject.file('key.properties')).with { propFile ->  
-                if (propFile.canRead()) {  
-                    // because we can read the keystore  
- // we are building locally // so sign locally // otherwise build an unsigned apk for later signing by the CI/CD provider  signingConfig signingConfigs.release  
+        release {
+            if (System.getenv('CONTINUOUS_INTEGRATION') == true ){  
+                file(rootProject.file('key.properties')).with { propFile ->  
+                    if (propFile.canRead()) {  
+                        // because we can read the keystore  
+    // we are building locally // so sign locally // otherwise build an unsigned apk for later signing by the CI/CD provider  signingConfig signingConfigs.release  
+                    }  
                 }  
-            }  
-  
-            applicationVariants.all { variant ->  
-                variant.outputs.all { output ->  
-                    output.outputFileName = "app-release.apk"  
+    
+                applicationVariants.all { variant ->  
+                    variant.outputs.all { output ->  
+                        output.outputFileName = "app-release.apk"  
+                    }  
                 }  
-            }  
             // TODO: Add your own signing config for the release build.  
   // Signing with the debug keys for now, so `flutter run --release` works.  
-        signingConfig signingConfigs.release  
+                signingConfig signingConfigs.release  
+            }else{
+                signingConfig signingConfigs.debug 
+            }
         }  
     }
 }
