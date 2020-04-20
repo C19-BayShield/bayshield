@@ -53,7 +53,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs { 
-        if (System.getenv()["CI"] == true ){
+        if (System.getenv()["CI"]){
             logger.quiet('CI')
             file(rootProject.file('key.properties')).with { propFile ->  
                 if (propFile.canRead()) {  
@@ -73,7 +73,7 @@ android {
   
     buildTypes {  
         release {
-            if (System.getenv()["CI"] == true ){  
+            if (System.getenv()["CI"]){  
                 logger.quiet('CI')
                 file(rootProject.file('key.properties')).with { propFile ->  
                     if (propFile.canRead()) {  
