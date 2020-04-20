@@ -54,6 +54,7 @@ android {
     }
     signingConfigs { 
         if (System.getenv('CONTINUOUS_INTEGRATION') == true ){
+            print('CI')
             file(rootProject.file('key.properties')).with { propFile ->  
                 if (propFile.canRead()) {  
             release {  
@@ -73,6 +74,7 @@ android {
     buildTypes {  
         release {
             if (System.getenv('CONTINUOUS_INTEGRATION') == true ){  
+                print('CI')
                 file(rootProject.file('key.properties')).with { propFile ->  
                     if (propFile.canRead()) {  
                         // because we can read the keystore  
@@ -89,6 +91,7 @@ android {
   // Signing with the debug keys for now, so `flutter run --release` works.  
                 signingConfig signingConfigs.release  
             }else{
+                print('No CI')
                 signingConfig signingConfigs.debug 
             }
         }  
