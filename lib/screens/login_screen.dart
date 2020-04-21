@@ -108,24 +108,66 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
     });
   }
 
+  Widget _buildCoverImage(Size screenSize) {
+    return Container(
+      height: screenSize.height,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/landingcover.jpg'),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppBar() {
+    return Positioned(
+      top: 0.0,
+      left: 0.0,
+      right: 0.0,
+      child: AppBar(
+        title: new Text('C19 | BayShield'),
+        backgroundColor: Colors.black.withOpacity(0.5),
+      ),
+    ); 
+  }
+
  @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: new AppBar(
-          title: new Text('BayShield Login'),
-          backgroundColor: Color(0xFF313F84),
-        ),
+    Size screenSize = MediaQuery.of(context).size;
+    return Scaffold(
         body: Stack(
           children: <Widget>[
-            _showForm(),
-            _showCircularProgress(),
-          ],
-        ));
-  }
+            _buildCoverImage(screenSize),
+            SafeArea(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: screenSize.height / 3.6,
+                    ),
+                    Container(
+                      margin: new EdgeInsets.only(left: 12.0, right: 12.0),
+                      height: screenSize.height / 1.8,
+                      color: Colors.white,
+                      child: Column(
+                        children: <Widget>[
+                          _showForm(),
+                        ]
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _showCircularProgress(),
+              _buildAppBar()
+            ],
+          ),
+      );
+    }
 
   Widget _showForm() {
   return new Container(
-      padding: EdgeInsets.all(18.0),
+      padding: new EdgeInsets.only(left: 22.0, right: 22.0),
       child: new Form(
         key: _formKey,
         child: new ListView(
@@ -155,11 +197,17 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
       child: new TextFormField(
+        style: new TextStyle(
+              color: Colors.black,
+        ),
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
         decoration: new InputDecoration(
             hintText: 'Email',
+            hintStyle:  new TextStyle(
+              color: Colors.grey,
+            ),
             icon: new Icon(
               Icons.mail,
               color: Colors.grey,
@@ -174,11 +222,17 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
       child: new TextFormField(
+        style: new TextStyle(
+              color: Colors.black,
+        ),
         maxLines: 1,
         obscureText: true,
         autofocus: false,
         decoration: new InputDecoration(
             hintText: 'Password',
+            hintStyle:  new TextStyle(
+              color: Colors.grey,
+            ),
             icon: new Icon(
               Icons.lock,
               color: Colors.grey,
@@ -194,13 +248,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
         padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
         child: SizedBox(
           height: 40.0,
-          child: new RaisedButton(
-            elevation: 5.0,
-            shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30.0)),
-            color: Color(0xFF313F84),
-            child: new Text(_isLoginForm ? 'Login' : 'Create account',
-                style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+          child: new FlatButton(
+            child: new Text(_isLoginForm ? 'SIGN IN' : 'CREATE AN ACCOUNT',
+                style: new TextStyle(fontSize: 20.0, color: Color(0xFFF4BA5B))),
             onPressed: validateAndSubmit,
           ),
         ));
@@ -209,8 +259,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
   Widget showSecondaryButton() {
     return new FlatButton(
         child: new Text(
-            _isLoginForm ? 'Create an account' : 'Have an account? Sign in',
-            style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
+            _isLoginForm ? 'SIGN UP' : 'HAVE AN ACCOUNT? SIGN IN',
+            style: new TextStyle(fontSize: 20.0, 
+              color: Color(0xFFF4BA5B))),
         onPressed: toggleFormMode);
   }
 
@@ -219,7 +270,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
       return new Text(
         _errorMessage,
         style: TextStyle(
-            fontSize: 13.0,
+            fontSize: 16.0,
             color: Colors.red,
             height: 1.0,
             fontWeight: FontWeight.w300),

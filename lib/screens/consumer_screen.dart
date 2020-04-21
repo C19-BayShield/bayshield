@@ -274,10 +274,10 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                     ),
                   ],
                 ),
+              ),
+              _buildAppBar()
+            ],
           ),
-          _buildAppBar()
-        ],
-      ),
       );
     }
   }
