@@ -44,18 +44,6 @@ class _UserTypeScreenState extends State<UserTypeScreen>{
       ),
     );
 
-  Widget _buildCoverImage() {
-    return Container(
-      height: screenSize.height,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/landingcover.jpg'),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
   Column _buildButtonColumn(IconData icon, String label) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -120,7 +108,7 @@ class _UserTypeScreenState extends State<UserTypeScreen>{
     return Scaffold(
             body: Stack(
               children: <Widget>[
-                _buildCoverImage(),
+                new FullScreenCover(),
                 ListView(
                   children: [promptSection, buttonSection],
                 ),

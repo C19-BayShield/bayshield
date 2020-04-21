@@ -4,6 +4,7 @@ import 'package:supplyside/screens/user_type_screen.dart';
 import 'package:supplyside/util/firestore_users.dart';
 import 'package:supplyside/datamodels/user.dart';
 import 'package:supplyside/locator.dart';
+import 'package:supplyside/widgets.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   LoginSignupScreen({this.auth, this.loginCallback});
@@ -108,37 +109,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
     });
   }
 
-  Widget _buildCoverImage(Size screenSize) {
-    return Container(
-      height: screenSize.height,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/landingcover.jpg'),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return Positioned(
-      top: 0.0,
-      left: 0.0,
-      right: 0.0,
-      child: AppBar(
-        title: new Text('C19 | BayShield'),
-        backgroundColor: Colors.black.withOpacity(0.5),
-      ),
-    ); 
-  }
-
  @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
         body: Stack(
           children: <Widget>[
-            _buildCoverImage(screenSize),
+            new FullScreenCover(),
             SafeArea(
                 child: Column(
                   children: <Widget>[
@@ -151,6 +128,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
                       color: Colors.white,
                       child: Column(
                         children: <Widget>[
+                          new SizedBox(height: screenSize.height / 9.6),
                           _showForm(),
                         ]
                       ),
@@ -159,7 +137,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
                 ),
               ),
               _showCircularProgress(),
-              _buildAppBar()
+              new BayShieldAppBar(title: 'C19 | BayShield'),
             ],
           ),
       );
@@ -175,8 +153,15 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
           children: <Widget>[
             showEmailInput(),
             showPasswordInput(),
-            showPrimaryButton(),
-            showSecondaryButton(),
+            new SizedBox(height: 32),
+            new PrimaryButton(  
+              submit: validateAndSubmit, 
+              label: _isLoginForm ? 'SIGN IN' : 'CREATE AN ACCOUNT'
+            ),
+            new PrimaryButton(  
+              submit: toggleFormMode,
+              label: _isLoginForm ? 'SIGN UP' : 'HAVE AN ACCOUNT? SIGN IN',
+            ),
             showErrorMessage(),
           ],
         ),
@@ -194,75 +179,22 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
   }
 
   Widget showEmailInput() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 100.0, 0.0, 0.0),
-      child: new TextFormField(
-        style: new TextStyle(
-              color: Colors.black,
-        ),
-        maxLines: 1,
-        keyboardType: TextInputType.emailAddress,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Email',
-            hintStyle:  new TextStyle(
-              color: Colors.grey,
-            ),
-            icon: new Icon(
-              Icons.mail,
-              color: Colors.grey,
-            )),
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
-        onSaved: (value) => _email = value.trim(),
-      ),
+    return new BayShieldFormField(
+      hint: 'Email',
+      icon: Icons.mail,
+      validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
+      onSaved: (value) => _email = value.trim(),
     );
   }
 
   Widget showPasswordInput() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-      child: new TextFormField(
-        style: new TextStyle(
-              color: Colors.black,
-        ),
-        maxLines: 1,
-        obscureText: true,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Password',
-            hintStyle:  new TextStyle(
-              color: Colors.grey,
-            ),
-            icon: new Icon(
-              Icons.lock,
-              color: Colors.grey,
-            )),
-        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
-        onSaved: (value) => _password = value.trim(),
-      ),
+    return new BayShieldFormField(
+      obscureText: true,
+      hint: 'Password',
+      icon: Icons.lock,
+      validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
+      onSaved: (value) => _password = value.trim(),
     );
-  }
-
-  Widget showPrimaryButton() {
-    return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
-        child: SizedBox(
-          height: 40.0,
-          child: new FlatButton(
-            child: new Text(_isLoginForm ? 'SIGN IN' : 'CREATE AN ACCOUNT',
-                style: new TextStyle(fontSize: 20.0, color: Color(0xFFF4BA5B))),
-            onPressed: validateAndSubmit,
-          ),
-        ));
-  }
-
-  Widget showSecondaryButton() {
-    return new FlatButton(
-        child: new Text(
-            _isLoginForm ? 'SIGN UP' : 'HAVE AN ACCOUNT? SIGN IN',
-            style: new TextStyle(fontSize: 20.0, 
-              color: Color(0xFFF4BA5B))),
-        onPressed: toggleFormMode);
   }
 
   Widget showErrorMessage() {
