@@ -91,7 +91,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     );
 
     return Text(
-      user.getName(),
+      user.getName() ?? "",
       style: _nameTextStyle,
     );
   }
@@ -109,7 +109,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
       color: Colors.white,
       padding: EdgeInsets.all(8.0),
       child: Text(
-        user.getAddress(),
+        user.getAddress() ?? "",
         textAlign: TextAlign.center,
         style: bioTextStyle,
       ),
@@ -179,7 +179,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
         borderRadius: BorderRadius.circular(4.0),
       ),
       child: Text(
-        user.getFacilityName(),
+        user.getFacilityName() ?? "",
         style: TextStyle(
           fontFamily: 'Spectral',
           color: Colors.black,
@@ -274,10 +274,10 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                     ),
                   ],
                 ),
+              ),
+              _buildAppBar()
+            ],
           ),
-          _buildAppBar()
-        ],
-      ),
       );
     }
   }

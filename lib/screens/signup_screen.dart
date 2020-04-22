@@ -4,7 +4,7 @@ import 'package:supplyside/screens/user_type_screen.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/util/firestore_users.dart';
 import 'package:supplyside/locator.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:supplyside/widgets.dart';
 
 class SignUpScreen extends StatefulWidget {
 
@@ -35,16 +35,34 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: new AppBar(
-          title: new Text('BayShield ' + widget.label + ' Signup'),
-          backgroundColor: Color(0xFF313F84),
-        ),
-        body: Stack(
-          children: <Widget>[
-            _showForm()
-          ],
-        ));
+    Size screenSize = MediaQuery.of(context).size;
+    return Scaffold(
+            body: Stack(
+              children: <Widget>[
+                new FullScreenCover(),
+                SafeArea(
+                  child: ListView(
+                    children: <Widget>[
+                      SizedBox(
+                        height: screenSize.height / 6,
+                      ),
+                      Container(
+                        margin: new EdgeInsets.only(left: 12.0, right: 12.0),
+                        height: screenSize.height / 1.4,
+                        color: Colors.white,
+                        child: Column(
+                          children: <Widget>[
+                            _showForm(),
+                          ]
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                new BayShieldAppBar(title: widget.label + ' Registration')
+              ]
+            ),
+    );
   }
 
   // Check if form is valid before going to root screen
@@ -127,159 +145,66 @@ class _SignUpScreenState extends State<SignUpScreen>{
               if (widget.label == 'Medical Facility') showMedicalFacilityNameInput(),
               if (widget.label == 'Collection Hub') showCollectionHubNameInput(),
               showAddressInput(),
-              showPrimaryButton(),
-              showSecondaryButton(),
+              new SizedBox(height: 24),
+              new PrimaryButton(submit: validateAndSubmit, label: "REGISTER"),
+              new PrimaryButton(submit: backToUserType, label: "BACK"),
             ],
           ),
         ));
   }
 
   Widget showNameInput() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 0.0),
-      child: new TextFormField(
-        maxLines: 1,
-        keyboardType: TextInputType.text,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'First Last',
-            icon: new Icon(
-              Icons.account_circle,
-              color: Colors.grey,
-            )),
-        validator: (value) => value.isEmpty ? 'Name can\'t be empty' : null,
-        onSaved: (value) => _name = value.trim(),
-      ),
+    return new BayShieldFormField(
+      hint: 'First Last', 
+      icon: Icons.account_circle,
+      validator: (value) => value.isEmpty ? 'Name can\'t be empty' : null,
+      onSaved: (value) => _name = value.trim(),
     );
   }
 
   Widget showEmailInput() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-      child: new TextFormField(
-        maxLines: 1,
-        keyboardType: TextInputType.emailAddress,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Email',
-            icon: new Icon(
-              Icons.mail,
-              color: Colors.grey,
-            )),
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
-        onSaved: (value) => _email = value.trim(),
-      ),
+    return new BayShieldFormField(
+      hint: 'Email',
+      icon: Icons.mail,
+      validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
+      onSaved: (value) => _email = value.trim(),
     );
   }
 
   Widget showPhoneNumberInput() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-      child: new TextFormField(
-        maxLines: 1,
-        keyboardType: TextInputType.phone,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Phone Number',
-            icon: new Icon(
-              Icons.phone,
-              color: Colors.grey,
-            )),
-        validator: (value) => value.isEmpty ? 'Phone number can\'t be empty' : null,
-        onSaved: (value) => _phoneNumber = value.trim(),
-      ),
+    return new BayShieldFormField(
+      hint: 'Phone Number',
+      icon: Icons.phone,
+      validator: (value) => value.isEmpty ? 'Phone number can\'t be empty' : null,
+      onSaved: (value) => _phoneNumber = value.trim(),
     );
   }
 
   Widget showCollectionHubNameInput() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-      child: new TextFormField(
-        maxLines: 1,
-        keyboardType: TextInputType.text,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Collection Hub Name',
-            icon: new Icon(
-              Icons.business,
-              color: Colors.grey,
-            )),
-        validator: (value) => value.isEmpty ? 'Collection hub name can\'t be empty' : null,
-        onSaved: (value) => _collectionHubName = value.trim(),
-      ),
+    return new BayShieldFormField(
+      hint: 'Collection Hub Name',
+      icon: Icons.business,
+      validator: (value) => value.isEmpty ? 'Collection hub name can\'t be empty' : null,
+      onSaved: (value) => _collectionHubName = value.trim(),
     );
   }
 
   Widget showMedicalFacilityNameInput() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-      child: new TextFormField(
-        maxLines: 1,
-        keyboardType: TextInputType.text,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Medical Facility Name',
-            icon: new Icon(
-              Icons.business,
-              color: Colors.grey,
-            )),
-        validator: (value) => value.isEmpty ? 'Medical facility name can\'t be empty' : null,
-        onSaved: (value) => _medicalFacilityName = value.trim(),
-      ),
+    return new BayShieldFormField(
+      hint: 'Medical Facility Name',
+      icon: Icons.business,
+      validator: (value) => value.isEmpty ? 'Medical facility name can\'t be empty' : null,
+      onSaved: (value) => _medicalFacilityName = value.trim(),
     );
   }
 
   Widget showAddressInput() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-      child: new TextFormField(
-        maxLines: 1,
-        keyboardType: TextInputType.text,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Address',
-            icon: new Icon(
-              Icons.home,
-              color: Colors.grey,
-            )),
-        validator: (value) => value.isEmpty ? 'Address can\'t be empty' : null,
-        onSaved: (value) => _address = value.trim(),
-      ),
+    return new BayShieldFormField(
+      hint: 'Address',
+      icon: Icons.home,
+      validator: (value) => value.isEmpty ? 'Address can\'t be empty' : null,
+      onSaved: (value) => _address = value.trim(),
     );
-  }
-
-  Widget showPrimaryButton() {
-    return new Padding(
-      padding: EdgeInsets.fromLTRB(0.0, 45.0, 0.0, 0.0),
-      child: SizedBox(
-        height: 40.0,
-        child: new RaisedButton(
-          elevation: 5.0,
-          shape: new RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(30.0)),
-          color: Color(0xFF313F84),
-          child: new Text('Finish',
-              style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-          onPressed: validateAndSubmit,
-        ),
-      ));
-  }
-
-  Widget showSecondaryButton() {
-    return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-        child: SizedBox(
-          height: 40.0,
-          child: new RaisedButton(
-            elevation: 5.0,
-            shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30.0)),
-            color: Colors.grey,
-            child: new Text('Back',
-                style: new TextStyle(fontSize: 20.0, color: Colors.black)),
-            onPressed: backToUserType,
-          ),
-        ));
   }
 
   void validateAndSubmit() async {
