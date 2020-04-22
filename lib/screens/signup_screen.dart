@@ -41,7 +41,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
               children: <Widget>[
                 new FullScreenCover(),
                 SafeArea(
-                  child: Column(
+                  child: ListView(
                     children: <Widget>[
                       SizedBox(
                         height: screenSize.height / 6,

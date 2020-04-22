@@ -60,7 +60,7 @@ class BayShieldFormField extends StatelessWidget {
   final Function(String) onSaved;
   final String hint;
   final IconData icon;
-  bool obscureText;
+  final bool obscureText;
   BayShieldFormField({Key key, this.obscureText, @required this.validator, this.onSaved, this.hint, this.icon}) : super(key: key);
 
   Widget build(BuildContext context) {
