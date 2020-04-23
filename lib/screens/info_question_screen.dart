@@ -53,6 +53,7 @@ class _InfoQuestionScreenState extends State<InfoQuestionScreen>{
 
   @override
   Widget build(BuildContext context) {
+    widget.quantities.forEach((k,v) => print('${k}: ${v}'));
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
