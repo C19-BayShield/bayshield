@@ -200,7 +200,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
 
   void showSnackBar(BuildContext context) {
     final snackBar = SnackBar(
-      content: Text('Quantity cannot be zero.'),
+      content: Text('Quantity cannot be zero for any item.'),
     );
     Scaffold.of(context).showSnackBar(snackBar);
   }
@@ -209,7 +209,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
     double c_width = MediaQuery.of(context).size.width;
     return IntrinsicWidth(
       child: Container(
-        width: c_width * .5,
+        width: c_width * .35,
         height: 100,
         child: TextField(
           textAlign: TextAlign.center,
@@ -219,15 +219,18 @@ class _QuantityScreenState extends State<QuantityScreen>{
           maxLength: 4,
           maxLengthEnforced: true,
           decoration: new InputDecoration(
-            labelText: "Quantity Requested",
+            labelText: "Quantity",
           ),
           keyboardType: TextInputType.number,
           inputFormatters: <TextInputFormatter>[
             WhitelistingTextInputFormatter.digitsOnly
           ],
           onChanged: (value){
-            _zeroQuantity = value == "0";
+            int currTotal = 0;
             quantities[tag] = int.parse(value);
+            quantities.forEach((k,v) {currTotal = currTotal + v;});
+
+            _zeroQuantity = currTotal <= int.parse(value);
             setState(() {});
           }, // Only numbers can be entered
         ),
