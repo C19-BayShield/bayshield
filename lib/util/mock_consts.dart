@@ -6,6 +6,16 @@ String aBoxImg = 'https://matchgrademed.com/wp-content/uploads/2020/04/Stackable
 Item faceShield = Item('Face Shield', faceShildImg, 'To protect your face', [ItemRequirement.fabricator]);
 Item aerosolBox = Item('Aersol Box', aBoxImg, 'Prevent c19 in the air', [ItemRequirement.laserCutter]);
 
+// new constants added 4.22.20 for testing purpose
+// TODO: add imageURL, description, required items
+Item bodySuit = Item('Body Suit', '', '', [ItemRequirement.none]);
+Item gloves = Item('Gloves', '', '', [ItemRequirement.none]);
+Item goggles = Item('Goggles', '', '', [ItemRequirement.none]);
+Item n95Regular = Item('N95 Regular', '', '', [ItemRequirement.none]);
+Item n95Small = Item('N95 Small', '', '', [ItemRequirement.none]);
+Item sanitizer = Item('Sanitizer', '', '', [ItemRequirement.none]);
+Item surgicalMask = Item('Surgical Mask', '', '', [ItemRequirement.none]);
+Item wipes = Item('Wipe', '', '', [ItemRequirement.none]);
 
 List<Item> itemsToRequest = [faceShield, aerosolBox];
 
