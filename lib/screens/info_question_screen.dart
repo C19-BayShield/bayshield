@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:supplyside/screens/quantity_screen.dart';
 
 class InfoQuestionScreen extends StatefulWidget {
-  InfoQuestionScreen({this.key, this.selected});
+  InfoQuestionScreen({this.key, this.selected, this.quantities});
 
   final Key key;
   final Map<String, bool> selected;
+  final Map<String, int> quantities;
 
   @override
   State<StatefulWidget> createState() => new _InfoQuestionScreenState();

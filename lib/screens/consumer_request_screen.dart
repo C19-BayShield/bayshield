@@ -113,7 +113,7 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                             children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.only(top: 10),
-                                child: Text('Aerosol Box', style: Theme.of(context).textTheme.headline5,),
+                                child: Text('Aerosol Box', style: Theme.of(context).textTheme.headline4,),
                               ),
                               Padding(
                                 padding: EdgeInsets.all(10),
@@ -143,7 +143,7 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                             children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.only(top: 10),
-                                child: Text('Body Suit', style: Theme.of(context).textTheme.headline5,),
+                                child: Text('Body Suit', style: Theme.of(context).textTheme.headline4,),
                               ),
                               Padding(
                                 padding: EdgeInsets.all(10),
@@ -208,7 +208,7 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(top: 10),
-                                  child: Text('Gloves', style: Theme.of(context).textTheme.headline5,),
+                                  child: Text('Gloves', style: Theme.of(context).textTheme.headline4,),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(10),
@@ -243,7 +243,7 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(top: 10),
-                                  child: Text('Goggles', style: Theme.of(context).textTheme.headline5,),
+                                  child: Text('Goggles', style: Theme.of(context).textTheme.headline4,),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(10),
@@ -273,7 +273,7 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(top: 10),
-                                  child: Text('N95 Regular', style: Theme.of(context).textTheme.headline5,),
+                                  child: Text('N95 Regular', style: Theme.of(context).textTheme.headline4,),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(10),
@@ -308,7 +308,7 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(top: 10),
-                                  child: Text('N95 Small', style: Theme.of(context).textTheme.headline5,),
+                                  child: Text('N95 Small', style: Theme.of(context).textTheme.headline4,),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(10),
@@ -338,7 +338,7 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(top: 10),
-                                  child: Text('Sanitizer', style: Theme.of(context).textTheme.headline5,),
+                                  child: Text('Sanitizer', style: Theme.of(context).textTheme.headline4,),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(10),
@@ -373,7 +373,7 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(top: 10),
-                                  child: Text('Surgical Mask', style: Theme.of(context).textTheme.headline5,),
+                                  child: Text('Surgical Mask', style: Theme.of(context).textTheme.headline4,),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(10),
@@ -403,7 +403,7 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                               children: <Widget>[
                                 Padding(
                                   padding: EdgeInsets.only(top: 10),
-                                  child: Text('Wipes', style: Theme.of(context).textTheme.headline5,),
+                                  child: Text('Wipes', style: Theme.of(context).textTheme.headline4,),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(10),
@@ -431,7 +431,6 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                             ),
                           ]
                       ),
-
                       RaisedButton(child: Text('Next'), onPressed: () {
                         Map<String, bool> selected = new Map();
                         selected["Aerosol Box"] = aerosolBoxSelected[0];

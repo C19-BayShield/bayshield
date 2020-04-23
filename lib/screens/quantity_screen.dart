@@ -16,16 +16,19 @@ class QuantityScreen extends StatefulWidget {
 
 class _QuantityScreenState extends State<QuantityScreen>{
 
-//  int aerosolBoxQuantity = 0;
-//  int bodySuitQuantity = 0;
-//  int faceShieldQuantity = 0;
-//  int gloveQuantity = 0;
-//  int goggleQuantity = 0;
-//  int n95RegularQuantity = 0;
-//  int n95SmallQuantity = 0;
-//  int sanitizerQuantity = 0;
-//  int surgicalMaskQuantity = 0;
-//  int wipeQuantity = 0;
+  Map<String, int> quantities= {
+    "Aersol Box": 0,
+    "Body Suit": 0,
+    "Face Shield": 0,
+    "Gloves": 0,
+    "Goggles": 0,
+    "N95 Regular": 0,
+    "N95 Small": 0,
+    "Sanitizer": 0,
+    "Surgical Mask": 0,
+    "Wipes": 0,
+  };
+
   bool _zeroQuantity = true;
 
   @override
@@ -74,7 +77,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
                                   if (widget.selected["Aerosol Box"] ==
                                       true) _createForm("Aerosol Box"),
                                   if (widget.selected["Aerosol Box"] ==
-                                      true) _quantityForm(),
+                                      true) _quantityForm("Aerosol Box"),
                                 ]
                             ),
                             Row(
@@ -83,7 +86,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
                                   if (widget.selected["Body Suit"] ==
                                       true) _createForm("Body Suit"),
                                   if (widget.selected["Body Suit"] ==
-                                      true) _quantityForm(),
+                                      true) _quantityForm("Body Suit"),
                                 ]
                             ),
                             Row(
@@ -92,7 +95,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
                                   if (widget.selected["Face Shield"] ==
                                       true) _createForm("Face Shield"),
                                   if (widget.selected["Face Shield"] ==
-                                      true) _quantityForm(),
+                                      true) _quantityForm("Face Shield"),
                                 ]
                             ),
                             Row(
@@ -101,7 +104,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
                                   if (widget.selected["Gloves"] ==
                                       true) _createForm("Gloves"),
                                   if (widget.selected["Gloves"] ==
-                                      true) _quantityForm(),
+                                      true) _quantityForm("Gloves"),
                                 ]
                             ),
                             Row(
@@ -110,7 +113,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
                                   if (widget.selected["Goggles"] ==
                                       true) _createForm("Goggles"),
                                   if (widget.selected["Goggles"] ==
-                                      true) _quantityForm(),
+                                      true) _quantityForm("Goggles"),
                                 ]
                             ),
                             Row(
@@ -119,7 +122,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
                                   if (widget.selected["N95 Regular"] ==
                                       true) _createForm("N95 Regular"),
                                   if (widget.selected["N95 Regular"] ==
-                                      true) _quantityForm(),
+                                      true) _quantityForm("N95 Regular"),
                                 ]
                             ),
                             Row(
@@ -128,7 +131,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
                                   if (widget.selected["N95 Small"] ==
                                       true) _createForm("N95 Small"),
                                   if (widget.selected["N95 Small"] ==
-                                      true) _quantityForm(),
+                                      true) _quantityForm("N95 Small"),
                                 ]
                             ),
                             Row(
@@ -137,7 +140,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
                                   if (widget.selected["Sanitizer"] ==
                                       true) _createForm("Sanitizer"),
                                   if (widget.selected["Sanitizer"] ==
-                                      true) _quantityForm(),
+                                      true) _quantityForm("Sanitizer"),
                                 ]
                             ),
                             Row(
@@ -146,7 +149,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
                                   if (widget.selected["Surgical Mask"] ==
                                       true) _createForm("Surgical Mask"),
                                   if (widget.selected["Surgical Mask"] ==
-                                      true) _quantityForm(),
+                                      true) _quantityForm("Surgical Mask"),
                                 ]
                             ),
                             Row(
@@ -155,7 +158,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
                                   if (widget.selected["Wipes"] ==
                                       true) _createForm("Wipes"),
                                   if (widget.selected["Wipes"] ==
-                                      true) _quantityForm(),
+                                      true) _quantityForm("Wipes"),
                                 ]
                             ),
                             RaisedButton(child: Text('Next'), onPressed: () {
@@ -166,7 +169,8 @@ class _QuantityScreenState extends State<QuantityScreen>{
                                   context,
                                   MaterialPageRoute(builder: (context) =>
                                       InfoQuestionScreen(key: widget.key,
-                                          selected: widget.selected)),
+                                          selected: widget.selected,
+                                          quantities: quantities)),
                                 );
                               }
                             }
@@ -201,7 +205,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
     Scaffold.of(context).showSnackBar(snackBar);
   }
 
-  IntrinsicWidth _quantityForm() {
+  IntrinsicWidth _quantityForm(tag) {
     double c_width = MediaQuery.of(context).size.width;
     return IntrinsicWidth(
       child: Container(
@@ -215,7 +219,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
           maxLength: 4,
           maxLengthEnforced: true,
           decoration: new InputDecoration(
-            labelText: "Amount Requested",
+            labelText: "Quantity Requested",
           ),
           keyboardType: TextInputType.number,
           inputFormatters: <TextInputFormatter>[
@@ -223,6 +227,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
           ],
           onChanged: (value){
             _zeroQuantity = value == "0";
+            quantities[tag] = int.parse(value);
             setState(() {});
           }, // Only numbers can be entered
         ),
@@ -235,7 +240,7 @@ class _QuantityScreenState extends State<QuantityScreen>{
       children: <Widget>[
         Padding(
           padding: EdgeInsets.only(top: 10),
-          child: Text(tag, style: Theme.of(context).textTheme.headline5,),
+          child: Text(tag, style: Theme.of(context).textTheme.headline4,),
         ),
         Padding(
           padding: EdgeInsets.all(10),
@@ -272,6 +277,5 @@ class _QuantityScreenState extends State<QuantityScreen>{
     } else if (tag == "Wipes") {
       return Image.asset('assets/images/wipes.jpg');
     }
-
   }
 }
