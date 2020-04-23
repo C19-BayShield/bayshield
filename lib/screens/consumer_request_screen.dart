@@ -3,19 +3,6 @@ import 'package:supplyside/screens/quantity_screen.dart';
 import 'package:supplyside/datamodels/item.dart';
 import 'package:supplyside/util/mock_consts.dart';
 
-Map<String, Item> itemRequestMap = {
-  'Aersol Box': aerosolBox,
-  'Body Suit': bodySuit,
-  'Face Shield': faceShield,
-  'Gloves': gloves,
-  'Goggles': goggles,
-  'N95 Regular': n95Regular,
-  'N95 Small': n95Small,
-  'Sanitizer': sanitizer,
-  'Surgical Mask': surgicalMask,
-  'Wipes': wipes
-};
-
 class OrderRequestPage extends StatefulWidget {
   OrderRequestPage({Key key}) : super(key: key);
 
