@@ -225,12 +225,10 @@ class _QuantityScreenState extends State<QuantityScreen>{
           inputFormatters: <TextInputFormatter>[
             WhitelistingTextInputFormatter.digitsOnly
           ],
-          onChanged: (value){
-            int currTotal = 0;
+          onChanged: (value) {
+            _zeroQuantity = false;
             quantities[tag] = int.parse(value);
-            quantities.forEach((k,v) {currTotal = currTotal + v;});
-
-            _zeroQuantity = currTotal <= int.parse(value);
+            quantities.forEach((k,v) => { if (widget.selected[k] == true && quantities[k] == 0) _zeroQuantity = true });
             setState(() {});
           }, // Only numbers can be entered
         ),
