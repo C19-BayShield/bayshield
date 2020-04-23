@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supplyside/screens/quantity_screen.dart';
+import 'package:supplyside/util/item_consts.dart';
+import 'package:supplyside/datamodels/item.dart';
+import 'package:supplyside/widgets.dart';
 
 class OrderRequestPage extends StatefulWidget {
   OrderRequestPage({Key key}) : super(key: key);
@@ -10,19 +13,28 @@ class OrderRequestPage extends StatefulWidget {
 
 class _OrderRequestPageState extends State<OrderRequestPage> {
 
-  List<bool> aerosolBoxSelected = [false];
-  List<bool> bodySuitSelected = [false];
-  List<bool> faceShieldSelected = [false];
-  List<bool> glovesSelected = [false];
-  List<bool> gogglesSelected = [false];
-  List<bool> n95RegularSelected = [false];
-  List<bool> n95SmallSelected = [false];
-  List<bool> sanitizerSelected = [false];
-  List<bool> surgicalMaskSelected = [false];
-  List<bool> wipesSelected = [false];
-
+  final List<Item> items = itemsToRequest;
+  List<List<bool>> selectedItems = [for (var i = 0; i < itemsToRequest.length; i++) [false]];
   bool _chosen = false;
 
+  Widget _buildRow(int start) {
+      return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        for (var i = start; i < start + 2; i++) 
+          new ItemDisplay(
+          item: items[i], 
+          onPressed: (int index) {
+            setState(() {
+              selectedItems[i][index] =
+              !selectedItems[i][index];
+            });
+          },
+          isSelected: selectedItems[i],
+        )
+      ]
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,415 +70,24 @@ class _OrderRequestPageState extends State<OrderRequestPage> {
                                         color: Color(0xFFE6B819),),)
                                   ],
                                 ),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text(
-                                              'Aerosol Box', style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .headline4,),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(10),
-                                            child: ToggleButtons(
-                                              children: <Widget>[
-                                                Container(
-                                                  width: 140.0,
-                                                  height: 140.0,
-                                                  color: Colors.white,
-                                                  child: Image.asset(
-                                                      'assets/images/aerosol_box.png'),
-                                                ),
-                                              ],
-                                              selectedBorderColor: Color(
-                                                  0xFFE6B819),
-                                              borderColor: Color(0xFF313F84),
-                                              borderWidth: 8.0,
-                                              onPressed: (int index) {
-                                                setState(() {
-                                                  aerosolBoxSelected[index] =
-                                                  !aerosolBoxSelected[index];
-                                                });
-                                              },
-                                              isSelected: aerosolBoxSelected,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text(
-                                              'Body Suit', style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .headline4,),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(10),
-                                            child: ToggleButtons(
-                                              children: <Widget>[
-                                                Container(
-                                                  width: 140.0,
-                                                  height: 140.0,
-                                                  color: Colors.white,
-                                                  child: Image.asset(
-                                                      'assets/images/body_suit.jpg'),
-                                                ),
-                                              ],
-                                              selectedBorderColor: Color(
-                                                  0xFFE6B819),
-                                              borderColor: Color(0xFF313F84),
-                                              borderWidth: 8.0,
-                                              onPressed: (int index) {
-                                                setState(() {
-                                                  bodySuitSelected[index] =
-                                                  !bodySuitSelected[index];
-                                                });
-                                              },
-                                              isSelected: bodySuitSelected,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ]
-                                ),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text(
-                                              'Face Shield', style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .headline5,),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(10),
-                                            child: ToggleButtons(
-                                              children: <Widget>[
-                                                Container(
-                                                  width: 140.0,
-                                                  height: 140.0,
-                                                  color: Colors.white,
-                                                  child: Image.asset(
-                                                      'assets/images/face_shield.jpeg'),
-                                                ),
-                                              ],
-                                              selectedBorderColor: Color(
-                                                  0xFFE6B819),
-                                              borderColor: Color(0xFF313F84),
-                                              borderWidth: 8.0,
-                                              onPressed: (int index) {
-                                                setState(() {
-                                                  faceShieldSelected[index] =
-                                                  !faceShieldSelected[index];
-                                                });
-                                              },
-                                              isSelected: faceShieldSelected,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text('Gloves', style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .headline4,),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(10),
-                                            child: ToggleButtons(
-                                              children: <Widget>[
-                                                Container(
-                                                  width: 140.0,
-                                                  height: 140.0,
-                                                  color: Colors.white,
-                                                  child: Image.asset(
-                                                      'assets/images/gloves.jpg'),
-                                                ),
-                                              ],
-                                              selectedBorderColor: Color(
-                                                  0xFFE6B819),
-                                              borderColor: Color(0xFF313F84),
-                                              borderWidth: 8.0,
-                                              onPressed: (int index) {
-                                                setState(() {
-                                                  glovesSelected[index] =
-                                                  !glovesSelected[index];
-                                                });
-                                              },
-                                              isSelected: glovesSelected,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ]
-                                ),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text('Goggles', style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .headline4,),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(10),
-                                            child: ToggleButtons(
-                                              children: <Widget>[
-                                                Container(
-                                                  width: 140.0,
-                                                  height: 140.0,
-                                                  color: Colors.white,
-                                                  child: Image.asset(
-                                                      'assets/images/goggles.jpeg'),
-                                                ),
-                                              ],
-                                              selectedBorderColor: Color(
-                                                  0xFFE6B819),
-                                              borderColor: Color(0xFF313F84),
-                                              borderWidth: 8.0,
-                                              onPressed: (int index) {
-                                                setState(() {
-                                                  gogglesSelected[index] =
-                                                  !gogglesSelected[index];
-                                                });
-                                              },
-                                              isSelected: gogglesSelected,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text(
-                                              'N95 Regular', style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .headline4,),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(10),
-                                            child: ToggleButtons(
-                                              children: <Widget>[
-                                                Container(
-                                                  width: 140.0,
-                                                  height: 140.0,
-                                                  color: Colors.white,
-                                                  child: Image.asset(
-                                                      'assets/images/n95_regular.jpg'),
-                                                ),
-                                              ],
-                                              selectedBorderColor: Color(
-                                                  0xFFE6B819),
-                                              borderColor: Color(0xFF313F84),
-                                              borderWidth: 8.0,
-                                              onPressed: (int index) {
-                                                setState(() {
-                                                  n95RegularSelected[index] =
-                                                  !n95RegularSelected[index];
-                                                });
-                                              },
-                                              isSelected: n95RegularSelected,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ]
-                                ),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text(
-                                              'N95 Small', style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .headline4,),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(10),
-                                            child: ToggleButtons(
-                                              children: <Widget>[
-                                                Container(
-                                                  width: 140.0,
-                                                  height: 140.0,
-                                                  color: Colors.white,
-                                                  child: Image.asset(
-                                                      'assets/images/n95_small.jpeg'),
-                                                ),
-                                              ],
-                                              selectedBorderColor: Color(
-                                                  0xFFE6B819),
-                                              borderColor: Color(0xFF313F84),
-                                              borderWidth: 8.0,
-                                              onPressed: (int index) {
-                                                setState(() {
-                                                  n95SmallSelected[index] =
-                                                  !n95SmallSelected[index];
-                                                });
-                                              },
-                                              isSelected: n95SmallSelected,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text(
-                                              'Sanitizer', style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .headline4,),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(10),
-                                            child: ToggleButtons(
-                                              children: <Widget>[
-                                                Container(
-                                                  width: 140.0,
-                                                  height: 140.0,
-                                                  color: Colors.white,
-                                                  child: Image.asset(
-                                                      'assets/images/hand_sanitizer.jpeg'),
-                                                ),
-                                              ],
-                                              selectedBorderColor: Color(
-                                                  0xFFE6B819),
-                                              borderColor: Color(0xFF313F84),
-                                              borderWidth: 8.0,
-                                              onPressed: (int index) {
-                                                setState(() {
-                                                  sanitizerSelected[index] =
-                                                  !sanitizerSelected[index];
-                                                });
-                                              },
-                                              isSelected: sanitizerSelected,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ]
-                                ),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text(
-                                              'Surgical Mask', style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .headline4,),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(10),
-                                            child: ToggleButtons(
-                                              children: <Widget>[
-                                                Container(
-                                                  width: 140.0,
-                                                  height: 140.0,
-                                                  color: Colors.white,
-                                                  child: Image.asset(
-                                                      'assets/images/surgical_mask.png'),
-                                                ),
-                                              ],
-                                              selectedBorderColor: Color(
-                                                  0xFFE6B819),
-                                              borderColor: Color(0xFF313F84),
-                                              borderWidth: 8.0,
-                                              onPressed: (int index) {
-                                                setState(() {
-                                                  surgicalMaskSelected[index] =
-                                                  !surgicalMaskSelected[index];
-                                                });
-                                              },
-                                              isSelected: surgicalMaskSelected,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text('Wipes', style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .headline4,),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.all(10),
-                                            child: ToggleButtons(
-                                              children: <Widget>[
-                                                Container(
-                                                  width: 140.0,
-                                                  height: 140.0,
-                                                  color: Colors.white,
-                                                  child: Image.asset(
-                                                      'assets/images/wipes.jpg'),
-                                                ),
-                                              ],
-                                              selectedBorderColor: Color(
-                                                  0xFFE6B819),
-                                              borderColor: Color(0xFF313F84),
-                                              borderWidth: 8.0,
-                                              onPressed: (int index) {
-                                                setState(() {
-                                                  wipesSelected[index] =
-                                                  !wipesSelected[index];
-                                                });
-                                              },
-                                              isSelected: wipesSelected,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ]
-                                ),
+                                for (var i = 0; i < items.length; i+=2)  _buildRow(i),
                                 RaisedButton(
                                     child: Text('Next'), onPressed: () {
                                   Map<String, bool> selected = new Map();
                                   selected["Aerosol Box"] =
-                                  aerosolBoxSelected[0];
-                                  selected["Body Suit"] = bodySuitSelected[0];
+                                  selectedItems[0][0];
+                                  selected["Body Suit"] = selectedItems[1][0];
                                   selected["Face Shield"] =
-                                  faceShieldSelected[0];
-                                  selected["Gloves"] = glovesSelected[0];
-                                  selected["Goggles"] = gogglesSelected[0];
+                                  selectedItems[2][0];
+                                  selected["Gloves"] = selectedItems[3][0];
+                                  selected["Goggles"] = selectedItems[4][0];
                                   selected["N95 Regular"] =
-                                  n95RegularSelected[0];
-                                  selected["N95 Small"] = n95SmallSelected[0];
-                                  selected["Sanitizer"] = sanitizerSelected[0];
+                                  selectedItems[5][0];
+                                  selected["N95 Small"] = selectedItems[6][0];
+                                  selected["Sanitizer"] = selectedItems[7][0];
                                   selected["Surgical Mask"] =
-                                  surgicalMaskSelected[0];
-                                  selected["Wipes"] = wipesSelected[0];
+                                 selectedItems[8][0];
+                                  selected["Wipes"] = selectedItems[9][0];
 
                                   _chosen = false;
 

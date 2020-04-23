@@ -36,8 +36,9 @@ class SupplyRequest {
 /// A SupplyOrder is an overall request for a group of items
 class SupplyOrder {
 
-  SupplyOrder({this.supplyNo, this.requests, this.status});
+  SupplyOrder({this.supplyNo, this.requests, this.status, this.userId});
 
+  String userId;
   String supplyNo;
   List<SupplyRequest> requests;
   Status status;

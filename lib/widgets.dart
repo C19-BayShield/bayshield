@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supplyside/datamodels/item.dart';
 
 class BayShieldAppBar extends StatelessWidget {
   final String title;
@@ -92,5 +93,46 @@ class BayShieldFormField extends StatelessWidget {
       ),
     );
   }
-      
+}
+
+class ItemDisplay extends StatelessWidget {
+  final Item item;
+  final Function(int) onPressed;
+  final List<bool> isSelected;
+  ItemDisplay({Key key, @required this.item, this.onPressed, this.isSelected}) : super(key: key);
+
+  Widget build(BuildContext context) {
+     return Column(
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: Text(
+            item.name, style: Theme
+              .of(context)
+              .textTheme
+              .headline4,),
+        ),
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: ToggleButtons(
+            children: <Widget>[
+              Container(
+                width: 140.0,
+                height: 140.0,
+                color: Colors.white,
+                child: Image.asset(
+                    item.imageUrl),
+              ),
+            ],
+            selectedBorderColor: Color(
+                0xFFE6B819),
+            borderColor: Color(0xFF313F84),
+            borderWidth: 8.0,
+            onPressed: onPressed,
+            isSelected: isSelected,
+          ),
+        ),
+      ],
+    );
+  }
 }
