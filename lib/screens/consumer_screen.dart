@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:supplyside/datamodels/order.dart';
 import 'package:supplyside/datamodels/user.dart';
 import 'package:supplyside/util/consts.dart';
-import 'package:supplyside/util/mock_consts.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/util/firestore_users.dart';
+import 'package:supplyside/util/firestore_orders.dart';
 import 'package:supplyside/locator.dart';
+import 'package:supplyside/widgets.dart';
+
+import '../widgets.dart';
 
 
 class ConsumerScreen extends StatefulWidget {
@@ -23,10 +26,10 @@ class ConsumerScreen extends StatefulWidget {
 class _ConsumerScreenState extends State<ConsumerScreen> {
 
   final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
+  final FirestoreOrders _firestoreOrders = locator<FirestoreOrders>();
   MedicalFacility user;
-
-  TextStyle orderStyle = TextStyle(fontSize: 16.0,letterSpacing: .5, color: Color(0xFF263151));
-  TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
+  List<SupplyOrder> orders;
+  Map<String, List<SupplyRequest>> requests = new Map();
 
   Future getUser() async {
     MedicalFacility currUser = await _firestoreUsers.getMedicalFacility(widget.userId);
@@ -35,6 +38,29 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
       setState(() {
         user = currUser;
       });
+    }
+  }
+
+  Future getOrders() async {
+    List<SupplyOrder> temp = await _firestoreOrders.getOrders(widget.userId);
+    if (temp != null) {
+      if (!mounted) return;
+
+      setState(() {
+        orders = temp; // initialize orders
+      });
+
+      // parse requests for each order
+      for (final order in temp) {
+        List<SupplyRequest> reqs = [];
+        for (final r in order.getRequests()) {
+          SupplyRequest req = await _firestoreOrders.getRequest(r);
+          reqs.add(req);
+        }
+        setState(() {
+          requests[order.supplyNo] = reqs; // initialize requests for this order
+        });
+      }
     }
   }
 
@@ -116,59 +142,17 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     );
   }
 
-  Widget _buildRequestItem(SupplyRequest req, BuildContext context) {
-    double c_width = MediaQuery.of(context).size.width;
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget> [
-        Container(
-          width: c_width * .8,
-          color: Color(0xFF313F84),
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          child: 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(right: 16),
-                  child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(req.item.imageUrl, 
-                    width: 64, 
-                    height: 64,
-                    fit: BoxFit.fill
-                  ),
-                ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(mainAxisSize: MainAxisSize.min,children: <Widget>[Text(req.item.name, style: Theme.of(context).textTheme.headline3,), SizedBox(width: 16),],),
-                    Text('${req.amtOrdered.toString()} Ordered', style: Theme.of(context).textTheme.subtitle2 ),
-                    Text('${req.statusToString()}', style: Theme.of(context).textTheme.subtitle2)
-                  ],
-                )
-              ],
-            ),
-          ),
-        Container(
-          color: Color(0xFFFFFFFF),
-          width: c_width * .8,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('Order #DOJF837D', style: this.orderStyle,),
-                Text('Order Date - 06 May 2020', style: this.orderSubtitleStyle)
-              ],
-            )
-          ),
-        )
-        ]
+  Widget _buildOrderDisplay(SupplyOrder order, BuildContext context) {
+    if (requests != null && requests[order.supplyNo] != null) {
+      return Column(
+        children: <Widget>[
+        for (final req in requests[order.supplyNo]) 
+          new OrderDisplay(req: req)
+        ],
       );
+    } else {
+      return new Container();
+    }
   }
 
   Widget _buildFacilityName() {
@@ -203,8 +187,8 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
       shrinkWrap: true,
       physics: AlwaysScrollableScrollPhysics(),
         children: <Widget>[
-            for(final req in TEST_REQS)
-        Padding(child: _buildRequestItem(req, context),padding: EdgeInsets.symmetric(vertical: 8)),         
+          for (final order in orders)
+            Padding(child: _buildOrderDisplay(order, context),padding: EdgeInsets.symmetric(vertical: 8)),         
         ], 
     );
   }
@@ -229,7 +213,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
         actions: <Widget>[
           new FlatButton(
               child: new Text('Logout',
-                  style: new TextStyle(fontSize: 17.0, color: Colors.white)),
+                style: new TextStyle(fontSize: 17.0, color: Colors.white)),
               onPressed: signOut)
         ],
       ),
@@ -248,6 +232,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
   @override
   Widget build(BuildContext context) {
     getUser();
+    getOrders();
     Size screenSize = MediaQuery.of(context).size;
     if (user == null) {
       return buildWaitingScreen();
@@ -269,9 +254,24 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                     _buildAddress(),
                     _buildRequestButton(),
                     Container(
-                      height: screenSize.height / 3.3, 
-                      child: _buildRequestList(),
+                      margin: EdgeInsets.only(left: 32),
+                      alignment: Alignment.centerLeft,
+                      child:  new Text('ORDER HISTORY',
+                        style: new TextStyle(fontSize: 14.0, color: Colors.grey)),
                     ),
+                    orders == null ? 
+                      buildWaitingScreen()
+                    : orders.length == 0 ? 
+                    Container(
+                      alignment: Alignment.center,
+                      child:  new Text('No orders yet',
+                        style: new TextStyle(fontSize: 16.0, color: Colors.black)),
+                    )
+                    :
+                    Container(
+                        height: screenSize.height / 3.5, 
+                        child: _buildRequestList(),
+                      )
                   ],
                 ),
               ),

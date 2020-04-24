@@ -1,6 +1,5 @@
 import 'package:supplyside/datamodels/item.dart';
 
-
 Item aerosolBox = 
   Item('Aersol Box', 
     'assets/images/aerosol_box.png', 
@@ -64,3 +63,38 @@ Item wipes =
 
 List<Item> itemsToRequest = [ aerosolBox, bodySuit, faceShield,
   gloves, goggles, n95Regular, n95Small, sanitizer, surgicalMask, wipes];
+
+Item itemFromName(String name) {
+  switch (name) {
+    case 'Aersol Box':
+      return aerosolBox;
+    break;
+    case 'Body Suit':
+      return bodySuit;
+    break;
+    case 'Face Shield':
+      return faceShield;
+    break;
+    case 'Gloves':
+      return gloves;
+    break;
+    case 'Goggles':
+      return goggles;
+    break;
+    case 'N95 Regular':
+      return n95Regular;
+    break;
+    case 'N95 Small':
+      return n95Small;
+    break;
+    case 'Sanitizer':
+      return sanitizer;
+    case 'Surgical Mask':
+      return surgicalMask;
+    case 'Wipes':
+      return wipes;
+    break;
+    default:
+      return null;
+  }
+}

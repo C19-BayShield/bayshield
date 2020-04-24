@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supplyside/datamodels/item.dart';
+import 'package:supplyside/datamodels/order.dart';
 
 class BayShieldAppBar extends StatelessWidget {
   final String title;
@@ -134,5 +135,75 @@ class ItemDisplay extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class OrderDisplay extends StatelessWidget {
+  final TextStyle orderStyle = TextStyle(fontSize: 16.0,letterSpacing: .5, color: Color(0xFF263151));
+  final TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
+  final SupplyRequest req;
+  OrderDisplay({Key key, @required this.req}) : super(key: key);
+
+  String truncateWithEllipsis(int cutoff, String myString) {
+  return (myString.length <= cutoff)
+    ? myString
+    : '${myString.substring(0, cutoff)}...';
+}
+
+  @override
+  Widget build(BuildContext context) {
+    double c_width = MediaQuery.of(context).size.width;
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget> [
+        Container(
+          width: c_width * .8,
+          color: Color(0xFF313F84),
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+          child: 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(right: 16),
+                  child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.0),
+                  child: Image.asset(
+                    req.item.imageUrl,
+                    width: 64, 
+                    height: 64,
+                    fit: BoxFit.fill
+                  ),
+                ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(mainAxisSize: MainAxisSize.min,children: <Widget>[Text(req.item.name, style: Theme.of(context).textTheme.headline3,), SizedBox(width: 16),],),
+                    Text('${req.amtOrdered.toString()} Ordered', style: Theme.of(context).textTheme.subtitle2 ),
+                    Text('${req.statusToString()}', style: Theme.of(context).textTheme.subtitle2)
+                  ],
+                )
+              ],
+            ),
+          ),
+        Container(
+          color: Color(0xFFFFFFFF),
+          width: c_width * .85,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text('Order ${truncateWithEllipsis(7, req.requestNo)}', style: this.orderStyle,),
+                Text('Order Date - 06 May 2020', style: this.orderSubtitleStyle)
+              ],
+            )
+          ),
+        )
+        ]
+      );
   }
 }
