@@ -112,7 +112,7 @@ class _UserTypeScreenState extends State<UserTypeScreen>{
                 ListView(
                   children: [promptSection, buttonSection],
                 ),
-                  new BayShieldAppBar(title: 'C19 | BayShield')
+                  new BayShieldAppBar(title: 'BayShield')
               ]
             ),
     );

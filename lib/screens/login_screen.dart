@@ -137,7 +137,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
                 ),
               ),
               _showCircularProgress(),
-              new BayShieldAppBar(title: 'C19 | BayShield'),
+              new BayShieldAppBar(title: 'BayShield'),
             ],
           ),
       );
