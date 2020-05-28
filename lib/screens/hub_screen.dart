@@ -125,7 +125,7 @@ class _HubScreenState extends State<HubScreen>{
                   )
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height / 8,
+                  height: MediaQuery.of(context).size.height / 7,
                   width: MediaQuery.of(context).size.width - 110,
                   color: Colors.transparent,
                   child: new DistributedOrdersCard(distributed: _distributed),
