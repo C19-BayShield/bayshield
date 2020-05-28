@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/widgets.dart';
 import 'package:supplyside/screens/order_screen.dart';
-import 'package:supplyside/screens/settings_screen.dart';
-import 'package:supplyside/screens/inventory_screen.dart';
+import 'package:supplyside/screens/profile_screen.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class HubScreen extends StatefulWidget {
@@ -25,7 +24,7 @@ class _HubScreenState extends State<HubScreen>{
   // TODO: Replace hard coded values
   int _incoming = 10;
   int _pending = 35;
-  int _distributed = 13430;
+  int _shipped = 13430;
   String _userType = "C O L L E C T I O N  H U B";
   static String _userName = "Dylan";
   String _greeting = "Hi, " + _userName + ".";
@@ -35,16 +34,34 @@ class _HubScreenState extends State<HubScreen>{
     setState(() {
       _selectedIndex = index;
       if (index == 0) {
-        navigateToOrderScreen(context, widget.userId);
+        navigateToOrderScreen(context, widget.userId, 0);
       } else if (index == 2) {
-        navigateToSettingsScreen(context, widget.userId);
+        navigateToProfileScreen(context, widget.userId);
       }
     });
   }
 
-  void _onPressed() {
+  void _onInventoryPressed() {
     setState(() {
-      navigateToInventoryScreen(context, widget.userId);
+      navigateToProfileScreen(context, widget.userId);
+    });
+  }
+
+  void _onIncomingPressed() {
+    setState(() {
+      navigateToOrderScreen(context, widget.userId, 0);
+    });
+  }
+
+  void _onPendingPressed() {
+    setState(() {
+      navigateToOrderScreen(context, widget.userId, 1);
+    });
+  }
+
+  void _onShippedPressed() {
+    setState(() {
+      navigateToOrderScreen(context, widget.userId, 2);
     });
   }
 
@@ -57,24 +74,16 @@ class _HubScreenState extends State<HubScreen>{
     }
   }
 
-  Future navigateToOrderScreen(context, String userId) async {
+  Future navigateToOrderScreen(context, String userId, index) async {
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OrderScreen(userId: userId,
-      auth: widget.auth,
+      auth: widget.auth, index: index,
     )
     ))
     ;
   }
 
-  Future navigateToSettingsScreen(context, String userId) async {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SettingsScreen(userId: userId,
-      auth: widget.auth,
-    )
-    ))
-    ;
-  }
-
-  Future navigateToInventoryScreen(context, String userId) async {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => InventoryScreen(userId: userId,
+  Future navigateToProfileScreen(context, String userId) async {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProfileScreen(userId: userId,
       auth: widget.auth,
     )
     ))
@@ -113,13 +122,13 @@ class _HubScreenState extends State<HubScreen>{
                         height: MediaQuery.of(context).size.height / 7,
                         width: (MediaQuery.of(context).size.width - 120) / 2,
                         color: Colors.transparent,
-                        child: new IncomingOrdersCard(incoming: _incoming),
+                        child: new IncomingOrdersCard(incoming: _incoming, onPressed: _onIncomingPressed),
                       ),
                       Container(
                         height: MediaQuery.of(context).size.height / 7,
                         width: (MediaQuery.of(context).size.width - 120) / 2,
                         color: Colors.transparent,
-                        child: new PendingOrdersCard(pending: _pending),
+                        child: new PendingOrdersCard(pending: _pending, onPressed: _onPendingPressed),
                       ),
                     ]
                   )
@@ -128,9 +137,9 @@ class _HubScreenState extends State<HubScreen>{
                   height: MediaQuery.of(context).size.height / 7,
                   width: MediaQuery.of(context).size.width - 110,
                   color: Colors.transparent,
-                  child: new DistributedOrdersCard(distributed: _distributed),
+                  child: new ShippedOrdersCard(shipped: _shipped, onPressed: _onShippedPressed),
                 ),
-                new InventoryButton(onPressed: _onPressed),
+                new InventoryButton(onPressed: _onInventoryPressed),
               ]
             )
           )

@@ -52,7 +52,7 @@ class UserTypeTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
-      height: MediaQuery.of(context).size.height / 22,
+      height: MediaQuery.of(context).size.height / 25,
       width: (MediaQuery.of(context).size.width + 25) / 2,
       color: Colors.transparent,
       child: Container(
@@ -98,8 +98,9 @@ class AlertTag extends StatelessWidget {
 
 class IncomingOrdersCard extends StatelessWidget {
   final int incoming;
+  final Function() onPressed;
 
-  IncomingOrdersCard({Key key, @required this.incoming}) : super(key: key);
+  IncomingOrdersCard({Key key, @required this.incoming, this.onPressed}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -118,7 +119,7 @@ class IncomingOrdersCard extends StatelessWidget {
                   textAlign: TextAlign.center,),
               ]
           ),
-          onPressed: null,
+          onPressed: onPressed,
         )
     );
   }
@@ -126,8 +127,9 @@ class IncomingOrdersCard extends StatelessWidget {
 
 class PendingOrdersCard extends StatelessWidget {
   final int pending;
+  final Function() onPressed;
 
-  PendingOrdersCard({Key key, @required this.pending}) : super(key: key);
+  PendingOrdersCard({Key key, @required this.pending, this.onPressed}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -146,16 +148,17 @@ class PendingOrdersCard extends StatelessWidget {
                   textAlign: TextAlign.center,),
               ]
           ),
-          onPressed: null,
+          onPressed: onPressed,
         )
     );
   }
 }
 
-class DistributedOrdersCard extends StatelessWidget {
-  final int distributed;
+class ShippedOrdersCard extends StatelessWidget {
+  final int shipped;
+  final Function() onPressed;
 
-  DistributedOrdersCard({Key key, @required this.distributed}) : super(key: key);
+  ShippedOrdersCard({Key key, @required this.shipped, this.onPressed}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -166,15 +169,15 @@ class DistributedOrdersCard extends StatelessWidget {
           child: new Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                new Text(distributed.toString(),
+                new Text(shipped.toString(),
                   style: TextStyle(color: Colors.black, fontSize: 40, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,),
-                new Text("Distributed",
+                new Text("Shipped",
                   style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,),
               ]
           ),
-          onPressed: null,
+          onPressed: onPressed,
         )
     );
   }
@@ -227,10 +230,11 @@ class MainBottomNavigationBar extends StatelessWidget {
           title: Text("Home")
         ),
         BottomNavigationBarItem(
-          icon: ImageIcon(
-            AssetImage("assets/images/settings.png"),
-          ),
-          title: Text("Settings")
+          icon: Icon(Icons.person),
+//          icon: ImageIcon(
+//            AssetImage("assets/images/profile.png"),
+//          ),
+          title: Text("Profile")
         ),
       ],
       currentIndex: selectedIndex,
