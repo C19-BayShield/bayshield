@@ -32,7 +32,7 @@ class MainAppBar extends StatelessWidget {
       title: Padding(
         padding: EdgeInsets.only(top: 12.0),
         child: Image.asset(
-            'assets/images/logo.png', color: Colors.white, height: 60),
+            'assets/images/logo.png', color: Colors.white, height: 64),
       ),
       actions: <Widget>[
         new FlatButton(
@@ -230,10 +230,9 @@ class MainBottomNavigationBar extends StatelessWidget {
           title: Text("Home")
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-//          icon: ImageIcon(
-//            AssetImage("assets/images/profile.png"),
-//          ),
+          icon: ImageIcon(
+            AssetImage("assets/images/settings.png"),
+          ),
           title: Text("Profile")
         ),
       ],
