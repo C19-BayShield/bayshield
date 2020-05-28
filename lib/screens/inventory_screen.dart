@@ -71,7 +71,7 @@ class _InventoryScreenState extends State<InventoryScreen>{
     return new Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70.0),
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
         child: new MainAppBar(signOut: signOut),
       ),
       body: SafeArea(

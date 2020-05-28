@@ -26,6 +26,7 @@ class MainAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new AppBar(
+      automaticallyImplyLeading: false,
       centerTitle: true,
       backgroundColor: Color(0xFF313F84),
       title: Padding(
