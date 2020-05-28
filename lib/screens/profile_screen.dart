@@ -73,13 +73,16 @@ class _ProfileScreenState extends State<ProfileScreen>{
           child: new Container(
               child: Center(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Container(
                         width: MediaQuery.of(context).size.width - 110,
                         color: Colors.transparent,
-                        child: new Text("Dylan's Profile", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.left,),
+                        child: new Padding(
+                          child: new Text("Dylan's Profile", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.left,),
+                          padding: EdgeInsets.only(top: 30, bottom: 25)
+                        )
                       ),
                       ToggleButtons(
                         fillColor: Color(0xFFB7CDFF),
