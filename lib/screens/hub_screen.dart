@@ -86,7 +86,7 @@ class _HubScreenState extends State<HubScreen>{
     return new Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(70.0),
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
         child: new MainAppBar(signOut: signOut),
       ),
       body: SafeArea(
