@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supplyside/util/authentication.dart';
+import 'package:supplyside/widgets.dart';
+import 'package:supplyside/screens/order_screen.dart';
+import 'package:supplyside/screens/settings_screen.dart';
+import 'package:supplyside/screens/inventory_screen.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class HubScreen extends StatefulWidget {
@@ -22,10 +26,25 @@ class _HubScreenState extends State<HubScreen>{
   int _incoming = 10;
   int _pending = 35;
   int _distributed = 13430;
+  String _userType = "C O L L E C T I O N  H U B";
+  static String _userName = "Dylan";
+  String _greeting = "Hi, " + _userName + ".";
+  String _message = "Alert: PPE Design Update. Read More";
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      if (index == 0) {
+        navigateToOrderScreen(context, widget.userId);
+      } else if (index == 2) {
+        navigateToSettingsScreen(context, widget.userId);
+      }
+    });
+  }
+
+  void _onPressed() {
+    setState(() {
+      navigateToInventoryScreen(context, widget.userId);
     });
   }
 
@@ -38,27 +57,37 @@ class _HubScreenState extends State<HubScreen>{
     }
   }
 
+  Future navigateToOrderScreen(context, String userId) async {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OrderScreen(userId: userId,
+      auth: widget.auth,
+    )
+    ))
+    ;
+  }
+
+  Future navigateToSettingsScreen(context, String userId) async {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SettingsScreen(userId: userId,
+      auth: widget.auth,
+    )
+    ))
+    ;
+  }
+
+  Future navigateToInventoryScreen(context, String userId) async {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => InventoryScreen(userId: userId,
+      auth: widget.auth,
+    )
+    ))
+    ;
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(70.0),
-        child: new AppBar(
-          centerTitle: true,
-          backgroundColor: Color(0xFF313F84),
-          title: Padding(
-              padding: EdgeInsets.only(top: 12.0),
-              child: Image.asset('assets/images/logo.png', color: Colors.white, height: 60),
-          ),
-          actions: <Widget>[
-            new FlatButton(
-                child: new Text('Logout',
-                    style: new TextStyle(fontSize: 17.0, color: Colors.white)),
-                onPressed: signOut
-            ),
-          ],
-        ),
+        child: new MainAppBar(signOut: signOut),
       ),
       body: SafeArea(
         child: new Container(
@@ -66,183 +95,48 @@ class _HubScreenState extends State<HubScreen>{
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Container(
-                  height: 25.0,
-                  width: 200.0,
-                  color: Colors.transparent,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Color(0xFFd48032).withOpacity(0.25),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: new Center(
-                      child: new Text("C O L L E C T I O N  H U B",
-                        style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,),
-                    )
-                  ),
-                ),
-                new Text("Hi, Dylan.", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                new UserTypeTag(userTag: _userType),
+                new Text(_greeting, style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,),
                 Container(
-                  height: 40.0,
-                  width: 300.0,
+                  height: MediaQuery.of(context).size.height / 20,
+                  width: MediaQuery.of(context).size.width - 110,
                   color: Colors.transparent,
-                  child: Container(
-                      decoration: BoxDecoration(
-                          color: Color(0xFF676E8B),
-                          borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                      child: new Center(
-                        child: new Row (
-                          children: <Widget>[
-                            new Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Icon(Icons.warning),
-                            ),
-                            new Text(" Alert: PPE Design Update. Read More",
-                              style: TextStyle(fontSize: 14.0, color: Colors.white),
-                              textAlign: TextAlign.center,),
-                          ]
-                      )
-                    )
-                  ),
+                  child: new AlertTag(message: _message),
                 ),
                 Container(
-                  width: 300,
+                  width: MediaQuery.of(context).size.width - 110,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Container(
-                        height: 100.0,
-                        width: 140.0,
+                        height: MediaQuery.of(context).size.height / 7,
+                        width: (MediaQuery.of(context).size.width - 120) / 2,
                         color: Colors.transparent,
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: Color(0xFFD2D2D2),
-                                borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                            child: new FlatButton(
-                              child: new Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  new Text(_incoming.toString(),
-                                    style: TextStyle(color: Colors.black, fontSize: 40, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.center,),
-                                  new Text("Incoming",
-                                    style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.center,),
-                                ]
-                              ),
-                              onPressed: null,
-                            )
-                        ),
+                        child: new IncomingOrdersCard(incoming: _incoming),
                       ),
                       Container(
-                        height: 100.0,
-                        width: 140.0,
+                        height: MediaQuery.of(context).size.height / 7,
+                        width: (MediaQuery.of(context).size.width - 120) / 2,
                         color: Colors.transparent,
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: Color(0xFFD48032),
-                                borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                            child: new FlatButton(
-                                child: new Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      new Text(_pending.toString(),
-                                        style: TextStyle(color: Colors.black, fontSize: 40, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                                        textAlign: TextAlign.center,),
-                                      new Text("Pending",
-                                        style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                                        textAlign: TextAlign.center,),
-                                    ]
-                                ),
-                                onPressed: null,
-                            )
-                        ),
+                        child: new PendingOrdersCard(pending: _pending),
                       ),
                     ]
                   )
                 ),
                 Container(
-                  height: 100.0,
-                  width: 300.0,
+                  height: MediaQuery.of(context).size.height / 8,
+                  width: MediaQuery.of(context).size.width - 110,
                   color: Colors.transparent,
-                  child: Container(
-                      decoration: BoxDecoration(
-                          color: Color(0xFFB7CDFF),
-                          borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                      child: new FlatButton(
-                        child: new Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              new Text(_distributed.toString(),
-                                style: TextStyle(color: Colors.black, fontSize: 40, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,),
-                              new Text("Distributed",
-                                style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,),
-                            ]
-                        ),
-                        onPressed: null,
-                      )
-                  ),
+                  child: new DistributedOrdersCard(distributed: _distributed),
                 ),
-                Container(
-                  height: 60.0,
-                  width: 300.0,
-                  color: Colors.transparent,
-                  child: Container(
-                    decoration: BoxDecoration(
-                    color: Color(0xFF283568),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    child: new FlatButton(
-                      child: new Text("Inventory",
-                        style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,),
-                      onPressed: null,
-                    )
-                  ),
-                ),
+                new InventoryButton(onPressed: _onPressed),
               ]
             )
           )
         )
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.store),
-            title: Text("Orders"),
-//            icon: ImageIcon(
-//              AssetImage("images/orders.png"),
-//              color: Colors.white,
-//            ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Text("Home"),
-//            icon: ImageIcon(
-//              AssetImage("images/home.png"),
-//              color: Colors.white,
-//            ),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            title: Text("Settings"),
-//            icon: ImageIcon(
-//              AssetImage("images/settings.png"),
-//              color: Colors.white,
-//            ),
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        backgroundColor: Color(0xFF313F84),
-        selectedItemColor: Color(0xFFEDA25D),
-        unselectedItemColor: Colors.white,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        iconSize: 36,
-        onTap: _onItemTapped,
-      ),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onItemTapped),
     );
   }
 }
