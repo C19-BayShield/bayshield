@@ -27,8 +27,9 @@ class FullScreenCover extends StatelessWidget {
       height: screenSize.height,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/landingcover.jpg'),
-          fit: BoxFit.cover,
+          image: AssetImage('assets/images/login_bg.png'),
+          fit: BoxFit.fitWidth,
+          alignment: Alignment.topLeft,
         ),
       ),
     );
@@ -42,16 +43,41 @@ class PrimaryButton extends StatelessWidget {
   PrimaryButton({Key key, @required this.submit, this.label}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-     return new Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
-        child: SizedBox(
-          height: 30.0,
-          child: new FlatButton(
-            child: new Text(label,
-                style: new TextStyle(fontSize: 20.0, color: Color(0xFFF4BA5B))),
-            onPressed: submit,
+     return Container(
+      margin: EdgeInsets.only(bottom: 5.0),
+      child: new FlatButton(
+        padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 20.0),
+        textColor: Colors.black,
+        color: Color(0xFFD48032),
+        child: new Text(label,
+            style: new TextStyle(fontSize: 24.0),
+        ),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
           ),
-        ));
+        onPressed: submit,
+      )
+    );
+  }
+}
+
+
+class SecondaryButton extends StatelessWidget {
+  // This widget is the root of your application.
+  final VoidCallback submit;
+  final String label;
+  SecondaryButton({Key key, @required this.submit, this.label}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+     return Container(
+      child: new FlatButton(
+        textColor: Colors.white,
+        child: new Text(label,
+            style: new TextStyle(fontSize: 18.0, decoration: TextDecoration.underline),
+        ),
+        onPressed: submit,
+      )
+    );
   }
 }
 
@@ -68,7 +94,7 @@ class BayShieldFormField extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 0.0),
       child: new TextFormField(
         style: new TextStyle(
-              color: Colors.black,
+              color: Colors.white,
         ),
         maxLines: 1,
         keyboardType: TextInputType.text,
@@ -81,7 +107,7 @@ class BayShieldFormField extends StatelessWidget {
             ),
             icon: new Icon(
               icon,
-              color: Colors.grey[700],
+              color: Colors.white,
             ),
             enabledBorder: UnderlineInputBorder(      
               borderSide: BorderSide(color: Colors.grey),   
