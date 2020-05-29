@@ -96,11 +96,11 @@ class AlertTag extends StatelessWidget {
   }
 }
 
-class IncomingOrdersCard extends StatelessWidget {
+class IncomingItemsCard extends StatelessWidget {
   final int incoming;
   final Function() onPressed;
 
-  IncomingOrdersCard({Key key, @required this.incoming, this.onPressed}) : super(key: key);
+  IncomingItemsCard({Key key, @required this.incoming, this.onPressed}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -125,11 +125,11 @@ class IncomingOrdersCard extends StatelessWidget {
   }
 }
 
-class PendingOrdersCard extends StatelessWidget {
+class PendingItemsCard extends StatelessWidget {
   final int pending;
   final Function() onPressed;
 
-  PendingOrdersCard({Key key, @required this.pending, this.onPressed}) : super(key: key);
+  PendingItemsCard({Key key, @required this.pending, this.onPressed}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -154,11 +154,11 @@ class PendingOrdersCard extends StatelessWidget {
   }
 }
 
-class ShippedOrdersCard extends StatelessWidget {
+class ShippedItemsCard extends StatelessWidget {
   final int shipped;
   final Function() onPressed;
 
-  ShippedOrdersCard({Key key, @required this.shipped, this.onPressed}) : super(key: key);
+  ShippedItemsCard({Key key, @required this.shipped, this.onPressed}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
