@@ -137,7 +137,7 @@ class _HubScreenState extends State<HubScreen>{
           )
         )
       ),
-      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onItemTapped),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onNavigationIconTapped),
     );
   }
 
@@ -220,7 +220,7 @@ class _HubScreenState extends State<HubScreen>{
           )
         )
       ),
-      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex , onItemTapped: _onItemTapped),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex , onItemTapped: _onNavigationIconTapped),
     );
   }
 
