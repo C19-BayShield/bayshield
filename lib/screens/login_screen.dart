@@ -195,7 +195,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
         hint: 'Full Name',
         icon: Icons.account_circle,
         validator: (value) => value.isEmpty ? 'Full Name can\'t be empty' : null,
-        onSaved: (value) => _email = value.trim(),
+        onSaved: (value) { },
       );
     } else {
       return new Container(width: 0.0, height: 0.0);
