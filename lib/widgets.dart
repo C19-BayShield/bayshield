@@ -20,7 +20,7 @@ class BayShieldAppBar extends StatelessWidget {
 }
 
 class MainAppBar extends StatelessWidget {
-  final VoidCallback signOut;
+  VoidCallback signOut;
 
   MainAppBar({Key key, @required this.signOut}) : super(key: key);
   @override
@@ -38,7 +38,7 @@ class MainAppBar extends StatelessWidget {
         new FlatButton(
             child: new Text('Logout',
                 style: new TextStyle(fontSize: 17.0, color: Colors.white)),
-            onPressed: signOut
+            onPressed: signOut,
         ),
       ],
     );
