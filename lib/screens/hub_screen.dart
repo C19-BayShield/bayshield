@@ -122,13 +122,13 @@ class _HubScreenState extends State<HubScreen>{
                         height: MediaQuery.of(context).size.height / 7,
                         width: (MediaQuery.of(context).size.width - 120) / 2,
                         color: Colors.transparent,
-                        child: new IncomingOrdersCard(incoming: _incoming, onPressed: _onIncomingPressed),
+                        child: new IncomingItemsCard(incoming: _incoming, onPressed: _onIncomingPressed),
                       ),
                       Container(
                         height: MediaQuery.of(context).size.height / 7,
                         width: (MediaQuery.of(context).size.width - 120) / 2,
                         color: Colors.transparent,
-                        child: new PendingOrdersCard(pending: _pending, onPressed: _onPendingPressed),
+                        child: new PendingItemsCard(pending: _pending, onPressed: _onPendingPressed),
                       ),
                     ]
                   )
@@ -137,7 +137,7 @@ class _HubScreenState extends State<HubScreen>{
                   height: MediaQuery.of(context).size.height / 7,
                   width: MediaQuery.of(context).size.width - 110,
                   color: Colors.transparent,
-                  child: new ShippedOrdersCard(shipped: _shipped, onPressed: _onShippedPressed),
+                  child: new ShippedItemsCard(shipped: _shipped, onPressed: _onShippedPressed),
                 ),
                 new InventoryButton(onPressed: _onInventoryPressed),
               ]
