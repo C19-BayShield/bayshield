@@ -86,7 +86,7 @@ class _InfoQuestionScreenState extends State<InfoQuestionScreen>{
                       Center(
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 40),
-                          child: Text('Does your facility have any reported Covid-19 cases, if so how many?'),
+                          child: Text('Does your facility have any reportes of highly infecious diseases, if so how many?'),
                         ),
                       ),
                       this._buildGenericDropDown(
@@ -108,7 +108,7 @@ class _InfoQuestionScreenState extends State<InfoQuestionScreen>{
                       Center(
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 40),
-                          child: Text('How many patients off all types(Covid & non-Covid related) does your facility process each day?'),
+                          child: Text('How many patients of all types does your facility process each day?'),
                         ),
                       ),
                       this._buildGenericDropDown(
