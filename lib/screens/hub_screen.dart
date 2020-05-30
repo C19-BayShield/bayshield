@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -28,9 +29,12 @@ class _HubScreenState extends State<HubScreen>{
   String _greeting = "Hi, " + _userName + ".";
   String _message = "Alert: PPE Design Update. Read More";
 
+  ItemConfirmationCard _itemConfirmationCard;
+
   int _index = 0;
 
   bool _initialized = false;
+  bool _addButtonPressed = false;
 
   List<bool> _isSelectedOrdersPage = [true, false, false]; // defaults at Incoming tab.
   bool _displayIncoming = true;
@@ -74,6 +78,14 @@ class _HubScreenState extends State<HubScreen>{
     build(context);
   }
 
+  void _onAddButtonPressed(ItemConfirmationCard card) {
+    _itemConfirmationCard = card;
+    _selectedIndex = 0;
+    _addButtonPressed = true;
+    _initialized = false;
+    build(context);
+  }
+
   void signOut() async {
     try {
       await widget.auth.signOut();
@@ -81,6 +93,104 @@ class _HubScreenState extends State<HubScreen>{
     } catch (e) {
       print(e);
     }
+  }
+
+  Widget showIncomingItems() {
+    // TODO: replace hard-coded values.
+    String asset = "assets/images/face_shield_icon.png";
+    String itemName = "Face Shield";
+    int quantity = 50;
+    String itemType = "USCF V1";
+    String date = "02/01/2020";
+
+    return new Padding (
+      padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+      child: Container(
+        width: MediaQuery.of(context).size.width - 110,
+        child: new Column (
+          children: <Widget> [
+            new ItemCard(asset: asset, itemName: itemName, quantity: quantity, 
+                itemType: itemType, date: date,
+                onPressed: () {
+                  _onAddButtonPressed(new ItemConfirmationCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType));
+                }),
+          ]
+        )
+      )
+    );
+  }
+
+  Widget buildConfirmationPage() {
+    return new Scaffold(
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+        child: new MainAppBar(signOut: signOut),
+      ),
+      body: SafeArea(
+        child: new Container(
+          child: Center(
+            child: new SingleChildScrollView(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    new Container(
+                      width: MediaQuery.of(context).size.width - 110,
+                      color: Colors.transparent,
+                      child: new Padding(
+                          child: new Text("Confirmation", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.left,),
+                          padding: EdgeInsets.only(top: 30, bottom: 25)
+                      ),
+                    ),
+                    new Container(
+                      width: MediaQuery.of(context).size.width - 110,
+                      child: _itemConfirmationCard,
+                    ),
+                    new Container(
+                        width: MediaQuery.of(context).size.width - 110,
+                        child: new QuantityInputField(onChanged: null),
+                    ),
+                    new Padding (
+                      padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                      child: new Container(
+                          width: MediaQuery.of(context).size.width - 110,
+                          decoration: BoxDecoration(
+                              color: Color(0xFF283568),
+                              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                          child: new FlatButton(
+                            child: new Text("Add to Inventory",
+                              style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,),
+                            onPressed: () {
+                              _addButtonPressed = false;
+                            },
+                          )
+                      ),
+                    ),
+                    new Container(
+                        width: MediaQuery.of(context).size.width - 110,
+                        decoration: BoxDecoration(
+                            color: Color(0xFF283568),
+                            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                        child: new FlatButton(
+                          child: new Text("Back",
+                            style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,),
+                          onPressed: () {
+                            _addButtonPressed = false;
+                            _onIncomingPressed();
+                          },
+                        )
+                    ),
+                  ]
+              )
+            )
+          )
+        )
+      ),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex , onItemTapped: _onNavigationIconTapped),
+    );
   }
 
   Widget buildHomePage() {
@@ -209,8 +319,7 @@ class _HubScreenState extends State<HubScreen>{
                   },
                   isSelected: _isSelectedOrdersPage,
                 ),
-                if (_displayIncoming) new Text("Incoming Orders", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.left,),
+                if (_displayIncoming) showIncomingItems(),
                 if (_displayPending) new Text("Pending Orders", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                   textAlign: TextAlign.left,),
                 if (_displayShipped) new Text("Shipped Orders", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
@@ -285,7 +394,11 @@ class _HubScreenState extends State<HubScreen>{
   @override
   Widget build(BuildContext context) {
     if (_selectedIndex == 0) {
-      return buildOrdersPage();
+      if (_addButtonPressed) {
+        return buildConfirmationPage();
+      } else {
+        return buildOrdersPage();
+      }
     } else if (_selectedIndex == 1) {
       return buildHomePage();
     } else if (_selectedIndex == 2) {
