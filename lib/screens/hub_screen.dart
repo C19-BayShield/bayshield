@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/widgets.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -30,6 +29,7 @@ class _HubScreenState extends State<HubScreen>{
   String _message = "Alert: PPE Design Update. Read More";
 
   ItemConfirmationCard _itemConfirmationCard;
+  int _newQuantity = 0;
 
   int _index = 0;
 
@@ -109,14 +109,37 @@ class _HubScreenState extends State<HubScreen>{
         width: MediaQuery.of(context).size.width - 110,
         child: new Column (
           children: <Widget> [
-            new ItemCard(asset: asset, itemName: itemName, quantity: quantity, 
-                itemType: itemType, date: date,
-                onPressed: () {
-                  _onAddButtonPressed(new ItemConfirmationCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType));
-                }),
+            new ItemCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType, date: date,
+              onPressed: () {
+                _onAddButtonPressed(new ItemConfirmationCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType));
+              }),
           ]
         )
       )
+    );
+  }
+
+  Widget _buildConfirmationPopUp(BuildContext context, String itemName, int quantity) {
+    return new AlertDialog(
+      backgroundColor: Colors.white,
+      titleTextStyle: TextStyle(fontSize: 18, fontFamily: "Roboto", color: Colors.black),
+      title: Text('Are you sure you want to add ' + quantity.toString() + " " + itemName + " to your inventory? You cannot undo this action."),
+      actions: <Widget>[
+        new FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          textColor: Color(0xFF283568),
+          child: const Text('Yes'),
+        ),
+        new FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          textColor: Color(0xFF283568),
+          child: const Text('No'),
+        ),
+      ],
     );
   }
 
@@ -132,58 +155,63 @@ class _HubScreenState extends State<HubScreen>{
           child: Center(
             child: new SingleChildScrollView(
               child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    new Container(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  new Container(
+                    width: MediaQuery.of(context).size.width - 110,
+                    color: Colors.transparent,
+                    child: new Padding(
+                      child: new Text("Confirmation", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,),
+                      padding: EdgeInsets.only(top: 30, bottom: 25)
+                    ),
+                  ),
+                  new Container(
+                    width: MediaQuery.of(context).size.width - 110,
+                    child: _itemConfirmationCard,
+                  ),
+                  new Container(
                       width: MediaQuery.of(context).size.width - 110,
-                      color: Colors.transparent,
-                      child: new Padding(
-                          child: new Text("Confirmation", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.left,),
-                          padding: EdgeInsets.only(top: 30, bottom: 25)
-                      ),
-                    ),
-                    new Container(
+                      child: new QuantityInputField(onChanged: (value) {
+                        _newQuantity = int.parse(value);
+                      }),
+                  ),
+                  new Padding (
+                    padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                    child: new Container(
                       width: MediaQuery.of(context).size.width - 110,
-                      child: _itemConfirmationCard,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF283568),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                      child: new FlatButton(
+                        child: new Text("Add to Inventory",
+                          style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => _buildConfirmationPopUp(context, _itemConfirmationCard.itemName, _newQuantity),
+                          );
+                        },
+                      )
                     ),
-                    new Container(
-                        width: MediaQuery.of(context).size.width - 110,
-                        child: new QuantityInputField(onChanged: null),
-                    ),
-                    new Padding (
-                      padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
-                      child: new Container(
-                          width: MediaQuery.of(context).size.width - 110,
-                          decoration: BoxDecoration(
-                              color: Color(0xFF283568),
-                              borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                          child: new FlatButton(
-                            child: new Text("Add to Inventory",
-                              style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,),
-                            onPressed: () {
-                              _addButtonPressed = false;
-                            },
-                          )
-                      ),
-                    ),
-                    new Container(
-                        width: MediaQuery.of(context).size.width - 110,
-                        decoration: BoxDecoration(
-                            color: Color(0xFF283568),
-                            borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                        child: new FlatButton(
-                          child: new Text("Back",
-                            style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,),
-                          onPressed: () {
-                            _addButtonPressed = false;
-                            _onIncomingPressed();
-                          },
-                        )
-                    ),
-                  ]
+                  ),
+                  new Container(
+                    width: MediaQuery.of(context).size.width - 110,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF283568),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    child: new FlatButton(
+                      child: new Text("Back",
+                        style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,),
+                      onPressed: () {
+                        _addButtonPressed = false;
+                        _onIncomingPressed();
+                      },
+                    )
+                  ),
+                ]
               )
             )
           )
