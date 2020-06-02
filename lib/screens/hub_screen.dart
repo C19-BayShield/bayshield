@@ -35,6 +35,7 @@ class _HubScreenState extends State<HubScreen>{
 
   bool _initialized = false;
   bool _addButtonPressed = false;
+  bool _arrowPressed = false;
 
   List<bool> _isSelectedOrdersPage = [true, false, false]; // defaults at Incoming tab.
   bool _displayIncoming = true;
@@ -48,6 +49,9 @@ class _HubScreenState extends State<HubScreen>{
   void _onNavigationIconTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _addButtonPressed = false;
+      _arrowPressed = false;
+      _initialized = false;
       build(context);
     });
   }
@@ -86,6 +90,14 @@ class _HubScreenState extends State<HubScreen>{
     build(context);
   }
 
+  void _onArrowPressed(ItemConfirmationCard card) {
+    _itemConfirmationCard = card;
+    _selectedIndex = 0;
+    _arrowPressed = true;
+    _initialized = false;
+    build(context);
+  }
+
   void signOut() async {
     try {
       await widget.auth.signOut();
@@ -98,6 +110,7 @@ class _HubScreenState extends State<HubScreen>{
   Widget showIncomingItems() {
     // TODO: replace hard-coded values.
     String asset = "assets/images/face_shield_icon.png";
+    String icon = "assets/images/add_button.png";
     String itemName = "Face Shield";
     int quantity = 50;
     String itemType = "USCF V1";
@@ -106,16 +119,65 @@ class _HubScreenState extends State<HubScreen>{
     return new Padding (
       padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
       child: Container(
-        width: MediaQuery.of(context).size.width - 110,
+        width: MediaQuery.of(context).size.width - 90,
         child: new Column (
           children: <Widget> [
-            new ItemCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType, date: date,
-              onPressed: () {
+            new ItemCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType, date: date, icon: icon,
+                hasShipped: false, isPending: false, onPressed: () {
                 _onAddButtonPressed(new ItemConfirmationCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType));
               }),
           ]
         )
       )
+    );
+  }
+
+  Widget showPendingItems() {
+    // TODO: replace hard-coded values.
+    String asset = "assets/images/face_shield_icon.png";
+    String icon = "assets/images/arrow.png";
+    String itemName = "Face Shield";
+    int quantity = 50;
+    String itemType = "USCF V3";
+
+    return new Padding (
+      padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+      child: Container(
+        width: MediaQuery.of(context).size.width - 90,
+        child: new Column (
+          children: <Widget> [
+            new ItemCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType, icon: icon, hasShipped: false, isPending: true,
+              onPressed: () {
+                _onArrowPressed(new ItemConfirmationCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType));
+              }),
+          ]
+        )
+      )
+    );
+  }
+
+  Widget showShippedItems() {
+    // TODO: replace hard-coded values.
+    String asset = "assets/images/face_shield_icon.png";
+    String itemName = "Face Shield";
+    int quantity = 50;
+    String itemType = "USCF V1";
+    String date = "02/01/2020";
+    String status = "Expected\nDelivery";
+    String deliveryDate = "02/06/2020";
+    String deliveryLocation = "Tang Center";
+
+    return new Padding (
+        padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+        child: Container(
+            width: MediaQuery.of(context).size.width - 90,
+            child: new Column (
+                children: <Widget> [
+                  new ItemCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType, date: date, hasShipped: true, isPending: false,
+                    status: status, deliveryDate: deliveryDate, deliveryLocation: deliveryLocation),
+                ]
+            )
+        )
     );
   }
 
@@ -163,7 +225,7 @@ class _HubScreenState extends State<HubScreen>{
                     child: new Padding(
                       child: new Text("Confirmation", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                         textAlign: TextAlign.left,),
-                      padding: EdgeInsets.only(top: 30, bottom: 25)
+                      padding: EdgeInsets.only(bottom: 25)
                     ),
                   ),
                   new Container(
@@ -216,6 +278,81 @@ class _HubScreenState extends State<HubScreen>{
             )
           )
         )
+      ),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex , onItemTapped: _onNavigationIconTapped),
+    );
+  }
+
+  Widget buildShippingPage() {
+    return new Scaffold(
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+        child: new MainAppBar(signOut: signOut),
+      ),
+      body: SafeArea(
+          child: new Container(
+              child: Center(
+                  child: new SingleChildScrollView(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            new Container(
+                              width: MediaQuery.of(context).size.width - 110,
+                              color: Colors.transparent,
+                              child: new Padding(
+                                  child: new Text("Shipping", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.left,),
+                                  padding: EdgeInsets.only(bottom: 25)
+                              ),
+                            ),
+                            new Container(
+                              width: MediaQuery.of(context).size.width - 110,
+                              child: _itemConfirmationCard,
+                            ),
+                            new Container(
+                              width: MediaQuery.of(context).size.width - 110,
+                              child: new QuantityInputField(onChanged: (value) {
+                                _newQuantity = int.parse(value);
+                              }),
+                            ),
+                            new Padding (
+                              padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                              child: new Container(
+                                  width: MediaQuery.of(context).size.width - 110,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xFF283568),
+                                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                  child: new FlatButton(
+                                    child: new Text("Print Shipping Label",
+                                      style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.center,),
+                                    onPressed: () {
+
+                                    },
+                                  )
+                              ),
+                            ),
+                            new Container(
+                                width: MediaQuery.of(context).size.width - 110,
+                                decoration: BoxDecoration(
+                                    color: Color(0xFF283568),
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                child: new FlatButton(
+                                  child: new Text("Back",
+                                    style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,),
+                                  onPressed: () {
+                                    _arrowPressed = false;
+                                    _onPendingPressed();
+                                  },
+                                )
+                            ),
+                          ]
+                      )
+                  )
+              )
+          )
       ),
       bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex , onItemTapped: _onNavigationIconTapped),
     );
@@ -348,10 +485,8 @@ class _HubScreenState extends State<HubScreen>{
                   isSelected: _isSelectedOrdersPage,
                 ),
                 if (_displayIncoming) showIncomingItems(),
-                if (_displayPending) new Text("Pending Orders", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.left,),
-                if (_displayShipped) new Text("Shipped Orders", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.left,),
+                if (_displayPending) showPendingItems(),
+                if (_displayShipped) showShippedItems(),
               ],
             )
           )
@@ -424,9 +559,10 @@ class _HubScreenState extends State<HubScreen>{
     if (_selectedIndex == 0) {
       if (_addButtonPressed) {
         return buildConfirmationPage();
-      } else {
-        return buildOrdersPage();
+      } else if (_arrowPressed) {
+        return buildShippingPage();
       }
+      return buildOrdersPage();
     } else if (_selectedIndex == 1) {
       return buildHomePage();
     } else if (_selectedIndex == 2) {
