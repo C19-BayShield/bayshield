@@ -215,17 +215,25 @@ class ItemCard extends StatelessWidget {
   final int quantity;
   final String itemType;
   final String date;
+  final String icon;
+  final bool hasShipped;
+  final bool isPending;
+  final String status;
+  final String deliveryDate;
+  final String deliveryLocation;
 
   final Function() onPressed;
 
-  ItemCard({Key key, @required this.asset, @required this.itemName, @required this.quantity, @required this.itemType, @required this.date, @required this.onPressed}) : super(key: key);
+  ItemCard({Key key, @required this.asset, @required this.itemName, @required this.quantity, @required this.itemType,
+    @required this.date, @required this.isPending, this.onPressed, this.hasShipped, this.icon, this.status,
+    this.deliveryDate, this.deliveryLocation,}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return new Row(
         children: <Widget>[
           Image.asset(asset, height: 70),
           new Padding (
-            padding: EdgeInsets.only(left: 16.0),
+            padding: EdgeInsets.only(left: 8.0),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -234,24 +242,34 @@ class ItemCard extends StatelessWidget {
                     textAlign: TextAlign.left,),
                   new Row(
                       children: <Widget>[
-                        new Text("X" + quantity.toString(),
-                          style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                        new Text("QTY:" + quantity.toString(),
+                          style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
                         new Padding (
                           padding: EdgeInsets.only(left: 8.0),
                           child: new Text(itemType,
-                            style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                            style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
                         )
                       ]
                   ),
-                  new Text(date,
+                  if (!isPending) new Text(date,
                     style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
                 ]
             ),
           ),
           Spacer(),
-          new IconButton(
+          if (!hasShipped) new IconButton(
             onPressed: onPressed,
-            icon: Image.asset("assets/images/add_button.png", height: 24, alignment: Alignment.centerRight),
+            icon: Image.asset(icon, height: 24, alignment: Alignment.centerRight),
+          ),
+          if (hasShipped) Column(
+            children: <Widget>[
+              new Text(status,
+                style: TextStyle(color: Color(0xFF555555), fontSize: 14, fontFamily: 'Roboto'), textAlign: TextAlign.center,),
+              new Text(deliveryDate,
+                style: TextStyle(color: Color(0xFF555555), fontSize: 14, fontFamily: 'Roboto'), textAlign: TextAlign.center,),
+              new Text(deliveryLocation,
+                style: TextStyle(color: Color(0xFF555555), fontSize: 14, fontFamily: 'Roboto'), textAlign: TextAlign.left,)
+            ]
           )
         ]
     );
@@ -271,7 +289,7 @@ class ItemConfirmationCard extends StatelessWidget {
       children: <Widget>[
         Image.asset(asset, height: 70),
         new Padding (
-          padding: EdgeInsets.only(left: 16.0),
+          padding: EdgeInsets.only(left: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -280,12 +298,12 @@ class ItemConfirmationCard extends StatelessWidget {
                 textAlign: TextAlign.left,),
               new Row(
                 children: <Widget>[
-                  new Text("X" + quantity.toString(),
-                    style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                  new Text("QTY:" + quantity.toString(),
+                    style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
                   new Padding (
                     padding: EdgeInsets.only(left: 8.0),
                     child: new Text(itemType,
-                      style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                      style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
                   )
                 ]
               ),
