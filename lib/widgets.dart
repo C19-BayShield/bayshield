@@ -225,7 +225,7 @@ class ItemCard extends StatelessWidget {
   final Function() onPressed;
 
   ItemCard({Key key, @required this.asset, @required this.itemName, @required this.quantity, @required this.itemType,
-    @required this.date, @required this.isPending, this.onPressed, this.hasShipped, this.icon, this.status,
+    @required this.isPending, @required this.hasShipped, this.date, this.onPressed, this.icon, this.status,
     this.deliveryDate, this.deliveryLocation,}) : super(key: key);
   @override
   Widget build(BuildContext context) {
