@@ -182,6 +182,22 @@ class _HubScreenState extends State<HubScreen>{
   }
 
   Widget _buildConfirmationPopUp(BuildContext context, String itemName, int quantity) {
+    if (quantity == 0) {
+      return new AlertDialog(
+        backgroundColor: Colors.white,
+        titleTextStyle: TextStyle(fontSize: 18, fontFamily: "Roboto", color: Colors.black),
+        title: Text("Please input a quantity greater than zero."),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            textColor: Color(0xFF283568),
+            child: const Text('Close'),
+          ) ,
+        ],
+      );
+    }
     return new AlertDialog(
       backgroundColor: Colors.white,
       titleTextStyle: TextStyle(fontSize: 18, fontFamily: "Roboto", color: Colors.black),
@@ -200,7 +216,7 @@ class _HubScreenState extends State<HubScreen>{
           },
           textColor: Color(0xFF283568),
           child: const Text('No'),
-        ),
+        ) ,
       ],
     );
   }
