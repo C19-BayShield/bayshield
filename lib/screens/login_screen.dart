@@ -62,18 +62,20 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
         if (_isLoginForm) {
           userId = await widget.auth.signIn(_email, _password);
           print('Signed in: $userId');
+          setState(() {
+            _isLoading = false;
+          });
         } else {
           // Sign up process
           userId = await widget.auth.signUp(_email, _password);
           print('Signed up user: $userId');
+          setState(() {
+            _isLoading = false;
+          });
           await widget.auth.signIn(_email, _password);
           await _firestoreUsers.createUser(User(id: userId, email: _email, type: ""));
           navigateToUserType(context, userId);
         }
-        setState(() {
-          _isLoading = false;
-        });
-
         if (userId.length > 0 && userId != null) {
           widget.loginCallback();
         }
@@ -120,15 +122,24 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
                 child: ListView(
                   children: <Widget>[
                     SizedBox(
-                      height: screenSize.height / 3.6,
+                      height: screenSize.height / 6.0,
                     ),
                     Container(
                       margin: new EdgeInsets.only(left: 12.0, right: 12.0),
-                      height: screenSize.height / 1.8,
-                      color: Colors.white,
                       child: Column(
                         children: <Widget>[
-                          new SizedBox(height: screenSize.height / 9.6),
+                          Image.asset('assets/images/logo_small.png', height: 100, width: 100),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "BAYSHIELD",
+                            style: TextStyle(
+                                fontSize: 28.0,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700),
+                            ),
+                          new SizedBox(height: 30),
                           _showForm(),
                         ]
                       ),
@@ -137,7 +148,6 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
                 ),
               ),
               _showCircularProgress(),
-              new BayShieldAppBar(title: 'BayShield'),
             ],
           ),
       );
@@ -151,16 +161,17 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
         child: new ListView(
           shrinkWrap: true,
           children: <Widget>[
+            showNameImput(),
             showEmailInput(),
             showPasswordInput(),
             new SizedBox(height: 32),
             new PrimaryButton(  
               submit: validateAndSubmit, 
-              label: _isLoginForm ? 'SIGN IN' : 'CREATE AN ACCOUNT'
+              label: _isLoginForm ? 'Sign In' : 'Sign Up'
             ),
-            new PrimaryButton(  
+            new SecondaryButton(  
               submit: toggleFormMode,
-              label: _isLoginForm ? 'SIGN UP' : 'HAVE AN ACCOUNT? SIGN IN',
+              label: _isLoginForm ? 'or Sign Up' : 'Already a member? Sign in now',
             ),
             showErrorMessage(),
           ],
@@ -178,10 +189,24 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
     );
   }
 
+  Widget showNameImput() {
+    if (!_isLoginForm) {
+      return new BayShieldFormField(
+        hint: 'Full Name',
+        icon: Icons.account_circle,
+        validator: (value) => value.isEmpty ? 'Full Name can\'t be empty' : null,
+        onSaved: (value) { },
+      );
+    } else {
+      return new Container(width: 0.0, height: 0.0);
+    }
+    
+  }
+
   Widget showEmailInput() {
     return new BayShieldFormField(
       hint: 'Email',
-      icon: Icons.mail,
+      icon: Icons.email,
       validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
       onSaved: (value) => _email = value.trim(),
     );
