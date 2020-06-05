@@ -278,7 +278,6 @@ class _HubScreenState extends State<HubScreen>{
                     width: MediaQuery.of(context).size.width - 110,
                     decoration: BoxDecoration(
                       color: Color(0xFFD48032),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
                     child: new FlatButton(
                       child: new Text("Back",
                         style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
@@ -353,7 +352,6 @@ class _HubScreenState extends State<HubScreen>{
                                 width: MediaQuery.of(context).size.width - 110,
                                 decoration: BoxDecoration(
                                     color: Color(0xFFD48032),
-                                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
                                 child: new FlatButton(
                                   child: new Text("Back",
                                     style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
