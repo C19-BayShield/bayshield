@@ -243,11 +243,11 @@ class ItemCard extends StatelessWidget {
                   new Row(
                       children: <Widget>[
                         new Text("QTY:" + quantity.toString(),
-                          style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                          style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
                         new Padding (
                           padding: EdgeInsets.only(left: 8.0),
                           child: new Text(itemType,
-                            style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                            style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
                         )
                       ]
                   ),
@@ -259,7 +259,7 @@ class ItemCard extends StatelessWidget {
           Spacer(),
           if (!hasShipped) new IconButton(
             onPressed: onPressed,
-            icon: Image.asset(icon, height: 24, alignment: Alignment.centerRight),
+            icon: Image.asset(icon, height: 26, alignment: Alignment.centerRight),
           ),
           if (hasShipped) Column(
             children: <Widget>[
@@ -299,11 +299,11 @@ class ItemConfirmationCard extends StatelessWidget {
               new Row(
                 children: <Widget>[
                   new Text("QTY:" + quantity.toString(),
-                    style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                    style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
                   new Padding (
                     padding: EdgeInsets.only(left: 8.0),
                     child: new Text(itemType,
-                      style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                      style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
                   )
                 ]
               ),

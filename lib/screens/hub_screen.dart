@@ -119,7 +119,7 @@ class _HubScreenState extends State<HubScreen>{
     return new Padding (
       padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
       child: Container(
-        width: MediaQuery.of(context).size.width - 90,
+        width: MediaQuery.of(context).size.width - 80,
         child: new Column (
           children: <Widget> [
             new ItemCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType, date: date, icon: icon,
@@ -143,7 +143,7 @@ class _HubScreenState extends State<HubScreen>{
     return new Padding (
       padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
       child: Container(
-        width: MediaQuery.of(context).size.width - 90,
+        width: MediaQuery.of(context).size.width - 80,
         child: new Column (
           children: <Widget> [
             new ItemCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType, icon: icon, hasShipped: false, isPending: true,
@@ -170,7 +170,7 @@ class _HubScreenState extends State<HubScreen>{
     return new Padding (
         padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
         child: Container(
-            width: MediaQuery.of(context).size.width - 90,
+            width: MediaQuery.of(context).size.width - 80,
             child: new Column (
                 children: <Widget> [
                   new ItemCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType, date: date, hasShipped: true, isPending: false,
@@ -277,7 +277,7 @@ class _HubScreenState extends State<HubScreen>{
                   new Container(
                     width: MediaQuery.of(context).size.width - 110,
                     decoration: BoxDecoration(
-                      color: Color(0xFF283568),
+                      color: Color(0xFFD48032),
                       borderRadius: BorderRadius.all(Radius.circular(10.0))),
                     child: new FlatButton(
                       child: new Text("Back",
@@ -352,7 +352,7 @@ class _HubScreenState extends State<HubScreen>{
                             new Container(
                                 width: MediaQuery.of(context).size.width - 110,
                                 decoration: BoxDecoration(
-                                    color: Color(0xFF283568),
+                                    color: Color(0xFFD48032),
                                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
                                 child: new FlatButton(
                                   child: new Text("Back",
