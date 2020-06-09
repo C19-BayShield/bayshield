@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supplyside/util/authentication.dart';
 
 class BayShieldAppBar extends StatelessWidget {
@@ -100,7 +101,7 @@ class IncomingItemsCard extends StatelessWidget {
   final int incoming;
   final Function() onPressed;
 
-  IncomingItemsCard({Key key, @required this.incoming, this.onPressed}) : super(key: key);
+  IncomingItemsCard({Key key, @required this.incoming, @required this.onPressed}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -129,7 +130,7 @@ class PendingItemsCard extends StatelessWidget {
   final int pending;
   final Function() onPressed;
 
-  PendingItemsCard({Key key, @required this.pending, this.onPressed}) : super(key: key);
+  PendingItemsCard({Key key, @required this.pending, @required this.onPressed}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -158,7 +159,7 @@ class ShippedItemsCard extends StatelessWidget {
   final int shipped;
   final Function() onPressed;
 
-  ShippedItemsCard({Key key, @required this.shipped, this.onPressed}) : super(key: key);
+  ShippedItemsCard({Key key, @required this.shipped, @required this.onPressed}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -208,10 +209,160 @@ class InventoryButton extends StatelessWidget {
   }
 }
 
+class ItemCard extends StatelessWidget {
+  final String asset;
+  final String itemName;
+  final int quantity;
+  final String itemType;
+  final String date;
+  final String icon;
+  final bool hasShipped;
+  final bool isPending;
+  final String status;
+  final String deliveryDate;
+  final String deliveryLocation;
+
+  final Function() onPressed;
+
+  ItemCard({Key key, @required this.asset, @required this.itemName, @required this.quantity, @required this.itemType,
+    @required this.isPending, @required this.hasShipped, this.date, this.onPressed, this.icon, this.status,
+    this.deliveryDate, this.deliveryLocation,}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return new Row(
+        children: <Widget>[
+          Image.asset(asset, height: 70),
+          new Padding (
+            padding: EdgeInsets.only(left: 8.0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text(itemName,
+                    style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,),
+                  new Row(
+                      children: <Widget>[
+                        new Text("QTY:" + quantity.toString(),
+                          style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                        new Padding (
+                          padding: EdgeInsets.only(left: 8.0),
+                          child: new Text(itemType,
+                            style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                        )
+                      ]
+                  ),
+                  if (!isPending) new Text(date,
+                    style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                ]
+            ),
+          ),
+          Spacer(),
+          if (!hasShipped) new IconButton(
+            onPressed: onPressed,
+            icon: Image.asset(icon, height: 26, alignment: Alignment.centerRight),
+          ),
+          if (hasShipped) Column(
+            children: <Widget>[
+              new Text(status,
+                style: TextStyle(color: Color(0xFF555555), fontSize: 14, fontFamily: 'Roboto'), textAlign: TextAlign.center,),
+              new Text(deliveryDate,
+                style: TextStyle(color: Color(0xFF555555), fontSize: 14, fontFamily: 'Roboto'), textAlign: TextAlign.center,),
+              new Text(deliveryLocation,
+                style: TextStyle(color: Color(0xFF555555), fontSize: 14, fontFamily: 'Roboto'), textAlign: TextAlign.left,)
+            ]
+          )
+        ]
+    );
+  }
+}
+
+class ItemConfirmationCard extends StatelessWidget {
+  final String asset;
+  final String itemName;
+  final int quantity;
+  final String itemType;
+
+  ItemConfirmationCard({Key key, @required this.asset, @required this.itemName, @required this.quantity, @required this.itemType}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return new Row(
+      children: <Widget>[
+        Image.asset(asset, height: 70),
+        new Padding (
+          padding: EdgeInsets.only(left: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              new Text(itemName,
+                style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                textAlign: TextAlign.left,),
+              new Row(
+                children: <Widget>[
+                  new Text("QTY:" + quantity.toString(),
+                    style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                  new Padding (
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: new Text(itemType,
+                      style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                  )
+                ]
+              ),
+            ]
+          ),
+        ),
+      ]
+    );
+  }
+}
+
+class QuantityInputField extends StatelessWidget {
+  final Function(String) onChanged;
+
+  QuantityInputField({Key key, @required this.onChanged}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Column (
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          new Padding (
+            padding: EdgeInsets.only(top: 64, bottom: 24),
+            child: new Text("QUANTITY", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+              textAlign: TextAlign.left,),
+          ),
+          new Container (
+            child: new TextField(
+              style: TextStyle(color: Colors.black),
+              textAlign: TextAlign.left,
+              scrollPadding: EdgeInsets.symmetric(horizontal: 16),
+              maxLines: 1,
+              autofocus: true,
+              decoration: new InputDecoration(
+                labelText: "Ex. 100",
+                labelStyle: TextStyle(
+                    color: Color(0xFFB3B3B3)
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                WhitelistingTextInputFormatter.digitsOnly
+              ],
+              onChanged: onChanged,
+            ),
+          ),
+        ]
+    );
+  }
+}
+
 class MainBottomNavigationBar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
-  MainBottomNavigationBar({Key key, @required this.selectedIndex, this.onItemTapped}) : super(key: key);
+  MainBottomNavigationBar({Key key, @required this.selectedIndex, @required this.onItemTapped}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
