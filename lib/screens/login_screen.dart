@@ -23,6 +23,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
 
   String _email;
   String _password;
+  String _name;
   String _errorMessage;
 
   bool _isLoginForm;
@@ -73,7 +74,8 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
             _isLoading = false;
           });
           await widget.auth.signIn(_email, _password);
-          await _firestoreUsers.createUser(User(id: userId, email: _email, type: ""));
+          await _firestoreUsers.createUser(User(id: userId, email: _email, type: "",));
+          await _firestoreUsers.setUserName(userId, _name);
           navigateToUserType(context, userId);
         }
         if (userId.length > 0 && userId != null) {
@@ -195,7 +197,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>{
         hint: 'Full Name',
         icon: Icons.account_circle,
         validator: (value) => value.isEmpty ? 'Full Name can\'t be empty' : null,
-        onSaved: (value) { },
+        onSaved: (value) => _name = value.trim(),
       );
     } else {
       return new Container(width: 0.0, height: 0.0);
