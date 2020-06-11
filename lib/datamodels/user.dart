@@ -9,6 +9,7 @@ class User {
   String type;
   String name;
   String address;
+  String phoneNumber;
   User({this.id, this.email, this.type});
 
   User.fromData(Map<String, dynamic> data)
@@ -16,7 +17,8 @@ class User {
       email = data['email'],
       type = data['type'] ?? '',
       name = data['name'],
-      address = data['address'];
+      address = data['address'],
+      phoneNumber = data['phoneNumber'];
       
   Map<String, dynamic> toJson() {
     return {

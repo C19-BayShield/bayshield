@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/widgets.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:supplyside/locator.dart';
+import 'package:supplyside/datamodels/user.dart';
+import 'package:supplyside/util/firestore_users.dart';
 
 class HubScreen extends StatefulWidget {
 
@@ -17,6 +19,8 @@ class HubScreen extends StatefulWidget {
 }
 
 class _HubScreenState extends State<HubScreen>{
+  final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
+  User user;
   int _selectedIndex = 1; // default loads Home Page.
 
   // TODO: Replace hard coded values
@@ -24,8 +28,6 @@ class _HubScreenState extends State<HubScreen>{
   int _pending = 35;
   int _shipped = 13430;
   String _userType = "C O L L E C T I O N  H U B";
-  static String _userName = "Dylan";
-  String _greeting = "Hi, " + _userName + ".";
   String _message = "Alert: PPE Design Update. Read More";
 
   ItemConfirmationCard _itemConfirmationCard;
@@ -58,6 +60,11 @@ class _HubScreenState extends State<HubScreen>{
 
   void _onInventoryPressed() {
     _selectedIndex = 2;
+    _displayInventory = true;
+    _displaySettings = false;
+
+    _isSelectedProfilePage[0] = _displayInventory;
+    _isSelectedProfilePage[1] = _displaySettings;
     build(context);
   }
 
@@ -377,6 +384,9 @@ class _HubScreenState extends State<HubScreen>{
   }
 
   Widget buildHomePage() {
+    String firstName = user.name.split(" ")[0];
+    String _greeting = "Hi, " + firstName + ".";
+
     return new Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
@@ -515,6 +525,8 @@ class _HubScreenState extends State<HubScreen>{
   }
 
   Widget buildProfilePage() {
+    String _greeting = user.name.split(" ")[0] + "'s Profile";
+
     return new Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
@@ -531,7 +543,7 @@ class _HubScreenState extends State<HubScreen>{
                   width: MediaQuery.of(context).size.width - 110,
                   color: Colors.transparent,
                   child: new Padding(
-                    child: new Text("Dylan's Profile", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                    child: new Text(_greeting, style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                       textAlign: TextAlign.left,),
                     padding: EdgeInsets.only(top: 30, bottom: 25)
                   )
@@ -561,8 +573,7 @@ class _HubScreenState extends State<HubScreen>{
                 ),
                 if (_displayInventory) new Text("Inventory", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                   textAlign: TextAlign.left,),
-                if (_displaySettings) new Text("Settings", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.left,),
+                if (_displaySettings) showSettings(),
               ]
             )
           )
@@ -572,19 +583,104 @@ class _HubScreenState extends State<HubScreen>{
     );
   }
 
+  Future getUser() async {
+    User currUser = await _firestoreUsers.getUser(widget.userId);
+    if (currUser != null) {
+      if (!mounted) return;
+      setState(() {
+        user = currUser;
+      });
+    }
+  }
+
+  Widget showSettings() {
+    return new Padding (
+      padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+      child: Container(
+        width: MediaQuery.of(context).size.width - 100,
+        child: new Column (
+          children: <Widget>[
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                new IconButton(
+                  onPressed: null,
+                  icon: Image.asset("assets/images/edit_button.png", height: 26, alignment: Alignment.centerRight),
+                )
+              ]
+            ),
+            new Row(
+              children: <Widget>[
+                new Padding(
+                  padding: EdgeInsets.only(right: 16),
+                  child: new Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      new Text("Name", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,),
+                      SizedBox(height: 16),
+                      new Text("Email", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,),
+                      SizedBox(height: 16),
+                      new Text("Phone", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,),
+                      SizedBox(height: 16),
+                      new Text("Address", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,),
+                    ]
+                  ),
+                ),
+                new Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    new Text(user.name, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                      textAlign: TextAlign.left,),
+                    SizedBox(height: 16),
+                    new Text(user.email, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                      textAlign: TextAlign.left,),
+                    SizedBox(height: 16),
+                    new Text(user.phoneNumber, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                      textAlign: TextAlign.left,),
+                    SizedBox(height: 16),
+                    new Text(user.address, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                      textAlign: TextAlign.left,),
+                  ]
+                )
+              ]
+            ),
+          ]
+        )
+      )
+    );
+  }
+
+  Widget buildWaitingScreen() {
+    return Scaffold(
+      body: Container(
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_selectedIndex == 0) {
-      if (_addButtonPressed) {
-        return buildConfirmationPage();
-      } else if (_arrowPressed) {
-        return buildShippingPage();
+    getUser();
+    if (user == null) {
+      return buildWaitingScreen();
+    } else {
+      if (_selectedIndex == 0) {
+        if (_addButtonPressed) {
+          return buildConfirmationPage();
+        } else if (_arrowPressed) {
+          return buildShippingPage();
+        }
+        return buildOrdersPage();
+      } else if (_selectedIndex == 1) {
+        return buildHomePage();
+      } else if (_selectedIndex == 2) {
+        return buildProfilePage();
       }
-      return buildOrdersPage();
-    } else if (_selectedIndex == 1) {
-      return buildHomePage();
-    } else if (_selectedIndex == 2) {
-      return buildProfilePage();
     }
   }
 }
