@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/widgets.dart';
 import 'package:supplyside/locator.dart';
@@ -20,8 +21,12 @@ class HubScreen extends StatefulWidget {
 
 class _HubScreenState extends State<HubScreen>{
   final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
-  User user;
   int _selectedIndex = 1; // default loads Home Page.
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
 
   // TODO: Replace hard coded values
   int _incoming = 10;
@@ -38,6 +43,7 @@ class _HubScreenState extends State<HubScreen>{
   bool _initialized = false;
   bool _addButtonPressed = false;
   bool _arrowPressed = false;
+  bool _editButtonPressed = false;
 
   List<bool> _isSelectedOrdersPage = [true, false, false]; // defaults at Incoming tab.
   bool _displayIncoming = true;
@@ -48,45 +54,43 @@ class _HubScreenState extends State<HubScreen>{
   bool _displayInventory = true;
   bool _displaySettings = false;
 
+  // User variables
+  User user;
+
   void _onNavigationIconTapped(int index) {
     setState(() {
+      _index = 0;
       _selectedIndex = index;
       _addButtonPressed = false;
       _arrowPressed = false;
+      _editButtonPressed = false;
       _initialized = false;
+      _displayInventory = true;
+      _displaySettings = false;
+
+      _isSelectedProfilePage[0] = _displayInventory;
+      _isSelectedProfilePage[1] = _displaySettings;
       build(context);
     });
   }
 
   void _onInventoryPressed() {
-    _selectedIndex = 2;
-    _displayInventory = true;
-    _displaySettings = false;
-
-    _isSelectedProfilePage[0] = _displayInventory;
-    _isSelectedProfilePage[1] = _displaySettings;
-    build(context);
+    _onNavigationIconTapped(2);
   }
 
   void _onIncomingPressed() {
-    _selectedIndex = 0;
     _index = 0;
-    _initialized = false;
-    build(context);
+    _onNavigationIconTapped(0);
   }
 
   void _onPendingPressed() {
-    _selectedIndex = 0;
     _index = 1;
-    _initialized = false;
-    build(context);
+    _onNavigationIconTapped(0);
   }
 
   void _onShippedPressed() {
-    _selectedIndex = 0;
     _index = 2;
-    _initialized = false;
-    build(context);
+    _onNavigationIconTapped(0);
   }
 
   void _onAddButtonPressed(ItemConfirmationCard card) {
@@ -101,6 +105,13 @@ class _HubScreenState extends State<HubScreen>{
     _itemConfirmationCard = card;
     _selectedIndex = 0;
     _arrowPressed = true;
+    _initialized = false;
+    build(context);
+  }
+
+  void _onEditButtonPressed() {
+    _selectedIndex = 2;
+    _editButtonPressed = true;
     _initialized = false;
     build(context);
   }
@@ -262,7 +273,7 @@ class _HubScreenState extends State<HubScreen>{
                       }),
                   ),
                   new Padding (
-                    padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                    padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
                     child: new Container(
                       width: MediaQuery.of(context).size.width - 110,
                       decoration: BoxDecoration(
@@ -283,13 +294,9 @@ class _HubScreenState extends State<HubScreen>{
                   ),
                   new Container(
                     width: MediaQuery.of(context).size.width - 110,
-                    decoration: BoxDecoration(
-                      color: Color(0xFFD48032),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    ),
                     child: new FlatButton(
                       child: new Text("Back",
-                        style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Color(0xFFD48032), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
                         textAlign: TextAlign.center,),
                       onPressed: () {
                         _addButtonPressed = false;
@@ -341,7 +348,7 @@ class _HubScreenState extends State<HubScreen>{
                               }),
                             ),
                             new Padding (
-                              padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                              padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
                               child: new Container(
                                   width: MediaQuery.of(context).size.width - 110,
                                   decoration: BoxDecoration(
@@ -359,13 +366,9 @@ class _HubScreenState extends State<HubScreen>{
                             ),
                             new Container(
                                 width: MediaQuery.of(context).size.width - 110,
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFD48032),
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                ),
                                 child: new FlatButton(
                                   child: new Text("Back",
-                                    style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                    style: TextStyle(color: Color(0xFFD48032), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
                                     textAlign: TextAlign.center,),
                                   onPressed: () {
                                     _arrowPressed = false;
@@ -528,6 +531,7 @@ class _HubScreenState extends State<HubScreen>{
     String _greeting = user.name.split(" ")[0] + "'s Profile";
 
     return new Scaffold(
+      resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
@@ -567,6 +571,9 @@ class _HubScreenState extends State<HubScreen>{
                       _isSelectedProfilePage[1 - index] = false;
                       _displayInventory = _isSelectedProfilePage[0];
                       _displaySettings = _isSelectedProfilePage[1];
+                      if (_displayInventory) {
+                        _editButtonPressed = false;
+                      }
                     });
                   },
                   isSelected: _isSelectedProfilePage,
@@ -585,6 +592,7 @@ class _HubScreenState extends State<HubScreen>{
 
   Future getUser() async {
     User currUser = await _firestoreUsers.getUser(widget.userId);
+
     if (currUser != null) {
       if (!mounted) return;
       setState(() {
@@ -604,7 +612,7 @@ class _HubScreenState extends State<HubScreen>{
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 new IconButton(
-                  onPressed: null,
+                  onPressed: _onEditButtonPressed,
                   icon: Image.asset("assets/images/edit_button.png", height: 26, alignment: Alignment.centerRight),
                 )
               ]
@@ -618,39 +626,174 @@ class _HubScreenState extends State<HubScreen>{
                     children: <Widget>[
                       new Text("Name", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                         textAlign: TextAlign.left,),
-                      SizedBox(height: 16),
+                      SizedBox(height: 29),
                       new Text("Email", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                         textAlign: TextAlign.left,),
-                      SizedBox(height: 16),
+                      SizedBox(height: 29),
                       new Text("Phone", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                         textAlign: TextAlign.left,),
-                      SizedBox(height: 16),
+                      SizedBox(height: 29),
                       new Text("Address", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                         textAlign: TextAlign.left,),
                     ]
                   ),
                 ),
-                new Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    new Text(user.name, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
-                      textAlign: TextAlign.left,),
-                    SizedBox(height: 16),
-                    new Text(user.email, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
-                      textAlign: TextAlign.left,),
-                    SizedBox(height: 16),
-                    new Text(user.phoneNumber, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
-                      textAlign: TextAlign.left,),
-                    SizedBox(height: 16),
-                    new Text(user.address, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
-                      textAlign: TextAlign.left,),
-                  ]
-                )
+                if (!_editButtonPressed)
+                  new Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        new Text(user.name, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                          textAlign: TextAlign.left,),
+                        SizedBox(height: 29),
+                        new Text(user.email, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                          textAlign: TextAlign.left,),
+                        SizedBox(height: 29),
+                        new Text(user.phoneNumber, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                          textAlign: TextAlign.left,),
+                        SizedBox(height: 29),
+                        new Text(user.address, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                          textAlign: TextAlign.left,),
+                      ]
+                  ),
+                if (_editButtonPressed) buildEditProfilePage(),
               ]
             ),
+            SizedBox(height: 30),
+            if (_editButtonPressed)
+              new Row (
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    new Padding (
+                      padding: EdgeInsets.only(right: 4),
+                      child: new Container(
+                          width: (MediaQuery.of(context).size.width - 120) * 0.5,
+                          child: new FlatButton(
+                            child: new Text("Save",
+                              style: TextStyle(color: Color(0xFF283568), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                              textAlign: TextAlign.center,),
+                            onPressed: () {
+                              updateUser();
+                              _editButtonPressed = false;
+                              showSettings();
+                            },
+                          )
+                      ),
+                    ),
+                    new Container(
+                        width: (MediaQuery.of(context).size.width - 120) * 0.5,
+                        child: new FlatButton(
+                          child: new Text("Back",
+                            style: TextStyle(color: Color(0xFFD48032), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                            textAlign: TextAlign.center,),
+                          onPressed: () {
+                            _editButtonPressed = false;
+                            showSettings();
+                          },
+                        )
+                    ),
+                  ]
+              )
           ]
         )
       )
+    );
+  }
+
+  Widget buildEditProfilePage() {
+    return new Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          new Container(
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: new TextField(
+              style: TextStyle(color: Colors.black),
+              textAlign: TextAlign.left,
+              maxLines: 1,
+              autofocus: false,
+              decoration: new InputDecoration(
+                hintText: user.name,
+                hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
+                enabledBorder: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black)
+                ),
+                focusedBorder: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black)
+                )
+              ),
+              keyboardType: TextInputType.text,
+              controller: nameController,
+              onChanged: null,
+            ),
+          ),
+          new Container(
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: new TextField(
+              style: TextStyle(color: Colors.black),
+              textAlign: TextAlign.left,
+              maxLines: 1,
+              autofocus: false,
+              decoration: new InputDecoration(
+                hintText: user.email,
+                hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
+                enabledBorder: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black)
+                ),
+                focusedBorder: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black)
+                )
+              ),
+              keyboardType: TextInputType.emailAddress,
+              controller: emailController,
+              onChanged: null,
+            ),
+          ),
+          new Container(
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: new TextField(
+              style: TextStyle(color: Colors.black),
+              textAlign: TextAlign.left,
+              maxLines: 1,
+              autofocus: false,
+              decoration: new InputDecoration(
+                hintText: user.phoneNumber,
+                hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
+                enabledBorder: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black)
+                ),
+                focusedBorder: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black)
+                )
+              ),
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                WhitelistingTextInputFormatter.digitsOnly
+              ],
+              controller: phoneNumberController,
+              onChanged: null,
+            ),
+          ),
+          new Container(
+            width: MediaQuery.of(context).size.width * 0.5,
+            child: new TextField(
+              style: TextStyle(color: Colors.black),
+              textAlign: TextAlign.left,
+              maxLines: 1,
+              autofocus: false,
+              decoration: new InputDecoration(
+                hintText: user.address,
+                hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
+                enabledBorder: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black)
+                ),
+                focusedBorder: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black)
+                )
+              ),
+              controller: addressController,
+              onChanged: null,
+            ),
+          ),
+      ]
     );
   }
 
@@ -661,6 +804,13 @@ class _HubScreenState extends State<HubScreen>{
         child: CircularProgressIndicator(),
       ),
     );
+  }
+
+  void updateUser() async {
+    await _firestoreUsers.setUserName(widget.userId, nameController.text == "" ? user.name : nameController.text);
+    await _firestoreUsers.setUserEmail(widget.userId, emailController.text == "" ? user.email : emailController.text);
+    await _firestoreUsers.setUserPhoneNumber(widget.userId, phoneNumberController.text == "" ? user.phoneNumber : phoneNumberController.text);
+    await _firestoreUsers.setUserAddress(widget.userId, addressController.text == "" ? user.address : addressController.text);
   }
 
   @override

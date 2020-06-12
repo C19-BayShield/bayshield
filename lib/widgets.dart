@@ -357,17 +357,18 @@ class QuantityInputField extends StatelessWidget {
               textAlign: TextAlign.left,
               scrollPadding: EdgeInsets.symmetric(horizontal: 16),
               maxLines: 1,
-              autofocus: true,
+              autofocus: false,
               decoration: new InputDecoration(
                 labelText: "Ex. 100",
                 labelStyle: TextStyle(
                     color: Color(0xFFB3B3B3)
                 ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.black,
-                  ),
+                enabledBorder: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black)
                 ),
+                focusedBorder: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black)
+                )
               ),
               keyboardType: TextInputType.number,
               inputFormatters: <TextInputFormatter>[
