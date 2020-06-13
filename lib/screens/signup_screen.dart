@@ -5,6 +5,7 @@ import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/util/firestore_users.dart';
 import 'package:supplyside/locator.dart';
 import 'package:supplyside/widgets.dart';
+import 'package:supplyside/datamodels/user.dart';
 
 class SignUpScreen extends StatefulWidget {
 
@@ -23,8 +24,6 @@ class _SignUpScreenState extends State<SignUpScreen>{
   final _formKey = new GlobalKey<FormState>();
   final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
 
-  String _name;
-  String _email;
   String _phoneNumber;
   String _collectionHubName;
   String _medicalFacilityName;
@@ -32,37 +31,73 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
   String _errorMessage;
   bool _isLoading;
+  User user;
+
+  Future getUser() async {
+   User currUser = await _firestoreUsers.getUser(widget.userId);
+    if (currUser != null) {
+      if (!mounted) return;
+      setState(() {
+        user = currUser;
+      });
+    }
+  }
+
+  Widget buildWaitingScreen() {
+    return Scaffold(
+      body: Container(
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    getUser();
     Size screenSize = MediaQuery.of(context).size;
-    return Scaffold(
-            body: Stack(
-              children: <Widget>[
-                new FullScreenCover(),
-                SafeArea(
-                  child: ListView(
-                    children: <Widget>[
-                      SizedBox(
-                        height: screenSize.height / 6,
-                      ),
-                      Container(
-                        margin: new EdgeInsets.only(left: 12.0, right: 12.0),
-                        height: screenSize.height / 1.4,
-                        color: Colors.white,
-                        child: Column(
-                          children: <Widget>[
-                            _showForm(),
-                          ]
-                        ),
-                      ),
-                    ],
+    
+    if (user == null) {
+      return buildWaitingScreen();
+    } else { 
+      String name = user.getName() ?? "";
+      return Scaffold(
+        body: Stack(
+          children: <Widget>[
+            new FullScreenCover(),
+            SafeArea(
+              child: ListView(
+                children: <Widget>[
+                    SizedBox(
+                  height: screenSize.height / 6.0,
                   ),
-                ),
-                new BayShieldAppBar(title: widget.label + ' Registration')
-              ]
+                  Container(
+                    margin: new EdgeInsets.only(left: 12.0, right: 12.0),
+                    child: Column(
+                      children: <Widget>[
+                        Image.asset('assets/images/logo_small.png', height: 100, width: 100),
+                        new UserTypeTagBlue(userTag: widget.label),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Text(
+                          "Hi " + name + "!",
+                          style: TextStyle(
+                              fontSize: 28.0,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700),
+                          ),
+                        _showForm(),
+                      ]
+                    ),
+                  ),
+                ],
+              ),
             ),
-    );
+          ]
+        ),
+      );
+    }
   }
 
   // Check if form is valid before going to root screen
@@ -93,11 +128,9 @@ class _SignUpScreenState extends State<SignUpScreen>{
     ;
   }
 
-  Future setCollectionHubInfo(String userId, String name, String email,
+  Future setCollectionHubInfo(String userId, 
       String phoneNumber, String collectionHubName, String address) async {
     try {
-      await _firestoreUsers.setUserName(userId, name);
-      await _firestoreUsers.setUserEmail(userId, email);
       await _firestoreUsers.setUserPhoneNumber(userId, phoneNumber);
       await _firestoreUsers.setUserCollectionHubName(userId, collectionHubName);
       await _firestoreUsers.setUserAddress(userId, address);
@@ -106,11 +139,9 @@ class _SignUpScreenState extends State<SignUpScreen>{
     }
   }
 
-  Future setMedicalFacilityInfo(String userId, String name, String email,
+  Future setMedicalFacilityInfo(String userId, 
       String phoneNumber, String medicalFacilityName, String address) async {
     try {
-      await _firestoreUsers.setUserName(userId, name);
-      await _firestoreUsers.setUserEmail(userId, email);
       await _firestoreUsers.setUserPhoneNumber(userId, phoneNumber);
       await _firestoreUsers.setMedicalFacilityName(userId, medicalFacilityName);
       await _firestoreUsers.setUserAddress(userId, address);
@@ -119,11 +150,9 @@ class _SignUpScreenState extends State<SignUpScreen>{
     }
   }
 
-  Future setMakerInfo(String userId, String name, String email,
+  Future setMakerInfo(String userId, 
       String phoneNumber, String address) async {
     try {
-      await _firestoreUsers.setUserName(userId, name);
-      await _firestoreUsers.setUserEmail(userId, email);
       await _firestoreUsers.setUserPhoneNumber(userId, phoneNumber);
       await _firestoreUsers.setUserAddress(userId, address);
     } catch (e) {
@@ -139,37 +168,36 @@ class _SignUpScreenState extends State<SignUpScreen>{
           child: new ListView(
             shrinkWrap: true,
             children: <Widget>[
-              showNameInput(),
-              showEmailInput(),
+              // showNameInput(),
+              // showEmailInput(),
               showPhoneNumberInput(),
               if (widget.label == 'Medical Facility') showMedicalFacilityNameInput(),
               if (widget.label == 'Collection Hub') showCollectionHubNameInput(),
               showAddressInput(),
               new SizedBox(height: 24),
-              new PrimaryButton(submit: validateAndSubmit, label: "REGISTER"),
-              new PrimaryButton(submit: backToUserType, label: "BACK"),
+              new PrimaryButton(submit: validateAndSubmit, label: "Get Started"),
             ],
           ),
         ));
   }
 
-  Widget showNameInput() {
-    return new BayShieldFormField(
-      hint: 'First Last', 
-      icon: Icons.account_circle,
-      validator: (value) => value.isEmpty ? 'Name can\'t be empty' : null,
-      onSaved: (value) => _name = value.trim(),
-    );
-  }
+  // Widget showNameInput() {
+  //   return new BayShieldFormField(
+  //     hint: 'First Last', 
+  //     icon: Icons.account_circle,
+  //     validator: (value) => value.isEmpty ? 'Name can\'t be empty' : null,
+  //     onSaved: (value) => _name = value.trim(),
+  //   );
+  // }
 
-  Widget showEmailInput() {
-    return new BayShieldFormField(
-      hint: 'Email',
-      icon: Icons.mail,
-      validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
-      onSaved: (value) => _email = value.trim(),
-    );
-  }
+  // Widget showEmailInput() {
+  //   return new BayShieldFormField(
+  //     hint: 'Email',
+  //     icon: Icons.mail,
+  //     validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
+  //     onSaved: (value) => _email = value.trim(),
+  //   );
+  // }
 
   Widget showPhoneNumberInput() {
     return new BayShieldFormField(
@@ -216,19 +244,19 @@ class _SignUpScreenState extends State<SignUpScreen>{
       try {
         switch(widget.label) {
           case 'Medical Facility': {
-            setMedicalFacilityInfo(widget.userId, _name, _email,
+            setMedicalFacilityInfo(widget.userId, 
                 _phoneNumber, _medicalFacilityName, _address);
             navigateToRootScreen(context, widget.userId);
           }
           break;
           case 'Maker': {
-            setMakerInfo(widget.userId, _name, _email,
+            setMakerInfo(widget.userId, 
                 _phoneNumber, _address);
             navigateToRootScreen(context, widget.userId);
           }
           break;
           case 'Collection Hub': {
-            setCollectionHubInfo(widget.userId, _name, _email,
+            setCollectionHubInfo(widget.userId,
                 _phoneNumber, _collectionHubName, _address);
             navigateToRootScreen(context, widget.userId);
           }

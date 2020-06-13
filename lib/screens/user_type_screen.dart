@@ -31,58 +31,33 @@ class _UserTypeScreenState extends State<UserTypeScreen>{
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
 
-    Widget promptSection = Container(
-      padding: const EdgeInsets.only(top: 94.0),
-      child: Text(
-        'Sign Up as a...',
-        textAlign: TextAlign.center,
-        softWrap: true,
-        style: TextStyle(
-          fontSize: 24.0,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-
-  Column _buildButtonColumn(IconData icon, String label) {
+  Column _buildButtonColumn(String label) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          margin: const EdgeInsets.only(top: 32, bottom: 32),
+          margin: const EdgeInsets.only(top: 16, bottom: 16),
           child: SizedBox(
-          height: screenSize.height / 7.7,
           child: new RaisedButton(
+            color: Color(0xFF697CC8), 
             elevation: 5.0,
-            padding: EdgeInsets.all(0.0),
-            child: Ink(
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [Color(0xD68134), Color(0xF5B819), Color(0xFFE6B819)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  borderRadius: BorderRadius.circular(10.0)
-              ),
+            padding: EdgeInsets.all(16.0),
               child: Container(
-                padding: EdgeInsets.only(top: 12),
-                constraints: BoxConstraints(maxWidth: screenSize.width / 1.7, minHeight: 70.0),
+                constraints: BoxConstraints(maxWidth: screenSize.width / 1.7),
                 alignment: Alignment.center,
                 child: Column( 
                   children: <Widget>[
-                    Icon(icon, color: Colors.white, size: 28.0),
-                    new SizedBox(height: 6),
                     new Text(label,
-                      style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                      style: new TextStyle(fontSize: 25.0, color: Colors.white,  fontWeight: FontWeight.w400)),
                   ]
                 ),
               ),
-            ),
             shape: new RoundedRectangleBorder(
                 borderRadius: new BorderRadius.circular(10.0)),
             onPressed: () {
               updateUserType(widget.userId, label);
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SignUpScreen(userId: widget.userId, auth: widget.auth, label: label)),
               );
@@ -94,13 +69,13 @@ class _UserTypeScreenState extends State<UserTypeScreen>{
   }
 
     Widget buttonSection = Container(
-      margin: const EdgeInsets.only(top: 32),
+      margin: const EdgeInsets.only(top: 24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildButtonColumn(Icons.local_hospital, 'Medical Facility'),
-          _buildButtonColumn(Icons.share, 'Collection Hub'),
-          _buildButtonColumn(Icons.lightbulb_outline, 'Maker'),
+          _buildButtonColumn('Maker'),
+          _buildButtonColumn('Collection Hub'),
+          _buildButtonColumn('Medical Organization'),
         ],
       ),
     );
@@ -110,9 +85,31 @@ class _UserTypeScreenState extends State<UserTypeScreen>{
               children: <Widget>[
                 new FullScreenCover(),
                 ListView(
-                  children: [promptSection, buttonSection],
+                  children: <Widget>[
+                    SizedBox(
+                      height: screenSize.height / 6.0,
+                    ),
+                    Container(
+                      margin: new EdgeInsets.only(left: 12.0, right: 12.0),
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset('assets/images/logo_small.png', height: 100, width: 100),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "I am a...",
+                            style: TextStyle(
+                                fontSize: 28.0,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700),
+                            ),
+                          buttonSection,
+                        ]
+                      ),
+                    ),
+                  ],
                 ),
-                  new BayShieldAppBar(title: 'BayShield')
               ]
             ),
     );

@@ -70,6 +70,28 @@ class UserTypeTag extends StatelessWidget {
   }
 }
 
+class UserTypeTagBlue extends StatelessWidget {
+  final String userTag;
+
+  UserTypeTagBlue({Key key, @required this.userTag}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      margin: new EdgeInsets.only(top: 6.0),
+      color: Colors.transparent,
+      child: Container(
+        padding: new EdgeInsets.only(top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+        decoration: BoxDecoration(
+            color: Color(0xFF697CC8), 
+            borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child: new Text(userTag.toUpperCase(),
+              style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,),
+      )
+    );
+  }
+}
+
 class AlertTag extends StatelessWidget {
   final String message;
 
