@@ -39,7 +39,14 @@ class User {
   String getAddress() {
     return this.address;
   }
- 
+
+  String getEmail() {
+    return this.email;
+  }
+
+  String getPhoneNumber() {
+    return this.phoneNumber;
+  }
 }
 
 class MedicalFacility extends User {

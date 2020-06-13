@@ -529,7 +529,8 @@ class EditFormField extends StatelessWidget {
   final TextInputType type;
   final String hint;
   final List<TextInputFormatter> formatter;
-  EditFormField({Key key, @required this.controller, @required this.type, @required this.hint, this.formatter}) : super(key: key);
+  final int maxLines;
+  EditFormField({Key key, @required this.controller, @required this.type, @required this.hint, this.formatter, @required this.maxLines}) : super(key: key);
 
   Widget build(BuildContext context) {
     return new Container(
@@ -537,7 +538,7 @@ class EditFormField extends StatelessWidget {
       child: new TextField(
         style: TextStyle(color: Colors.black),
         textAlign: TextAlign.left,
-        maxLines: 1,
+        maxLines: maxLines,
         autofocus: false,
         decoration: new InputDecoration(
             hintText: hint,
