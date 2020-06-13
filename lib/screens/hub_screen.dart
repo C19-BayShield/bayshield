@@ -68,6 +68,11 @@ class _HubScreenState extends State<HubScreen>{
       _displayInventory = true;
       _displaySettings = false;
 
+      nameController.clear();
+      emailController.clear();
+      phoneNumberController.clear();
+      addressController.clear();
+
       _isSelectedProfilePage[0] = _displayInventory;
       _isSelectedProfilePage[1] = _displaySettings;
       build(context);
@@ -687,6 +692,10 @@ class _HubScreenState extends State<HubScreen>{
                             textAlign: TextAlign.center,),
                           onPressed: () {
                             _editButtonPressed = false;
+                            nameController.clear();
+                            emailController.clear();
+                            phoneNumberController.clear();
+                            addressController.clear();
                             showSettings();
                           },
                         )
@@ -701,98 +710,31 @@ class _HubScreenState extends State<HubScreen>{
 
   Widget buildEditProfilePage() {
     return new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          new Container(
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: new TextField(
-              style: TextStyle(color: Colors.black),
-              textAlign: TextAlign.left,
-              maxLines: 1,
-              autofocus: false,
-              decoration: new InputDecoration(
-                hintText: user.name,
-                hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
-                enabledBorder: new UnderlineInputBorder(
-                    borderSide: new BorderSide(color: Colors.black)
-                ),
-                focusedBorder: new UnderlineInputBorder(
-                    borderSide: new BorderSide(color: Colors.black)
-                )
-              ),
-              keyboardType: TextInputType.text,
-              controller: nameController,
-              onChanged: null,
-            ),
-          ),
-          new Container(
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: new TextField(
-              style: TextStyle(color: Colors.black),
-              textAlign: TextAlign.left,
-              maxLines: 1,
-              autofocus: false,
-              decoration: new InputDecoration(
-                hintText: user.email,
-                hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
-                enabledBorder: new UnderlineInputBorder(
-                    borderSide: new BorderSide(color: Colors.black)
-                ),
-                focusedBorder: new UnderlineInputBorder(
-                    borderSide: new BorderSide(color: Colors.black)
-                )
-              ),
-              keyboardType: TextInputType.emailAddress,
-              controller: emailController,
-              onChanged: null,
-            ),
-          ),
-          new Container(
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: new TextField(
-              style: TextStyle(color: Colors.black),
-              textAlign: TextAlign.left,
-              maxLines: 1,
-              autofocus: false,
-              decoration: new InputDecoration(
-                hintText: user.phoneNumber,
-                hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
-                enabledBorder: new UnderlineInputBorder(
-                    borderSide: new BorderSide(color: Colors.black)
-                ),
-                focusedBorder: new UnderlineInputBorder(
-                    borderSide: new BorderSide(color: Colors.black)
-                )
-              ),
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                WhitelistingTextInputFormatter.digitsOnly
-              ],
-              controller: phoneNumberController,
-              onChanged: null,
-            ),
-          ),
-          new Container(
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: new TextField(
-              style: TextStyle(color: Colors.black),
-              textAlign: TextAlign.left,
-              maxLines: 1,
-              autofocus: false,
-              decoration: new InputDecoration(
-                hintText: user.address,
-                hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
-                enabledBorder: new UnderlineInputBorder(
-                    borderSide: new BorderSide(color: Colors.black)
-                ),
-                focusedBorder: new UnderlineInputBorder(
-                    borderSide: new BorderSide(color: Colors.black)
-                )
-              ),
-              controller: addressController,
-              onChanged: null,
-            ),
-          ),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        new EditFormField(
+          controller: nameController,
+          type: TextInputType.text,
+          hint: user.name,
+        ),
+        new EditFormField(
+          controller: emailController,
+          type: TextInputType.emailAddress,
+          hint: user.email,
+        ),
+        new EditFormField(
+          controller: phoneNumberController,
+          type: TextInputType.number,
+          hint: user.phoneNumber,
+          formatter: <TextInputFormatter>[
+            WhitelistingTextInputFormatter.digitsOnly
+          ],
+        ),
+        new EditFormField(
+          controller: addressController,
+          type: TextInputType.text,
+          hint: user.address,
+        ),
       ]
     );
   }
@@ -811,6 +753,11 @@ class _HubScreenState extends State<HubScreen>{
     await _firestoreUsers.setUserEmail(widget.userId, emailController.text == "" ? user.email : emailController.text);
     await _firestoreUsers.setUserPhoneNumber(widget.userId, phoneNumberController.text == "" ? user.phoneNumber : phoneNumberController.text);
     await _firestoreUsers.setUserAddress(widget.userId, addressController.text == "" ? user.address : addressController.text);
+
+    nameController.clear();
+    emailController.clear();
+    phoneNumberController.clear();
+    addressController.clear();
   }
 
   @override
