@@ -357,17 +357,18 @@ class QuantityInputField extends StatelessWidget {
               textAlign: TextAlign.left,
               scrollPadding: EdgeInsets.symmetric(horizontal: 16),
               maxLines: 1,
-              autofocus: true,
+              autofocus: false,
               decoration: new InputDecoration(
                 labelText: "Ex. 100",
                 labelStyle: TextStyle(
                     color: Color(0xFFB3B3B3)
                 ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.black,
-                  ),
+                enabledBorder: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black)
                 ),
+                focusedBorder: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.black)
+                )
               ),
               keyboardType: TextInputType.number,
               inputFormatters: <TextInputFormatter>[
@@ -493,33 +494,67 @@ class BayShieldFormField extends StatelessWidget {
   BayShieldFormField({Key key, this.obscureText, @required this.validator, this.onSaved, this.hint, this.icon}) : super(key: key);
 
   Widget build(BuildContext context) {
-     return Padding(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 0.0),
       child: new TextFormField(
         style: new TextStyle(
-              color: Colors.white,
+          color: Colors.white,
         ),
         maxLines: 1,
         keyboardType: TextInputType.text,
         autofocus: false,
         obscureText: this.obscureText ?? false,
         decoration: new InputDecoration(
-            hintText: hint,
-            hintStyle:  new TextStyle(
-              color: Colors.grey,
-            ),
-            icon: new Icon(
-              icon,
-              color: Colors.white,
-            ),
-            enabledBorder: UnderlineInputBorder(      
-              borderSide: BorderSide(color: Colors.grey),   
-              ),  
+          hintText: hint,
+          hintStyle: new TextStyle(
+            color: Colors.grey,
           ),
+          icon: new Icon(
+            icon,
+            color: Colors.white,
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey),
+          ),
+        ),
         validator: validator,
         onSaved: onSaved,
       ),
     );
   }
-      
+}
+
+class EditFormField extends StatelessWidget {
+  final TextEditingController controller;
+  final TextInputType type;
+  final String hint;
+  final List<TextInputFormatter> formatter;
+  final int maxLines;
+  EditFormField({Key key, @required this.controller, @required this.type, @required this.hint, this.formatter, @required this.maxLines}) : super(key: key);
+
+  Widget build(BuildContext context) {
+    return new Container(
+      width: MediaQuery.of(context).size.width * 0.5,
+      child: new TextField(
+        style: TextStyle(color: Colors.black),
+        textAlign: TextAlign.left,
+        maxLines: maxLines,
+        autofocus: false,
+        decoration: new InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
+            enabledBorder: new UnderlineInputBorder(
+                borderSide: new BorderSide(color: Colors.black)
+            ),
+            focusedBorder: new UnderlineInputBorder(
+                borderSide: new BorderSide(color: Colors.black)
+            )
+        ),
+        keyboardType: type,
+        controller: controller,
+        inputFormatters: formatter,
+        onChanged: null,
+      ),
+    );
+  }
 }

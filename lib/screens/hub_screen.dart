@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/widgets.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:supplyside/locator.dart';
+import 'package:supplyside/datamodels/user.dart';
+import 'package:supplyside/util/firestore_users.dart';
 
 class HubScreen extends StatefulWidget {
 
@@ -17,15 +20,19 @@ class HubScreen extends StatefulWidget {
 }
 
 class _HubScreenState extends State<HubScreen>{
+  final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
   int _selectedIndex = 1; // default loads Home Page.
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
 
   // TODO: Replace hard coded values
   int _incoming = 10;
   int _pending = 35;
   int _shipped = 13430;
   String _userType = "C O L L E C T I O N  H U B";
-  static String _userName = "Dylan";
-  String _greeting = "Hi, " + _userName + ".";
   String _message = "Alert: PPE Design Update. Read More";
 
   ItemConfirmationCard _itemConfirmationCard;
@@ -36,6 +43,7 @@ class _HubScreenState extends State<HubScreen>{
   bool _initialized = false;
   bool _addButtonPressed = false;
   bool _arrowPressed = false;
+  bool _editButtonPressed = false;
 
   List<bool> _isSelectedOrdersPage = [true, false, false]; // defaults at Incoming tab.
   bool _displayIncoming = true;
@@ -46,40 +54,48 @@ class _HubScreenState extends State<HubScreen>{
   bool _displayInventory = true;
   bool _displaySettings = false;
 
+  // User variables
+  User user;
+
   void _onNavigationIconTapped(int index) {
     setState(() {
+      _index = 0;
       _selectedIndex = index;
       _addButtonPressed = false;
       _arrowPressed = false;
+      _editButtonPressed = false;
       _initialized = false;
+      _displayInventory = true;
+      _displaySettings = false;
+
+      nameController.clear();
+      emailController.clear();
+      phoneNumberController.clear();
+      addressController.clear();
+
+      _isSelectedProfilePage[0] = _displayInventory;
+      _isSelectedProfilePage[1] = _displaySettings;
       build(context);
     });
   }
 
   void _onInventoryPressed() {
-    _selectedIndex = 2;
-    build(context);
+    _onNavigationIconTapped(2);
   }
 
   void _onIncomingPressed() {
-    _selectedIndex = 0;
     _index = 0;
-    _initialized = false;
-    build(context);
+    _onNavigationIconTapped(0);
   }
 
   void _onPendingPressed() {
-    _selectedIndex = 0;
     _index = 1;
-    _initialized = false;
-    build(context);
+    _onNavigationIconTapped(0);
   }
 
   void _onShippedPressed() {
-    _selectedIndex = 0;
     _index = 2;
-    _initialized = false;
-    build(context);
+    _onNavigationIconTapped(0);
   }
 
   void _onAddButtonPressed(ItemConfirmationCard card) {
@@ -95,6 +111,14 @@ class _HubScreenState extends State<HubScreen>{
     _selectedIndex = 0;
     _arrowPressed = true;
     _initialized = false;
+    build(context);
+  }
+
+  void _onEditButtonPressed() {
+    _selectedIndex = 2;
+    _editButtonPressed = !_editButtonPressed;
+    _initialized = false;
+    clearControllers();
     build(context);
   }
 
@@ -255,7 +279,7 @@ class _HubScreenState extends State<HubScreen>{
                       }),
                   ),
                   new Padding (
-                    padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                    padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
                     child: new Container(
                       width: MediaQuery.of(context).size.width - 110,
                       decoration: BoxDecoration(
@@ -276,13 +300,9 @@ class _HubScreenState extends State<HubScreen>{
                   ),
                   new Container(
                     width: MediaQuery.of(context).size.width - 110,
-                    decoration: BoxDecoration(
-                      color: Color(0xFFD48032),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    ),
                     child: new FlatButton(
                       child: new Text("Back",
-                        style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        style: TextStyle(color: Color(0xFFD48032), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
                         textAlign: TextAlign.center,),
                       onPressed: () {
                         _addButtonPressed = false;
@@ -334,7 +354,7 @@ class _HubScreenState extends State<HubScreen>{
                               }),
                             ),
                             new Padding (
-                              padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                              padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
                               child: new Container(
                                   width: MediaQuery.of(context).size.width - 110,
                                   decoration: BoxDecoration(
@@ -352,13 +372,9 @@ class _HubScreenState extends State<HubScreen>{
                             ),
                             new Container(
                                 width: MediaQuery.of(context).size.width - 110,
-                                decoration: BoxDecoration(
-                                  color: Color(0xFFD48032),
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                ),
                                 child: new FlatButton(
                                   child: new Text("Back",
-                                    style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                    style: TextStyle(color: Color(0xFFD48032), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
                                     textAlign: TextAlign.center,),
                                   onPressed: () {
                                     _arrowPressed = false;
@@ -377,6 +393,9 @@ class _HubScreenState extends State<HubScreen>{
   }
 
   Widget buildHomePage() {
+    String firstName = user.getName().split(" ")[0];
+    String _greeting = "Hi, " + firstName + ".";
+
     return new Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
@@ -385,50 +404,50 @@ class _HubScreenState extends State<HubScreen>{
       ),
       body: SafeArea(
         child: new Container(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                new UserTypeTag(userTag: _userType),
-                new Text(_greeting, style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,),
-                Container(
-                  height: MediaQuery.of(context).size.height / 20,
-                  width: MediaQuery.of(context).size.width - 110,
-                  color: Colors.transparent,
-                  child: new AlertTag(message: _message),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width - 110,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
+                      new UserTypeTag(userTag: _userType),
+                      new Text(_greeting, style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,),
                       Container(
-                        height: MediaQuery.of(context).size.height / 7,
-                        width: (MediaQuery.of(context).size.width - 120) / 2,
+                        height: MediaQuery.of(context).size.height / 20,
+                        width: MediaQuery.of(context).size.width - 110,
                         color: Colors.transparent,
-                        child: new IncomingItemsCard(incoming: _incoming, onPressed: _onIncomingPressed),
+                        child: new AlertTag(message: _message),
+                      ),
+                      Container(
+                          width: MediaQuery.of(context).size.width - 110,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Container(
+                                  height: MediaQuery.of(context).size.height / 7,
+                                  width: (MediaQuery.of(context).size.width - 120) / 2,
+                                  color: Colors.transparent,
+                                  child: new IncomingItemsCard(incoming: _incoming, onPressed: _onIncomingPressed),
+                                ),
+                                Container(
+                                  height: MediaQuery.of(context).size.height / 7,
+                                  width: (MediaQuery.of(context).size.width - 120) / 2,
+                                  color: Colors.transparent,
+                                  child: new PendingItemsCard(pending: _pending, onPressed: _onPendingPressed),
+                                ),
+                              ]
+                          )
                       ),
                       Container(
                         height: MediaQuery.of(context).size.height / 7,
-                        width: (MediaQuery.of(context).size.width - 120) / 2,
+                        width: MediaQuery.of(context).size.width - 110,
                         color: Colors.transparent,
-                        child: new PendingItemsCard(pending: _pending, onPressed: _onPendingPressed),
+                        child: new ShippedItemsCard(shipped: _shipped, onPressed: _onShippedPressed),
                       ),
+                      new InventoryButton(onPressed: _onInventoryPressed),
                     ]
-                  )
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height / 7,
-                  width: MediaQuery.of(context).size.width - 110,
-                  color: Colors.transparent,
-                  child: new ShippedItemsCard(shipped: _shipped, onPressed: _onShippedPressed),
-                ),
-                new InventoryButton(onPressed: _onInventoryPressed),
-              ]
+                )
             )
-          )
-        )
+        ),
       ),
       bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onNavigationIconTapped),
     );
@@ -457,134 +476,358 @@ class _HubScreenState extends State<HubScreen>{
         child: new MainAppBar(signOut: signOut),
       ),
       body: SafeArea(
-        child: new Container(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width - 110,
-                  color: Colors.transparent,
-                  child: new Padding(
-                    child: new Text("Orders", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.left,),
-                    padding: EdgeInsets.only(top: 30, bottom: 25)
+        child: new SingleChildScrollView(
+          child: new Container(
+              child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          width: MediaQuery.of(context).size.width - 110,
+                          color: Colors.transparent,
+                          child: new Padding(
+                              child: new Text("Orders", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,),
+                              padding: EdgeInsets.only(top: 30, bottom: 25)
+                          )
+                      ),
+                      ToggleButtons(
+                        fillColor: Color(0xFFB7CDFF),
+                        borderColor: Color(0xFFC4C4C4),
+                        selectedBorderColor: Color(0xFFC4C4C4),
+                        borderWidth: 2.0,
+                        constraints: BoxConstraints(minWidth: (MediaQuery.of(context).size.width - 110)/3, minHeight: MediaQuery.of(context).size.height / 25),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        children: <Widget>[
+                          new Text("Incoming", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,),
+                          new Text("Pending", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,),
+                          new Text("Shipped", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,),
+                        ],
+                        onPressed: (int index) {
+                          setState(() {
+                            for (int i = 0; i < _isSelectedOrdersPage.length; i++) {
+                              if (i == index) {
+                                _isSelectedOrdersPage[i] = true;
+                              } else {
+                                _isSelectedOrdersPage[i] = false;
+                              }
+                            }
+                            _displayIncoming = _isSelectedOrdersPage[0];
+                            _displayPending = _isSelectedOrdersPage[1];
+                            _displayShipped = _isSelectedOrdersPage[2];
+                          });
+                        },
+                        isSelected: _isSelectedOrdersPage,
+                      ),
+                      if (_displayIncoming) showIncomingItems(),
+                      if (_displayPending) showPendingItems(),
+                      if (_displayShipped) showShippedItems(),
+                    ],
                   )
-                ),
-                ToggleButtons(
-                  fillColor: Color(0xFFB7CDFF),
-                  borderColor: Color(0xFFC4C4C4),
-                  selectedBorderColor: Color(0xFFC4C4C4),
-                  borderWidth: 2.0,
-                  constraints: BoxConstraints(minWidth: (MediaQuery.of(context).size.width - 110)/3, minHeight: MediaQuery.of(context).size.height / 25),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  children: <Widget>[
-                    new Text("Incoming", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,),
-                    new Text("Pending", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,),
-                    new Text("Shipped", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,),
-                  ],
-                  onPressed: (int index) {
-                    setState(() {
-                      for (int i = 0; i < _isSelectedOrdersPage.length; i++) {
-                        if (i == index) {
-                          _isSelectedOrdersPage[i] = true;
-                        } else {
-                          _isSelectedOrdersPage[i] = false;
-                        }
-                      }
-                      _displayIncoming = _isSelectedOrdersPage[0];
-                      _displayPending = _isSelectedOrdersPage[1];
-                      _displayShipped = _isSelectedOrdersPage[2];
-                    });
-                  },
-                  isSelected: _isSelectedOrdersPage,
-                ),
-                if (_displayIncoming) showIncomingItems(),
-                if (_displayPending) showPendingItems(),
-                if (_displayShipped) showShippedItems(),
-              ],
-            )
+              )
           )
-        )
+        ),
       ),
       bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex , onItemTapped: _onNavigationIconTapped),
     );
   }
 
   Widget buildProfilePage() {
+    String _greeting = user.getName().split(" ")[0] + "'s Profile";
+
     return new Scaffold(
+      resizeToAvoidBottomPadding: false,
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
         child: new MainAppBar(signOut: signOut),
       ),
       body: SafeArea(
-        child: new Container(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width - 110,
-                  color: Colors.transparent,
-                  child: new Padding(
-                    child: new Text("Dylan's Profile", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.left,),
-                    padding: EdgeInsets.only(top: 30, bottom: 25)
+        child: new SingleChildScrollView(
+          child: new Container(
+              child: Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                            width: MediaQuery.of(context).size.width - 110,
+                            color: Colors.transparent,
+                            child: new Padding(
+                                child: new Text(_greeting, style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.left,),
+                                padding: EdgeInsets.only(top: 30, bottom: 25)
+                            )
+                        ),
+                        ToggleButtons(
+                          fillColor: Color(0xFFB7CDFF),
+                          borderColor: Color(0xFFB2B2B2),
+                          selectedBorderColor: Color(0xFFB2B2B2),
+                          borderWidth: 2.0,
+                          constraints: BoxConstraints(minWidth: (MediaQuery.of(context).size.width - 110)/2, minHeight: MediaQuery.of(context).size.height / 25),
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          children: <Widget>[
+                            new Text("Inventory", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,),
+                            new Text("Settings", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,),
+                          ],
+                          onPressed: (int index) {
+                            setState(() {
+                              _isSelectedProfilePage[index] = true;
+                              _isSelectedProfilePage[1 - index] = false;
+                              _displayInventory = _isSelectedProfilePage[0];
+                              _displaySettings = _isSelectedProfilePage[1];
+                              if (_displayInventory) {
+                                _editButtonPressed = false;
+                              }
+                            });
+                          },
+                          isSelected: _isSelectedProfilePage,
+                        ),
+                        if (_displayInventory) new Text("Inventory", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.left,),
+                        if (_displaySettings) showSettings(),
+                      ]
                   )
-                ),
-                ToggleButtons(
-                  fillColor: Color(0xFFB7CDFF),
-                  borderColor: Color(0xFFB2B2B2),
-                  selectedBorderColor: Color(0xFFB2B2B2),
-                  borderWidth: 2.0,
-                  constraints: BoxConstraints(minWidth: (MediaQuery.of(context).size.width - 110)/2, minHeight: MediaQuery.of(context).size.height / 25),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  children: <Widget>[
-                    new Text("Inventory", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,),
-                    new Text("Settings", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,),
-                  ],
-                  onPressed: (int index) {
-                    setState(() {
-                      _isSelectedProfilePage[index] = true;
-                      _isSelectedProfilePage[1 - index] = false;
-                      _displayInventory = _isSelectedProfilePage[0];
-                      _displaySettings = _isSelectedProfilePage[1];
-                    });
-                  },
-                  isSelected: _isSelectedProfilePage,
-                ),
-                if (_displayInventory) new Text("Inventory", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.left,),
-                if (_displaySettings) new Text("Settings", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.left,),
-              ]
-            )
+              )
           )
-        )
+        ),
       ),
       bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onNavigationIconTapped),
     );
   }
 
+  Future getUser() async {
+    User currUser = await _firestoreUsers.getUser(widget.userId);
+
+    if (currUser != null) {
+      if (!mounted) return;
+      setState(() {
+        user = currUser;
+      });
+    }
+  }
+
+  Widget showSettings() {
+    return new Padding (
+      padding: EdgeInsets.only(top: 10.0),
+      child: Container(
+        width: MediaQuery.of(context).size.width - 100,
+        child: new Column (
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                new IconButton(
+                  onPressed: _onEditButtonPressed,
+                  icon: Image.asset("assets/images/edit_button.png", height: 26, alignment: Alignment.centerRight),
+                )
+              ]
+            ),
+            SizedBox(height: 5),
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                new Container(
+                  width: MediaQuery.of(context).size.width * 0.25,
+                  child: new Text("Name", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,)
+                ),
+                if (!_editButtonPressed)
+                  new Container(
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    child: new Text(user.getName(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                      textAlign: TextAlign.left,),
+                  ),
+                if (_editButtonPressed)
+                  new Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: new EditFormField(
+                        controller: nameController,
+                        type: TextInputType.text,
+                        hint: user.getName(),
+                        maxLines: 1,
+                      )
+                  ),
+              ]
+            ),
+            SizedBox(height: 10),
+            new Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  new Container(
+                      width: MediaQuery.of(context).size.width * 0.25,
+                      child: new Text("Email", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,)
+                  ),
+                  if (!_editButtonPressed)
+                    new Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: new Text(user.getEmail(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                        textAlign: TextAlign.left,),
+                    ),
+                  if (_editButtonPressed)
+                    new Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: new EditFormField(
+                          controller: emailController,
+                          type: TextInputType.text,
+                          hint: user.getEmail(),
+                          maxLines: 1,
+                        )
+                    ),
+                ]
+            ),
+            SizedBox(height: 10),
+            new Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  new Container(
+                      width: MediaQuery.of(context).size.width * 0.25,
+                      child: new Text("Phone", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,)
+                  ),
+                  if (!_editButtonPressed)
+                    new Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: new Text(user.getPhoneNumber(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                        textAlign: TextAlign.left,),
+                    ),
+                  if (_editButtonPressed)
+                    new Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: new EditFormField(
+                          controller: phoneNumberController,
+                          type: TextInputType.number,
+                          hint: user.getPhoneNumber(),
+                          formatter: <TextInputFormatter>[
+                            WhitelistingTextInputFormatter.digitsOnly
+                          ],
+                          maxLines: 1,
+                        )
+                    ),
+                ]
+            ),
+            SizedBox(height: 10),
+            new Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  new Container(
+                      width: MediaQuery.of(context).size.width * 0.25,
+                      child: new Text("Address", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,)
+                  ),
+                  if (!_editButtonPressed)
+                    new Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: new Text(user.getAddress(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                        textAlign: TextAlign.left,),
+                    ),
+                  if (_editButtonPressed)
+                    new Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                      child: new EditFormField(
+                        controller: addressController,
+                        type: TextInputType.text,
+                        hint: user.getAddress(),
+                        maxLines: 1,
+                      )
+                    ),
+                ]
+            ),
+            SizedBox(height: 20),
+            if (_editButtonPressed)
+              new Row (
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    new Padding (
+                      padding: EdgeInsets.only(right: 4),
+                      child: new Container(
+                          width: (MediaQuery.of(context).size.width - 120) * 0.5,
+                          child: new FlatButton(
+                            child: new Text("Save",
+                              style: TextStyle(color: Color(0xFF283568), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                              textAlign: TextAlign.center,),
+                            onPressed: () {
+                              updateUser();
+                              _editButtonPressed = false;
+                              showSettings();
+                            },
+                          )
+                      ),
+                    ),
+                    new Container(
+                        width: (MediaQuery.of(context).size.width - 120) * 0.5,
+                        child: new FlatButton(
+                          child: new Text("Cancel",
+                            style: TextStyle(color: Color(0xFFD48032), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                            textAlign: TextAlign.center,),
+                          onPressed: () {
+                            _editButtonPressed = false;
+                            clearControllers();
+                            showSettings();
+                          },
+                        )
+                    ),
+                  ]
+              )
+          ]
+        )
+      )
+    );
+  }
+
+  Widget buildWaitingScreen() {
+    return Scaffold(
+      body: Container(
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  void updateUser() async {
+    await _firestoreUsers.setUserName(widget.userId, nameController.text == "" ? user.getName() : nameController.text);
+    await _firestoreUsers.setUserEmail(widget.userId, emailController.text == "" ? user.getEmail() : emailController.text);
+    await _firestoreUsers.setUserPhoneNumber(widget.userId, phoneNumberController.text == "" ? user.getPhoneNumber() : phoneNumberController.text);
+    await _firestoreUsers.setUserAddress(widget.userId, addressController.text == "" ? user.getAddress() : addressController.text);
+    clearControllers();
+  }
+
+  void clearControllers() {
+    nameController.clear();
+    emailController.clear();
+    phoneNumberController.clear();
+    addressController.clear();
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_selectedIndex == 0) {
-      if (_addButtonPressed) {
-        return buildConfirmationPage();
-      } else if (_arrowPressed) {
-        return buildShippingPage();
+    getUser();
+    if (user == null) {
+      return buildWaitingScreen();
+    } else {
+      if (_selectedIndex == 0) {
+        if (_addButtonPressed) {
+          return buildConfirmationPage();
+        } else if (_arrowPressed) {
+          return buildShippingPage();
+        }
+        return buildOrdersPage();
+      } else if (_selectedIndex == 1) {
+        return buildHomePage();
+      } else if (_selectedIndex == 2) {
+        return buildProfilePage();
       }
-      return buildOrdersPage();
-    } else if (_selectedIndex == 1) {
-      return buildHomePage();
-    } else if (_selectedIndex == 2) {
-      return buildProfilePage();
     }
   }
 }
