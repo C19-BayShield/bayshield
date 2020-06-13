@@ -682,7 +682,7 @@ class _HubScreenState extends State<HubScreen>{
                     new Container(
                         width: (MediaQuery.of(context).size.width - 120) * 0.5,
                         child: new FlatButton(
-                          child: new Text("Back",
+                          child: new Text("Cancel",
                             style: TextStyle(color: Color(0xFFD48032), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
                             textAlign: TextAlign.center,),
                           onPressed: () {
