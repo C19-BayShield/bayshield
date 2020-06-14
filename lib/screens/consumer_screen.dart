@@ -6,6 +6,7 @@ import 'package:supplyside/util/mock_consts.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/util/firestore_users.dart';
 import 'package:supplyside/locator.dart';
+import 'package:supplyside/widgets.dart';
 
 
 class ConsumerScreen extends StatefulWidget {
@@ -24,9 +25,58 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
 
   final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
   MedicalFacility user;
+  int _selectedIndex = 1; // default loads Home Page.
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
 
   TextStyle orderStyle = TextStyle(fontSize: 16.0,letterSpacing: .5, color: Color(0xFF263151));
   TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
+  String _message = "Alert: PPE Design Update. Read More";
+  int _pending = 4;
+  int _shipped = 100;
+  int _newQuantity = 0;
+
+  int _index = 0;
+
+  bool _initialized = false;
+  bool _addButtonPressed = false;
+  bool _arrowPressed = false;
+  bool _editButtonPressed = false;
+
+  List<bool> _isSelectedOrdersPage = [true, false, false]; // defaults at Incoming tab.
+  bool _displayIncoming = true;
+  bool _displayPending = false;
+  bool _displayShipped = false;
+
+  List<bool> _isSelectedProfilePage = [true, false]; // defaults at Inventory tab.
+  bool _displayInventory = true;
+  bool _displaySettings = false;
+
+
+  void _onNavigationIconTapped(int index) {
+    setState(() {
+      _index = 0;
+      _selectedIndex = index;
+      _addButtonPressed = false;
+      _arrowPressed = false;
+      _editButtonPressed = false;
+      _initialized = false;
+      _displayInventory = true;
+      _displaySettings = false;
+
+      nameController.clear();
+      emailController.clear();
+      phoneNumberController.clear();
+      addressController.clear();
+
+      _isSelectedProfilePage[0] = _displayInventory;
+      _isSelectedProfilePage[1] = _displaySettings;
+      build(context);
+    });
+  }
+
 
   Future getUser() async {
     MedicalFacility currUser = await _firestoreUsers.getMedicalFacility(widget.userId);
@@ -47,52 +97,6 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
           fit: BoxFit.cover,
         ),
       ),
-    );
-  }
-
-  Widget _buildProfileImage() {
-    return Center(
-      child: Container(
-        width: 140.0,
-        height: 140.0,
-        margin: const EdgeInsets.only(bottom: 15.0),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/default_hospital.jpg'),
-            fit: BoxFit.cover,
-          ),
-          borderRadius: BorderRadius.circular(80.0),
-          border: Border.all(
-            color: Colors.white,
-            width: 5.0,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey,
-              blurRadius: 10.0, // has the effect of softening the shadow
-              spreadRadius: 1.0, // has the effect of extending the shadow
-              offset: Offset(
-                0.0, // horizontal, move right 10
-                0.0, // vertical, move down 10
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFullName() {
-    TextStyle _nameTextStyle = TextStyle(
-      fontFamily: 'Roboto',
-      color: Colors.black,
-      fontSize: 24.0,
-      fontWeight: FontWeight.w400,
-    );
-
-    return Text(
-      user.getName() ?? "",
-      style: _nameTextStyle,
     );
   }
 
@@ -171,33 +175,6 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
       );
   }
 
-  Widget _buildFacilityName() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4.0),
-      ),
-      child: Text(
-        user.getFacilityName() ?? "",
-        style: TextStyle(
-          fontFamily: 'Spectral',
-          color: Colors.black,
-          fontSize: 20.0,
-          fontWeight: FontWeight.w300,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildRequestButton() {
-    return RaisedButton(
-      child: Text('ORDER'),
-      onPressed: () => Navigator.pushNamed(context, REQUEST_SCREEN),
-      padding: EdgeInsets.symmetric(horizontal: 32),
-    );
-  }
-
   Widget _buildRequestList() {
     return ListView(
       shrinkWrap: true,
@@ -218,24 +195,6 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     );
   }
 
-   Widget _buildAppBar() {
-    return Positioned(
-      top: 0.0,
-      left: 0.0,
-      right: 0.0,
-      child: AppBar(
-        title: new Text('Medical Facility Home'),
-        backgroundColor: Colors.black.withOpacity(0.5),
-        actions: <Widget>[
-          new FlatButton(
-              child: new Text('Logout',
-                  style: new TextStyle(fontSize: 17.0, color: Colors.white)),
-              onPressed: signOut)
-        ],
-      ),
-    ); 
-  }
-
    signOut() async {
     try {
       await widget.auth.signOut();
@@ -245,40 +204,88 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    getUser();
-    Size screenSize = MediaQuery.of(context).size;
+  Widget buildHomePage() {
+    String firstName = user.getName().split(" ")[0];
+    String _greeting = "Hi, " + firstName + ".";
     if (user == null) {
       return buildWaitingScreen();
     } else {
-      return Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(
-          children: <Widget>[
-            _buildCoverImage(screenSize),
-            SafeArea(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: screenSize.height / 4.7,
-                    ),
-                    _buildProfileImage(),
-                    _buildFullName(),
-                    _buildFacilityName(),
-                    _buildAddress(),
-                    _buildRequestButton(),
-                    Container(
-                      height: screenSize.height / 3.3, 
-                      child: _buildRequestList(),
-                    ),
-                  ],
-                ),
-              ),
-              _buildAppBar()
-            ],
+          return new Scaffold(
+          backgroundColor: Colors.white,
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+            child: new MainAppBar(signOut: signOut),
           ),
-      );
+          body: SafeArea(
+            child: new Container(
+                child: Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          new UserTypeTag(userTag: user.getFacilityName() ?? ""),
+                          new Text(_greeting, style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,),
+                          Container(
+                            height: MediaQuery.of(context).size.height / 20,
+                            width: MediaQuery.of(context).size.width - 110,
+                            color: Colors.transparent,
+                            child: new AlertTag(message: _message),
+                          ),
+                          Container(
+                              width: MediaQuery.of(context).size.width - 110,
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                      height: MediaQuery.of(context).size.height / 7,
+                                      width: (MediaQuery.of(context).size.width - 120) / 2,
+                                      color: Colors.transparent,
+                                      child: new PendingItemsCard(pending: _pending, onPressed: () => {}),
+                                    ),
+                                    Container(
+                                      height: MediaQuery.of(context).size.height / 7,
+                                      width: (MediaQuery.of(context).size.width - 120) / 2,
+                                      color: Colors.transparent,
+                                      child: new ShippedItemsCard(shipped: _shipped, onPressed: () => {}),
+                                    ),
+                                  ]
+                              )
+                          ),
+                          new NewOrderButton(onPressed: () => Navigator.pushNamed(context, REQUEST_SCREEN),),
+                           Container(
+                              height: MediaQuery.of(context).size.height / 15,
+                              width: MediaQuery.of(context).size.width - 110,
+                              color: Colors.transparent,
+                            ),
+                        ]
+                    )
+                )
+            ),
+          ),
+          bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onNavigationIconTapped),
+        );
+      }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    getUser();
+    if (user == null) {
+      return buildWaitingScreen();
+    } else {
+      return buildHomePage();
+      // if (_selectedIndex == 0) {
+      //   if (_addButtonPressed) {
+      //     return buildConfirmationPage();
+      //   } else if (_arrowPressed) {
+      //     return buildShippingPage();
+      //   }
+      //   return buildOrdersPage();
+      // } else if (_selectedIndex == 1) {
+      //   return buildHomePage();
+      // } else if (_selectedIndex == 2) {
+      //   return buildProfilePage();
+      // }
     }
   }
 }

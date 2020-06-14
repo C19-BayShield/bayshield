@@ -231,6 +231,32 @@ class InventoryButton extends StatelessWidget {
   }
 }
 
+class NewOrderButton extends StatelessWidget {
+  final Function() onPressed;
+
+  NewOrderButton ({Key key, @required this.onPressed}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height / 12,
+      width: MediaQuery.of(context).size.width - 110,
+      color: Colors.transparent,
+      child: Container(
+          decoration: BoxDecoration(
+              color: Color(0xFF283568),
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: new FlatButton(
+            child: new Text("New Order",
+              style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,),
+            onPressed: onPressed,
+          )
+      ),
+    );
+  }
+}
+
+
 class ItemCard extends StatelessWidget {
   final String asset;
   final String itemName;

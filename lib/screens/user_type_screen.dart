@@ -56,7 +56,11 @@ class _UserTypeScreenState extends State<UserTypeScreen>{
             shape: new RoundedRectangleBorder(
                 borderRadius: new BorderRadius.circular(10.0)),
             onPressed: () {
-              updateUserType(widget.userId, label);
+              if (label == "Medical Organization") {
+                updateUserType(widget.userId, "Medical Facility");
+              } else {
+                updateUserType(widget.userId, label);
+              }
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => SignUpScreen(userId: widget.userId, auth: widget.auth, label: label)),
