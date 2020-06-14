@@ -257,6 +257,29 @@ class NewOrderButton extends StatelessWidget {
   }
 }
 
+class NewOrderPlus extends StatelessWidget {
+  final Function() onPressed;
+
+  NewOrderPlus ({Key key, @required this.onPressed}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.transparent,
+      padding: EdgeInsets.only(top: 8, left: 40),
+      alignment: Alignment.centerLeft,
+      child: Container(
+          child: new FlatButton.icon(
+            icon: Icon(Icons.add_circle, color: Color(0XFFB7CDFF), size: 48.0), 
+            label: new Text("   Add Order",
+              style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto',),
+              textAlign: TextAlign.left,),
+            onPressed: onPressed,
+          )
+      ),
+    );
+  }
+}
+
 
 class ItemCard extends StatelessWidget {
   final String asset;

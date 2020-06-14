@@ -89,58 +89,41 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
   }
 
   Widget _buildRequestItem(SupplyRequest req, BuildContext context) {
-    double c_width = MediaQuery.of(context).size.width;
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget> [
-        Container(
-          width: c_width * .8,
-          color: Color(0xFF313F84),
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          child: 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(right: 16),
-                  child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(req.item.imageUrl, 
-                    width: 64, 
-                    height: 64,
-                    fit: BoxFit.fill
-                  ),
-                ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(mainAxisSize: MainAxisSize.min,children: <Widget>[Text(req.item.name, style: Theme.of(context).textTheme.headline3,), SizedBox(width: 16),],),
-                    Text('${req.amtOrdered.toString()} Ordered', style: Theme.of(context).textTheme.subtitle2 ),
-                    Text('${req.statusToString()}', style: Theme.of(context).textTheme.subtitle2)
-                  ],
-                )
-              ],
-            ),
-          ),
-        Container(
-          color: Color(0xFFFFFFFF),
-          width: c_width * .8,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('Order #DOJF837D', style: this.orderStyle,),
-                Text('Order Date - 06 May 2020', style: this.orderSubtitleStyle)
-              ],
+    String asset = req.item.imageUrl ?? "assets/images/logo.png";
+    String itemName =  req.item.name;
+    int quantity = req.amtOrdered;
+
+    return new ItemCard(asset: asset, itemName: itemName, quantity: quantity, 
+      itemType: "USCF V1", date: "06 May 2020", hasShipped: true, isPending: false,
+      status: req.statusToString(),  
+      deliveryLocation: user.getFacilityName(),
+      deliveryDate: "10 May 2020",
+    );
+  }
+
+    Widget showShippedItems() {
+    // TODO: replace hard-coded values.
+    String asset = "assets/images/face_shield_icon.png";
+    String itemName = "Face Shield";
+    int quantity = 50;
+    String itemType = "USCF V1";
+    String date = "02/01/2020";
+    String status = "Expected\nDelivery";
+    String deliveryDate = "02/06/2020";
+    String deliveryLocation = "Tang Center";
+
+    return new Padding (
+        padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+        child: Container(
+            width: MediaQuery.of(context).size.width - 80,
+            child: new Column (
+                children: <Widget> [
+                  new ItemCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType, date: date, hasShipped: true, isPending: false,
+                    status: status, deliveryDate: deliveryDate, deliveryLocation: deliveryLocation),
+                ]
             )
-          ),
         )
-        ]
-      );
+    );
   }
 
   Widget _buildRequestList() {
@@ -319,8 +302,8 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                               padding: EdgeInsets.only(top: 30, bottom: 25)
                           )
                       ),
-                     _buildRequestList(),
-                     new NewOrderButton(onPressed: () => Navigator.pushNamed(context, REQUEST_SCREEN),),
+                     showShippedItems(),
+                     new NewOrderPlus(onPressed: () => Navigator.pushNamed(context, REQUEST_SCREEN),),
                     ],
                   )
               )
