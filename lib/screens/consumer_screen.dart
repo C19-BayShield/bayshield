@@ -261,22 +261,9 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                                 padding: EdgeInsets.only(top: 30, bottom: 25)
                             )
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                            color: Color(0xFFD2D2D2),
-                          ),
-                            child: ToggleButtons(
-                          fillColor: Color(0xFFB7CDFF),
-                          borderWidth: 0.0,
-                          constraints: BoxConstraints(minWidth: (MediaQuery.of(context).size.width - 110)/2, minHeight: MediaQuery.of(context).size.height / 25),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          children: <Widget>[
-                            new Text("Profile", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,),
-                            new Text("Status", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,),
-                          ],
+                        TwoToggle(
+                          left: "Profile",
+                          right: "Status",
                           onPressed: (int index) {
                             setState(() {
                               _isSelectedProfilePage[index] = true;
@@ -289,7 +276,6 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                             });
                           },
                           isSelected: _isSelectedProfilePage,
-                        ),
                         ),
                         if (_displayStatus) new Text("TODO: Organization Details", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                           textAlign: TextAlign.left,),
