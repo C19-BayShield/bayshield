@@ -7,9 +7,10 @@ import 'package:supplyside/util/firestore_users.dart';
 
 class ProfileSettings extends StatefulWidget {
   
-  ProfileSettings({Key key, @required this.user}) : super(key: key);
+  ProfileSettings({Key key, @required this.user, @required this.title}) : super(key: key);
 
   final User user;
+  final String title;
 
   @override
   State<StatefulWidget> createState() => new _ProfileSettingState();
@@ -49,6 +50,11 @@ class _ProfileSettingState extends State<ProfileSettings>{
   }
 
   Widget build(BuildContext context) {
+    String name = widget.user.getName() ?? "";
+    String email = widget.user.getEmail() ?? "";
+    String phoneNo = widget.user.getPhoneNumber() ?? "";
+    String address = widget.user.getAddress() ?? "";
+
     return new Padding (
       padding: EdgeInsets.only(top: 10.0),
       child: Container(
@@ -58,8 +64,11 @@ class _ProfileSettingState extends State<ProfileSettings>{
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             new Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
+                new Text(widget.title, style: 
+                  TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                    textAlign: TextAlign.left,),
                 new IconButton(
                   onPressed: _onEditButtonPressed,
                   icon: Image.asset("assets/images/edit_button.png", height: 26, alignment: Alignment.centerRight),
@@ -79,7 +88,7 @@ class _ProfileSettingState extends State<ProfileSettings>{
                 if (!_editButtonPressed)
                   new Container(
                     width: MediaQuery.of(context).size.width * 0.5,
-                    child: new Text(widget.user.getName(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                    child: new Text(name, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
                       textAlign: TextAlign.left,),
                   ),
                 if (_editButtonPressed)
@@ -88,7 +97,7 @@ class _ProfileSettingState extends State<ProfileSettings>{
                       child: new EditFormField(
                         controller: nameController,
                         type: TextInputType.text,
-                        hint: widget.user.getName(),
+                        hint: name,
                         maxLines: 1,
                       )
                   ),
@@ -107,7 +116,7 @@ class _ProfileSettingState extends State<ProfileSettings>{
                   if (!_editButtonPressed)
                     new Container(
                       width: MediaQuery.of(context).size.width * 0.5,
-                      child: new Text(widget.user.getEmail(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                      child: new Text(email, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
                         textAlign: TextAlign.left,),
                     ),
                   if (_editButtonPressed)
@@ -116,7 +125,7 @@ class _ProfileSettingState extends State<ProfileSettings>{
                         child: new EditFormField(
                           controller: emailController,
                           type: TextInputType.text,
-                          hint: widget.user.getEmail(),
+                          hint: email,
                           maxLines: 1,
                         )
                     ),
@@ -135,7 +144,7 @@ class _ProfileSettingState extends State<ProfileSettings>{
                   if (!_editButtonPressed)
                     new Container(
                       width: MediaQuery.of(context).size.width * 0.5,
-                      child: new Text(widget.user.getPhoneNumber(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                      child: new Text(phoneNo, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
                         textAlign: TextAlign.left,),
                     ),
                   if (_editButtonPressed)
@@ -144,7 +153,7 @@ class _ProfileSettingState extends State<ProfileSettings>{
                         child: new EditFormField(
                           controller: phoneNumberController,
                           type: TextInputType.number,
-                          hint: widget.user.getPhoneNumber(),
+                          hint: phoneNo,
                           formatter: <TextInputFormatter>[
                             WhitelistingTextInputFormatter.digitsOnly
                           ],
@@ -166,7 +175,7 @@ class _ProfileSettingState extends State<ProfileSettings>{
                   if (!_editButtonPressed)
                     new Container(
                       width: MediaQuery.of(context).size.width * 0.5,
-                      child: new Text(widget.user.getAddress(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
+                      child: new Text(address, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
                         textAlign: TextAlign.left,),
                     ),
                   if (_editButtonPressed)
@@ -175,7 +184,7 @@ class _ProfileSettingState extends State<ProfileSettings>{
                       child: new EditFormField(
                         controller: addressController,
                         type: TextInputType.text,
-                        hint: widget.user.getAddress(),
+                        hint: address,
                         maxLines: 1,
                       )
                     ),

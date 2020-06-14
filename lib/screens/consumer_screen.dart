@@ -7,6 +7,7 @@ import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/util/firestore_users.dart';
 import 'package:supplyside/locator.dart';
 import 'package:supplyside/widgets.dart';
+import 'package:supplyside/state_widgets.dart';
 
 
 class ConsumerScreen extends StatefulWidget {
@@ -35,7 +36,6 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
   TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
   String _message = "Alert: PPE Design Update. Read More";
   int _pending = 4;
-  int _shipped = 100;
   int _newQuantity = 0;
 
   int _index = 0;
@@ -50,9 +50,9 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
   bool _displayPending = false;
   bool _displayShipped = false;
 
-  List<bool> _isSelectedProfilePage = [true, false]; // defaults at Inventory tab.
-  bool _displayInventory = true;
-  bool _displaySettings = false;
+  bool _displaySettings = true;
+  bool _displayStatus = false;
+  List<bool> _isSelectedProfilePage = [true, false]; 
 
 
   void _onNavigationIconTapped(int index) {
@@ -63,16 +63,16 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
       _arrowPressed = false;
       _editButtonPressed = false;
       _initialized = false;
-      _displayInventory = true;
-      _displaySettings = false;
+      _displayStatus = false;
+      _displaySettings = true;
 
       nameController.clear();
       emailController.clear();
       phoneNumberController.clear();
       addressController.clear();
 
-      _isSelectedProfilePage[0] = _displayInventory;
-      _isSelectedProfilePage[1] = _displaySettings;
+      _isSelectedProfilePage[0] = _displaySettings;
+      _isSelectedProfilePage[1] = _displayStatus;
       build(context);
     });
   }
@@ -86,38 +86,6 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
         user = currUser;
       });
     }
-  }
-
-  Widget _buildCoverImage(Size screenSize) {
-    return Container(
-      height: screenSize.height / 2.8,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/bgcover.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAddress() {
-    TextStyle bioTextStyle = TextStyle(
-      fontFamily: 'Spectral',
-      fontWeight: FontWeight.w400,//try changing weight to w500 if not thin
-      fontStyle: FontStyle.italic,
-      color: Color(0xFF799497),
-      fontSize: 16.0,
-    );
-
-    return Container(
-      color: Colors.white,
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        user.getAddress() ?? "",
-        textAlign: TextAlign.center,
-        style: bioTextStyle,
-      ),
-    );
   }
 
   Widget _buildRequestItem(SupplyRequest req, BuildContext context) {
@@ -246,7 +214,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                                       height: MediaQuery.of(context).size.height / 7,
                                       width: (MediaQuery.of(context).size.width - 120) / 2,
                                       color: Colors.transparent,
-                                      child: new ShippedItemsCard(shipped: _shipped, onPressed: () => {}),
+                                      child: new ShippedItemsCard(shipped: 100, onPressed: () => {}),
                                     ),
                                   ]
                               )
@@ -267,25 +235,96 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
       }
   }
 
+  Widget buildProfilePage() {
+    String _greeting = "Settings";
+
+    return new Scaffold(
+      resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+        child: new MainAppBar(signOut: signOut),
+      ),
+      body: SafeArea(
+        child: new SingleChildScrollView(
+          child: new Container(
+              child: Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                            width: MediaQuery.of(context).size.width - 110,
+                            color: Colors.transparent,
+                            child: new Padding(
+                                child: new Text(_greeting, style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.left,),
+                                padding: EdgeInsets.only(top: 30, bottom: 25)
+                            )
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                            color: Color(0xFFD2D2D2),
+                          ),
+                            child: ToggleButtons(
+                          fillColor: Color(0xFFB7CDFF),
+                          borderWidth: 0.0,
+                          constraints: BoxConstraints(minWidth: (MediaQuery.of(context).size.width - 110)/2, minHeight: MediaQuery.of(context).size.height / 25),
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          children: <Widget>[
+                            new Text("Profile", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,),
+                            new Text("Status", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,),
+                          ],
+                          onPressed: (int index) {
+                            setState(() {
+                              _isSelectedProfilePage[index] = true;
+                              _isSelectedProfilePage[1 - index] = false;
+                              _displaySettings = _isSelectedProfilePage[0];
+                              _displayStatus = _isSelectedProfilePage[1];
+                              if (_displaySettings) {
+                                _editButtonPressed = false;
+                              }
+                            });
+                          },
+                          isSelected: _isSelectedProfilePage,
+                        ),
+                        ),
+                        if (_displayStatus) new Text("TODO: Organization Details", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.left,),
+                        if (_displaySettings) new ProfileSettings(user: user, title: "Personal Information"),
+                      ]
+                  )
+              )
+          )
+        ),
+      ),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onNavigationIconTapped),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     getUser();
     if (user == null) {
       return buildWaitingScreen();
     } else {
-      return buildHomePage();
-      // if (_selectedIndex == 0) {
-      //   if (_addButtonPressed) {
-      //     return buildConfirmationPage();
-      //   } else if (_arrowPressed) {
-      //     return buildShippingPage();
-      //   }
-      //   return buildOrdersPage();
-      // } else if (_selectedIndex == 1) {
-      //   return buildHomePage();
-      // } else if (_selectedIndex == 2) {
-      //   return buildProfilePage();
-      // }
+      if (_selectedIndex == 0) {
+        if (_addButtonPressed) {
+          // return buildConfirmationPage();
+          return buildHomePage();
+        } else if (_arrowPressed) {
+          // return buildShippingPage();
+          return buildHomePage();
+        }
+        // return buildOrdersPage();
+      } else if (_selectedIndex == 1) {
+        return buildHomePage();
+      } else if (_selectedIndex == 2) {
+        return buildProfilePage();
+      }
     }
   }
 }
