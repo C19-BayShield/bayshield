@@ -61,7 +61,8 @@ class UserTypeTag extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
         child: new Center(
           child: new Text(userTag,
-            style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', 
+            fontWeight: FontWeight.bold, letterSpacing: 2.0),
             textAlign: TextAlign.center,),
         )
       )
@@ -84,7 +85,8 @@ class UserTypeTagBlue extends StatelessWidget {
             color: Color(0xFF697CC8), 
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
             child: new Text(userTag.toUpperCase(),
-              style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.white, fontSize: 15, 
+              fontFamily: 'Roboto', fontWeight: FontWeight.bold, letterSpacing: 2.0),
               textAlign: TextAlign.center,),
       )
     );

@@ -33,7 +33,7 @@ class _HubScreenState extends State<HubScreen>{
   int _incoming = 10;
   int _pending = 35;
   int _shipped = 13430;
-  String _userType = "C O L L E C T I O N  H U B";
+  String _userType = "COLLECTION HUB";
   String _message = "Alert: PPE Design Update. Read More";
 
   ItemConfirmationCard _itemConfirmationCard;

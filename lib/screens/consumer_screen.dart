@@ -172,6 +172,11 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     }
   }
 
+  void _onPendingPressed() {
+    _index = 1;
+    _onNavigationIconTapped(0);
+  }
+
   Widget buildHomePage() {
     String firstName = user.getName().split(" ")[0];
     String _greeting = "Hi, " + firstName + ".";
@@ -208,7 +213,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                                       height: MediaQuery.of(context).size.height / 7,
                                       width: (MediaQuery.of(context).size.width - 120) / 2,
                                       color: Colors.transparent,
-                                      child: new PendingItemsCard(pending: _pending, onPressed: () => {}),
+                                      child: new PendingItemsCard(pending: _pending, onPressed: _onPendingPressed),
                                     ),
                                     Container(
                                       height: MediaQuery.of(context).size.height / 7,
@@ -256,7 +261,8 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                             width: MediaQuery.of(context).size.width - 110,
                             color: Colors.transparent,
                             child: new Padding(
-                                child: new Text(_greeting, style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                child: new Text(_greeting, style: TextStyle(color: Colors.black, 
+                                fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.left,),
                                 padding: EdgeInsets.only(top: 30, bottom: 25)
                             )
@@ -290,6 +296,42 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     );
   }
 
+  Widget buildOrdersPage() {
+    return new Scaffold(
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+        child: new MainAppBar(signOut: signOut),
+      ),
+      body: SafeArea(
+        child: new SingleChildScrollView(
+          child: new Container(
+              child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          width: MediaQuery.of(context).size.width - 110,
+                          color: Colors.transparent,
+                          child: new Padding(
+                              child: new Text("Orders", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,),
+                              padding: EdgeInsets.only(top: 30, bottom: 25)
+                          )
+                      ),
+                     _buildRequestList(),
+                     new NewOrderButton(onPressed: () => Navigator.pushNamed(context, REQUEST_SCREEN),),
+                    ],
+                  )
+              )
+          )
+        ),
+      ),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex , onItemTapped: _onNavigationIconTapped),
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -298,14 +340,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
       return buildWaitingScreen();
     } else {
       if (_selectedIndex == 0) {
-        if (_addButtonPressed) {
-          // return buildConfirmationPage();
-          return buildHomePage();
-        } else if (_arrowPressed) {
-          // return buildShippingPage();
-          return buildHomePage();
-        }
-        // return buildOrdersPage();
+        return buildOrdersPage();
       } else if (_selectedIndex == 1) {
         return buildHomePage();
       } else if (_selectedIndex == 2) {
