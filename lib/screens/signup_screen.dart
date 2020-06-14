@@ -171,7 +171,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
               // showNameInput(),
               // showEmailInput(),
               showPhoneNumberInput(),
-              if (widget.label == 'Medical Facility') showMedicalFacilityNameInput(),
+              if (widget.label == 'Medical Organization') showMedicalFacilityNameInput(),
               if (widget.label == 'Collection Hub') showCollectionHubNameInput(),
               showAddressInput(),
               new SizedBox(height: 24),
@@ -243,7 +243,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
     if (validateAndSave()) {
       try {
         switch(widget.label) {
-          case 'Medical Facility': {
+          case 'Medical Organization': {
             setMedicalFacilityInfo(widget.userId, 
                 _phoneNumber, _medicalFacilityName, _address);
             navigateToRootScreen(context, widget.userId);
