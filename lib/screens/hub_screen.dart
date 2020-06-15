@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/widgets.dart';
+import 'package:supplyside/state_widgets.dart';
 import 'package:supplyside/locator.dart';
 import 'package:supplyside/datamodels/user.dart';
 import 'package:supplyside/util/firestore_users.dart';
@@ -32,7 +33,7 @@ class _HubScreenState extends State<HubScreen>{
   int _incoming = 10;
   int _pending = 35;
   int _shipped = 13430;
-  String _userType = "C O L L E C T I O N  H U B";
+  String _userType = "COLLECTION HUB";
   String _message = "Alert: PPE Design Update. Read More";
 
   ItemConfirmationCard _itemConfirmationCard;
@@ -114,13 +115,6 @@ class _HubScreenState extends State<HubScreen>{
     build(context);
   }
 
-  void _onEditButtonPressed() {
-    _selectedIndex = 2;
-    _editButtonPressed = !_editButtonPressed;
-    _initialized = false;
-    clearControllers();
-    build(context);
-  }
 
   void signOut() async {
     try {
@@ -561,19 +555,9 @@ class _HubScreenState extends State<HubScreen>{
                                 padding: EdgeInsets.only(top: 30, bottom: 25)
                             )
                         ),
-                        ToggleButtons(
-                          fillColor: Color(0xFFB7CDFF),
-                          borderColor: Color(0xFFB2B2B2),
-                          selectedBorderColor: Color(0xFFB2B2B2),
-                          borderWidth: 2.0,
-                          constraints: BoxConstraints(minWidth: (MediaQuery.of(context).size.width - 110)/2, minHeight: MediaQuery.of(context).size.height / 25),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          children: <Widget>[
-                            new Text("Inventory", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,),
-                            new Text("Settings", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.center,),
-                          ],
+                        new TwoToggle(
+                          left: "Inventory",
+                          right: "Settings",
                           onPressed: (int index) {
                             setState(() {
                               _isSelectedProfilePage[index] = true;
@@ -589,7 +573,7 @@ class _HubScreenState extends State<HubScreen>{
                         ),
                         if (_displayInventory) new Text("Inventory", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                           textAlign: TextAlign.left,),
-                        if (_displaySettings) showSettings(),
+                        if (_displaySettings) new ProfileSettings(user: user, title: ""),
                       ]
                   )
               )
@@ -611,181 +595,6 @@ class _HubScreenState extends State<HubScreen>{
     }
   }
 
-  Widget showSettings() {
-    return new Padding (
-      padding: EdgeInsets.only(top: 10.0),
-      child: Container(
-        width: MediaQuery.of(context).size.width - 100,
-        child: new Column (
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                new IconButton(
-                  onPressed: _onEditButtonPressed,
-                  icon: Image.asset("assets/images/edit_button.png", height: 26, alignment: Alignment.centerRight),
-                )
-              ]
-            ),
-            SizedBox(height: 5),
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                new Container(
-                  width: MediaQuery.of(context).size.width * 0.25,
-                  child: new Text("Name", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.left,)
-                ),
-                if (!_editButtonPressed)
-                  new Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    child: new Text(user.getName(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
-                      textAlign: TextAlign.left,),
-                  ),
-                if (_editButtonPressed)
-                  new Container(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: new EditFormField(
-                        controller: nameController,
-                        type: TextInputType.text,
-                        hint: user.getName(),
-                        maxLines: 1,
-                      )
-                  ),
-              ]
-            ),
-            SizedBox(height: 10),
-            new Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  new Container(
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      child: new Text("Email", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.left,)
-                  ),
-                  if (!_editButtonPressed)
-                    new Container(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: new Text(user.getEmail(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
-                        textAlign: TextAlign.left,),
-                    ),
-                  if (_editButtonPressed)
-                    new Container(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        child: new EditFormField(
-                          controller: emailController,
-                          type: TextInputType.text,
-                          hint: user.getEmail(),
-                          maxLines: 1,
-                        )
-                    ),
-                ]
-            ),
-            SizedBox(height: 10),
-            new Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  new Container(
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      child: new Text("Phone", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.left,)
-                  ),
-                  if (!_editButtonPressed)
-                    new Container(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: new Text(user.getPhoneNumber(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
-                        textAlign: TextAlign.left,),
-                    ),
-                  if (_editButtonPressed)
-                    new Container(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                        child: new EditFormField(
-                          controller: phoneNumberController,
-                          type: TextInputType.number,
-                          hint: user.getPhoneNumber(),
-                          formatter: <TextInputFormatter>[
-                            WhitelistingTextInputFormatter.digitsOnly
-                          ],
-                          maxLines: 1,
-                        )
-                    ),
-                ]
-            ),
-            SizedBox(height: 10),
-            new Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  new Container(
-                      width: MediaQuery.of(context).size.width * 0.25,
-                      child: new Text("Address", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.left,)
-                  ),
-                  if (!_editButtonPressed)
-                    new Container(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: new Text(user.getAddress(), style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'),
-                        textAlign: TextAlign.left,),
-                    ),
-                  if (_editButtonPressed)
-                    new Container(
-                        width: MediaQuery.of(context).size.width * 0.5,
-                      child: new EditFormField(
-                        controller: addressController,
-                        type: TextInputType.text,
-                        hint: user.getAddress(),
-                        maxLines: 1,
-                      )
-                    ),
-                ]
-            ),
-            SizedBox(height: 20),
-            if (_editButtonPressed)
-              new Row (
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    new Padding (
-                      padding: EdgeInsets.only(right: 4),
-                      child: new Container(
-                          width: (MediaQuery.of(context).size.width - 120) * 0.5,
-                          child: new FlatButton(
-                            child: new Text("Save",
-                              style: TextStyle(color: Color(0xFF283568), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
-                              textAlign: TextAlign.center,),
-                            onPressed: () {
-                              updateUser();
-                              _editButtonPressed = false;
-                              showSettings();
-                            },
-                          )
-                      ),
-                    ),
-                    new Container(
-                        width: (MediaQuery.of(context).size.width - 120) * 0.5,
-                        child: new FlatButton(
-                          child: new Text("Cancel",
-                            style: TextStyle(color: Color(0xFFD48032), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
-                            textAlign: TextAlign.center,),
-                          onPressed: () {
-                            _editButtonPressed = false;
-                            clearControllers();
-                            showSettings();
-                          },
-                        )
-                    ),
-                  ]
-              )
-          ]
-        )
-      )
-    );
-  }
-
   Widget buildWaitingScreen() {
     return Scaffold(
       body: Container(
@@ -793,21 +602,6 @@ class _HubScreenState extends State<HubScreen>{
         child: CircularProgressIndicator(),
       ),
     );
-  }
-
-  void updateUser() async {
-    await _firestoreUsers.setUserName(widget.userId, nameController.text == "" ? user.getName() : nameController.text);
-    await _firestoreUsers.setUserEmail(widget.userId, emailController.text == "" ? user.getEmail() : emailController.text);
-    await _firestoreUsers.setUserPhoneNumber(widget.userId, phoneNumberController.text == "" ? user.getPhoneNumber() : phoneNumberController.text);
-    await _firestoreUsers.setUserAddress(widget.userId, addressController.text == "" ? user.getAddress() : addressController.text);
-    clearControllers();
-  }
-
-  void clearControllers() {
-    nameController.clear();
-    emailController.clear();
-    phoneNumberController.clear();
-    addressController.clear();
   }
 
   @override

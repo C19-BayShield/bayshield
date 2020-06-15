@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:supplyside/util/authentication.dart';
 
 class BayShieldAppBar extends StatelessWidget {
   final String title;
@@ -62,7 +61,8 @@ class UserTypeTag extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
         child: new Center(
           child: new Text(userTag,
-            style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', 
+            fontWeight: FontWeight.bold, letterSpacing: 2.0),
             textAlign: TextAlign.center,),
         )
       )
@@ -85,7 +85,8 @@ class UserTypeTagBlue extends StatelessWidget {
             color: Color(0xFF697CC8), 
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
             child: new Text(userTag.toUpperCase(),
-              style: TextStyle(color: Colors.white, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.white, fontSize: 15, 
+              fontFamily: 'Roboto', fontWeight: FontWeight.bold, letterSpacing: 2.0),
               textAlign: TextAlign.center,),
       )
     );
@@ -230,6 +231,55 @@ class InventoryButton extends StatelessWidget {
     );
   }
 }
+
+class NewOrderButton extends StatelessWidget {
+  final Function() onPressed;
+
+  NewOrderButton ({Key key, @required this.onPressed}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height / 12,
+      width: MediaQuery.of(context).size.width - 110,
+      color: Colors.transparent,
+      child: Container(
+          decoration: BoxDecoration(
+              color: Color(0xFF283568),
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: new FlatButton(
+            child: new Text("New Order",
+              style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,),
+            onPressed: onPressed,
+          )
+      ),
+    );
+  }
+}
+
+class NewOrderPlus extends StatelessWidget {
+  final Function() onPressed;
+
+  NewOrderPlus ({Key key, @required this.onPressed}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.transparent,
+      padding: EdgeInsets.only(top: 8, left: 40),
+      alignment: Alignment.centerLeft,
+      child: Container(
+          child: new FlatButton.icon(
+            icon: Icon(Icons.add_circle, color: Color(0XFFB7CDFF), size: 48.0), 
+            label: new Text("   Add Order",
+              style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto',),
+              textAlign: TextAlign.left,),
+            onPressed: onPressed,
+          )
+      ),
+    );
+  }
+}
+
 
 class ItemCard extends StatelessWidget {
   final String asset;
@@ -555,6 +605,39 @@ class EditFormField extends StatelessWidget {
         inputFormatters: formatter,
         onChanged: null,
       ),
+    );
+  }
+}
+
+class TwoToggle extends StatelessWidget {
+  final Function(int) onPressed;
+  final List<bool> isSelected;
+  final String left;
+  final String right;
+
+  TwoToggle({Key key, @required this.onPressed, @required this.isSelected,
+    @required this.left, @required this.right,}) : super(key: key);
+
+  Widget build(BuildContext context) {
+    return new Container(
+      decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+        color: Color(0xFFD2D2D2),
+      ),
+        child: ToggleButtons(
+      fillColor: Color(0xFFB7CDFF),
+      borderWidth: 0.0,
+      constraints: BoxConstraints(minWidth: (MediaQuery.of(context).size.width - 110)/2, minHeight: MediaQuery.of(context).size.height / 25),
+      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+      children: <Widget>[
+        new Text(left, style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,),
+        new Text(right, style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,),
+      ],
+      onPressed: onPressed,
+      isSelected: isSelected,
+    ),
     );
   }
 }

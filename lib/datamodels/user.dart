@@ -51,7 +51,7 @@ class User {
 
 class MedicalFacility extends User {
 
-  MedicalFacility({id, String email, int phoneNumber, this.address, @required this.medicalFacilityName, this.staffSize}) :
+  MedicalFacility({id, String email, String phoneNumber, this.address, @required this.medicalFacilityName, this.staffSize}) :
     super(
       id: id, 
       email: email, 
@@ -64,6 +64,7 @@ class MedicalFacility extends User {
       email = data['email'],
       name = data['name'],
       address = data['address'],
+      phoneNumber = data['phoneNumber'],
       medicalFacilityName = data['medicalFacilityName'];
 
   String getFacilityName() {
@@ -78,5 +79,6 @@ class MedicalFacility extends User {
   int staffSize;
   String contactPersonName;
   String contactPersonTitle;
+  String phoneNumber;
 
 }

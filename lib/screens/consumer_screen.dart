@@ -6,6 +6,8 @@ import 'package:supplyside/util/mock_consts.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/util/firestore_users.dart';
 import 'package:supplyside/locator.dart';
+import 'package:supplyside/widgets.dart';
+import 'package:supplyside/state_widgets.dart';
 
 
 class ConsumerScreen extends StatefulWidget {
@@ -24,9 +26,57 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
 
   final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
   MedicalFacility user;
+  int _selectedIndex = 1; // default loads Home Page.
+  TextEditingController nameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
 
   TextStyle orderStyle = TextStyle(fontSize: 16.0,letterSpacing: .5, color: Color(0xFF263151));
   TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
+  String _message = "Alert: PPE Design Update. Read More";
+  int _pending = 4;
+  int _newQuantity = 0;
+
+  int _index = 0;
+
+  bool _initialized = false;
+  bool _addButtonPressed = false;
+  bool _arrowPressed = false;
+  bool _editButtonPressed = false;
+
+  List<bool> _isSelectedOrdersPage = [true, false, false]; // defaults at Incoming tab.
+  bool _displayIncoming = true;
+  bool _displayPending = false;
+  bool _displayShipped = false;
+
+  bool _displaySettings = true;
+  bool _displayStatus = false;
+  List<bool> _isSelectedProfilePage = [true, false]; 
+
+
+  void _onNavigationIconTapped(int index) {
+    setState(() {
+      _index = 0;
+      _selectedIndex = index;
+      _addButtonPressed = false;
+      _arrowPressed = false;
+      _editButtonPressed = false;
+      _initialized = false;
+      _displayStatus = false;
+      _displaySettings = true;
+
+      nameController.clear();
+      emailController.clear();
+      phoneNumberController.clear();
+      addressController.clear();
+
+      _isSelectedProfilePage[0] = _displaySettings;
+      _isSelectedProfilePage[1] = _displayStatus;
+      build(context);
+    });
+  }
+
 
   Future getUser() async {
     MedicalFacility currUser = await _firestoreUsers.getMedicalFacility(widget.userId);
@@ -38,163 +88,41 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     }
   }
 
-  Widget _buildCoverImage(Size screenSize) {
-    return Container(
-      height: screenSize.height / 2.8,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/bgcover.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileImage() {
-    return Center(
-      child: Container(
-        width: 140.0,
-        height: 140.0,
-        margin: const EdgeInsets.only(bottom: 15.0),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/default_hospital.jpg'),
-            fit: BoxFit.cover,
-          ),
-          borderRadius: BorderRadius.circular(80.0),
-          border: Border.all(
-            color: Colors.white,
-            width: 5.0,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey,
-              blurRadius: 10.0, // has the effect of softening the shadow
-              spreadRadius: 1.0, // has the effect of extending the shadow
-              offset: Offset(
-                0.0, // horizontal, move right 10
-                0.0, // vertical, move down 10
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFullName() {
-    TextStyle _nameTextStyle = TextStyle(
-      fontFamily: 'Roboto',
-      color: Colors.black,
-      fontSize: 24.0,
-      fontWeight: FontWeight.w400,
-    );
-
-    return Text(
-      user.getName() ?? "",
-      style: _nameTextStyle,
-    );
-  }
-
-  Widget _buildAddress() {
-    TextStyle bioTextStyle = TextStyle(
-      fontFamily: 'Spectral',
-      fontWeight: FontWeight.w400,//try changing weight to w500 if not thin
-      fontStyle: FontStyle.italic,
-      color: Color(0xFF799497),
-      fontSize: 16.0,
-    );
-
-    return Container(
-      color: Colors.white,
-      padding: EdgeInsets.all(8.0),
-      child: Text(
-        user.getAddress() ?? "",
-        textAlign: TextAlign.center,
-        style: bioTextStyle,
-      ),
-    );
-  }
-
   Widget _buildRequestItem(SupplyRequest req, BuildContext context) {
-    double c_width = MediaQuery.of(context).size.width;
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget> [
-        Container(
-          width: c_width * .8,
-          color: Color(0xFF313F84),
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-          child: 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(right: 16),
-                  child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.network(req.item.imageUrl, 
-                    width: 64, 
-                    height: 64,
-                    fit: BoxFit.fill
-                  ),
-                ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(mainAxisSize: MainAxisSize.min,children: <Widget>[Text(req.item.name, style: Theme.of(context).textTheme.headline3,), SizedBox(width: 16),],),
-                    Text('${req.amtOrdered.toString()} Ordered', style: Theme.of(context).textTheme.subtitle2 ),
-                    Text('${req.statusToString()}', style: Theme.of(context).textTheme.subtitle2)
-                  ],
-                )
-              ],
-            ),
-          ),
-        Container(
-          color: Color(0xFFFFFFFF),
-          width: c_width * .8,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('Order #DOJF837D', style: this.orderStyle,),
-                Text('Order Date - 06 May 2020', style: this.orderSubtitleStyle)
-              ],
-            )
-          ),
-        )
-        ]
-      );
-  }
+    String asset = req.item.imageUrl ?? "assets/images/logo.png";
+    String itemName =  req.item.name;
+    int quantity = req.amtOrdered;
 
-  Widget _buildFacilityName() {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 6.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(4.0),
-      ),
-      child: Text(
-        user.getFacilityName() ?? "",
-        style: TextStyle(
-          fontFamily: 'Spectral',
-          color: Colors.black,
-          fontSize: 20.0,
-          fontWeight: FontWeight.w300,
-        ),
-      ),
+    return new ItemCard(asset: asset, itemName: itemName, quantity: quantity, 
+      itemType: "USCF V1", date: "06 May 2020", hasShipped: true, isPending: false,
+      status: req.statusToString(),  
+      deliveryLocation: user.getFacilityName(),
+      deliveryDate: "10 May 2020",
     );
   }
 
-  Widget _buildRequestButton() {
-    return RaisedButton(
-      child: Text('ORDER'),
-      onPressed: () => Navigator.pushNamed(context, REQUEST_SCREEN),
-      padding: EdgeInsets.symmetric(horizontal: 32),
+    Widget showShippedItems() {
+    // TODO: replace hard-coded values.
+    String asset = "assets/images/face_shield_icon.png";
+    String itemName = "Face Shield";
+    int quantity = 50;
+    String itemType = "USCF V1";
+    String date = "02/01/2020";
+    String status = "Expected\nDelivery";
+    String deliveryDate = "02/06/2020";
+    String deliveryLocation = "Tang Center";
+
+    return new Padding (
+        padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+        child: Container(
+            width: MediaQuery.of(context).size.width - 80,
+            child: new Column (
+                children: <Widget> [
+                  new ItemCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType, date: date, hasShipped: true, isPending: false,
+                    status: status, deliveryDate: deliveryDate, deliveryLocation: deliveryLocation),
+                ]
+            )
+        )
     );
   }
 
@@ -218,24 +146,6 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     );
   }
 
-   Widget _buildAppBar() {
-    return Positioned(
-      top: 0.0,
-      left: 0.0,
-      right: 0.0,
-      child: AppBar(
-        title: new Text('Medical Facility Home'),
-        backgroundColor: Colors.black.withOpacity(0.5),
-        actions: <Widget>[
-          new FlatButton(
-              child: new Text('Logout',
-                  style: new TextStyle(fontSize: 17.0, color: Colors.white)),
-              onPressed: signOut)
-        ],
-      ),
-    ); 
-  }
-
    signOut() async {
     try {
       await widget.auth.signOut();
@@ -245,40 +155,180 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    getUser();
-    Size screenSize = MediaQuery.of(context).size;
+  void _onPendingPressed() {
+    _index = 1;
+    _onNavigationIconTapped(0);
+  }
+
+  Widget buildHomePage() {
+    String firstName = user.getName().split(" ")[0];
+    String _greeting = "Hi, " + firstName + ".";
     if (user == null) {
       return buildWaitingScreen();
     } else {
-      return Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(
-          children: <Widget>[
-            _buildCoverImage(screenSize),
-            SafeArea(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: screenSize.height / 4.7,
-                    ),
-                    _buildProfileImage(),
-                    _buildFullName(),
-                    _buildFacilityName(),
-                    _buildAddress(),
-                    _buildRequestButton(),
-                    Container(
-                      height: screenSize.height / 3.3, 
-                      child: _buildRequestList(),
-                    ),
-                  ],
-                ),
-              ),
-              _buildAppBar()
-            ],
+          return new Scaffold(
+          backgroundColor: Colors.white,
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+            child: new MainAppBar(signOut: signOut),
           ),
-      );
+          body: SafeArea(
+            child: new Container(
+                child: Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          new UserTypeTag(userTag: user.getFacilityName() ?? ""),
+                          new Text(_greeting, style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,),
+                          Container(
+                            height: MediaQuery.of(context).size.height / 20,
+                            width: MediaQuery.of(context).size.width - 110,
+                            color: Colors.transparent,
+                            child: new AlertTag(message: _message),
+                          ),
+                          Container(
+                              width: MediaQuery.of(context).size.width - 110,
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                      height: MediaQuery.of(context).size.height / 7,
+                                      width: (MediaQuery.of(context).size.width - 120) / 2,
+                                      color: Colors.transparent,
+                                      child: new PendingItemsCard(pending: _pending, onPressed: _onPendingPressed),
+                                    ),
+                                    Container(
+                                      height: MediaQuery.of(context).size.height / 7,
+                                      width: (MediaQuery.of(context).size.width - 120) / 2,
+                                      color: Colors.transparent,
+                                      child: new ShippedItemsCard(shipped: 100, onPressed: () => {}),
+                                    ),
+                                  ]
+                              )
+                          ),
+                          new NewOrderButton(onPressed: () => Navigator.pushNamed(context, REQUEST_SCREEN),),
+                           Container(
+                              height: MediaQuery.of(context).size.height / 15,
+                              width: MediaQuery.of(context).size.width - 110,
+                              color: Colors.transparent,
+                            ),
+                        ]
+                    )
+                )
+            ),
+          ),
+          bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onNavigationIconTapped),
+        );
+      }
+  }
+
+  Widget buildProfilePage() {
+    String _greeting = "Settings";
+
+    return new Scaffold(
+      resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+        child: new MainAppBar(signOut: signOut),
+      ),
+      body: SafeArea(
+        child: new SingleChildScrollView(
+          child: new Container(
+              child: Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                            width: MediaQuery.of(context).size.width - 110,
+                            color: Colors.transparent,
+                            child: new Padding(
+                                child: new Text(_greeting, style: TextStyle(color: Colors.black, 
+                                fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.left,),
+                                padding: EdgeInsets.only(top: 30, bottom: 25)
+                            )
+                        ),
+                        TwoToggle(
+                          left: "Profile",
+                          right: "Status",
+                          onPressed: (int index) {
+                            setState(() {
+                              _isSelectedProfilePage[index] = true;
+                              _isSelectedProfilePage[1 - index] = false;
+                              _displaySettings = _isSelectedProfilePage[0];
+                              _displayStatus = _isSelectedProfilePage[1];
+                              if (_displaySettings) {
+                                _editButtonPressed = false;
+                              }
+                            });
+                          },
+                          isSelected: _isSelectedProfilePage,
+                        ),
+                        if (_displayStatus) new Text("TODO: Organization Details", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.left,),
+                        if (_displaySettings) new ProfileSettings(user: user, title: "Personal Information"),
+                      ]
+                  )
+              )
+          )
+        ),
+      ),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onNavigationIconTapped),
+    );
+  }
+
+  Widget buildOrdersPage() {
+    return new Scaffold(
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+        child: new MainAppBar(signOut: signOut),
+      ),
+      body: SafeArea(
+        child: new SingleChildScrollView(
+          child: new Container(
+              child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          width: MediaQuery.of(context).size.width - 110,
+                          color: Colors.transparent,
+                          child: new Padding(
+                              child: new Text("Orders", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,),
+                              padding: EdgeInsets.only(top: 30, bottom: 25)
+                          )
+                      ),
+                     showShippedItems(),
+                     new NewOrderPlus(onPressed: () => Navigator.pushNamed(context, REQUEST_SCREEN),),
+                    ],
+                  )
+              )
+          )
+        ),
+      ),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex , onItemTapped: _onNavigationIconTapped),
+    );
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    getUser();
+    if (user == null) {
+      return buildWaitingScreen();
+    } else {
+      if (_selectedIndex == 0) {
+        return buildOrdersPage();
+      } else if (_selectedIndex == 1) {
+        return buildHomePage();
+      } else if (_selectedIndex == 2) {
+        return buildProfilePage();
+      }
     }
   }
 }
