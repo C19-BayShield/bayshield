@@ -603,10 +603,10 @@ class _HubScreenState extends State<HubScreen>{
                         )
                       ]
                   ),
-                  if (_inventoryEditButtonPressed) new InventoryEditCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType),
-                  if (_inventoryEditButtonPressed) new InventoryEditCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType2),
                   if (!_inventoryEditButtonPressed) new InventoryCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType,),
                   if (!_inventoryEditButtonPressed) new InventoryCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType2,),
+                  if (_inventoryEditButtonPressed) new InventoryEditCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType),
+                  if (_inventoryEditButtonPressed) new InventoryEditCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType2),
                   if (_inventoryEditButtonPressed) new Row (
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
