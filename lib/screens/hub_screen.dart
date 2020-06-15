@@ -44,7 +44,8 @@ class _HubScreenState extends State<HubScreen>{
   bool _initialized = false;
   bool _addButtonPressed = false;
   bool _arrowPressed = false;
-  bool _editButtonPressed = false;
+  bool _settingsEditButtonPressed = false;
+  bool _inventoryEditButtonPressed = false;
 
   List<bool> _isSelectedOrdersPage = [true, false, false]; // defaults at Incoming tab.
   bool _displayIncoming = true;
@@ -60,11 +61,14 @@ class _HubScreenState extends State<HubScreen>{
 
   void _onNavigationIconTapped(int index) {
     setState(() {
-      _index = 0;
       _selectedIndex = index;
+      if (_selectedIndex != 0) {
+        _index = 0;
+      }
       _addButtonPressed = false;
       _arrowPressed = false;
-      _editButtonPressed = false;
+      _settingsEditButtonPressed = false;
+      _inventoryEditButtonPressed = false;
       _initialized = false;
       _displayInventory = true;
       _displaySettings = false;
@@ -115,6 +119,10 @@ class _HubScreenState extends State<HubScreen>{
     build(context);
   }
 
+  void _onInventoryEditButtonPressed() {
+    _inventoryEditButtonPressed = !_inventoryEditButtonPressed;
+    build(context);
+  }
 
   void signOut() async {
     try {
@@ -485,21 +493,7 @@ class _HubScreenState extends State<HubScreen>{
                               padding: EdgeInsets.only(top: 30, bottom: 25)
                           )
                       ),
-                      ToggleButtons(
-                        fillColor: Color(0xFFB7CDFF),
-                        borderColor: Color(0xFFC4C4C4),
-                        selectedBorderColor: Color(0xFFC4C4C4),
-                        borderWidth: 2.0,
-                        constraints: BoxConstraints(minWidth: (MediaQuery.of(context).size.width - 110)/3, minHeight: MediaQuery.of(context).size.height / 25),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        children: <Widget>[
-                          new Text("Incoming", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,),
-                          new Text("Pending", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,),
-                          new Text("Shipped", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,),
-                        ],
+                      new ThreeToggle(
                         onPressed: (int index) {
                           setState(() {
                             for (int i = 0; i < _isSelectedOrdersPage.length; i++) {
@@ -515,6 +509,9 @@ class _HubScreenState extends State<HubScreen>{
                           });
                         },
                         isSelected: _isSelectedOrdersPage,
+                        left: "Incoming",
+                        middle: "Pending",
+                        right: "Shipped",
                       ),
                       if (_displayIncoming) showIncomingItems(),
                       if (_displayPending) showPendingItems(),
@@ -565,14 +562,13 @@ class _HubScreenState extends State<HubScreen>{
                               _displayInventory = _isSelectedProfilePage[0];
                               _displaySettings = _isSelectedProfilePage[1];
                               if (_displayInventory) {
-                                _editButtonPressed = false;
+                                _settingsEditButtonPressed = false;
                               }
                             });
                           },
                           isSelected: _isSelectedProfilePage,
                         ),
-                        if (_displayInventory) new Text("Inventory", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.left,),
+                        if (_displayInventory) buildInventoryPage(),
                         if (_displaySettings) new ProfileSettings(user: user, title: ""),
                       ]
                   )
@@ -581,6 +577,71 @@ class _HubScreenState extends State<HubScreen>{
         ),
       ),
       bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onNavigationIconTapped),
+    );
+  }
+
+  Widget buildInventoryPage() {
+    String asset = "assets/images/face_shield_icon.png";
+    String itemName = "Face Shield";
+    int quantity = 5000;
+    String itemType = "USCF V1";
+    String itemType2 = "USCF V3";
+
+    return new Padding (
+        padding: EdgeInsets.only(top: 10.0),
+        child: Container(
+            width: MediaQuery.of(context).size.width - 100,
+            child: new Column (
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget> [
+                  new Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        new IconButton(
+                          onPressed: _onInventoryEditButtonPressed,
+                          icon: Image.asset("assets/images/edit_button.png", height: 26, alignment: Alignment.centerRight),
+                        )
+                      ]
+                  ),
+                  if (_inventoryEditButtonPressed) new InventoryEditCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType),
+                  if (_inventoryEditButtonPressed) new InventoryEditCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType2),
+                  if (!_inventoryEditButtonPressed) new InventoryCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType,),
+                  if (!_inventoryEditButtonPressed) new InventoryCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType2,),
+                  if (_inventoryEditButtonPressed) new Row (
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        new Padding (
+                          padding: EdgeInsets.only(right: 4),
+                          child: new Container(
+                              width: (MediaQuery.of(context).size.width - 120) * 0.5,
+                              child: new FlatButton(
+                                child: new Text("Save",
+                                  style: TextStyle(color: Color(0xFF283568), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                                  textAlign: TextAlign.center,),
+                                onPressed: () {
+                                  _inventoryEditButtonPressed = false;
+                                  build(context);
+                                },
+                              )
+                          ),
+                        ),
+                        new Container(
+                            width: (MediaQuery.of(context).size.width - 120) * 0.5,
+                            child: new FlatButton(
+                              child: new Text("Cancel",
+                                style: TextStyle(color: Color(0xFFD48032), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                                textAlign: TextAlign.center,),
+                              onPressed: () {
+                                _inventoryEditButtonPressed = false;
+                                build(context);
+                              },
+                            )
+                        ),
+                      ]
+                  )
+                ]
+            )
+        ),
     );
   }
 

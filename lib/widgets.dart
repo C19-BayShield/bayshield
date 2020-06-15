@@ -365,9 +365,13 @@ class ItemConfirmationCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              new Text(itemName,
-                style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                textAlign: TextAlign.left,),
+              new Row(
+                children: <Widget>[
+                  new Text(itemName,
+                    style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.left,),
+                ]
+              ),
               new Row(
                 children: <Widget>[
                   new Text("QTY:" + quantity.toString(),
@@ -383,6 +387,73 @@ class ItemConfirmationCard extends StatelessWidget {
           ),
         ),
       ]
+    );
+  }
+}
+
+class InventoryCard extends StatelessWidget {
+  final String asset;
+  final String itemName;
+  final int quantity;
+  final String itemType;
+
+  InventoryCard({Key key, @required this.asset, @required this.itemName, @required this.quantity, @required this.itemType,}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return new Row(
+        children: <Widget>[
+          Image.asset(asset, height: 70),
+          new Padding (
+            padding: EdgeInsets.only(left: 8.0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text(itemType + " " + itemName,
+                    style: TextStyle(color: Colors.black, fontSize: 22, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,),
+                  new Text(quantity.toString() + " COUNT",
+                    style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                ]
+            ),
+          ),
+        ]
+    );
+  }
+}
+
+class InventoryEditCard extends StatelessWidget {
+  final String asset;
+  final String itemName;
+  final int quantity;
+  final String itemType;
+
+  InventoryEditCard({Key key, @required this.asset, @required this.itemName, @required this.quantity, @required this.itemType}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return new Row(
+        children: <Widget>[
+          Image.asset(asset, height: 70),
+          new Padding (
+            padding: EdgeInsets.only(left: 8.0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text(itemType + " " + itemName,
+                    style: TextStyle(color: Colors.black, fontSize: 22, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,),
+                  new Container(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: new EditFormField(
+                        type: TextInputType.number,
+                        hint: quantity.toString(),
+                        maxLines: 1,
+                      )
+                  ),
+                  SizedBox(height: 10),
+                ]
+            ),
+          ),
+        ]
     );
   }
 }
@@ -609,6 +680,42 @@ class EditFormField extends StatelessWidget {
   }
 }
 
+class ThreeToggle extends StatelessWidget {
+  final Function(int) onPressed;
+  final List<bool> isSelected;
+  final String left;
+  final String middle;
+  final String right;
+
+  ThreeToggle({Key key, @required this.onPressed, @required this.isSelected,
+    @required this.left, @required this.middle, @required this.right,}) : super(key: key);
+
+  Widget build(BuildContext context) {
+    return new Container(
+      decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+        color: Color(0xFFD2D2D2),
+      ),
+      child: ToggleButtons(
+        fillColor: Color(0xFFB7CDFF),
+        borderWidth: 0.0,
+        constraints: BoxConstraints(minWidth: (MediaQuery.of(context).size.width - 110) / 3, minHeight: MediaQuery.of(context).size.height / 25),
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        children: <Widget>[
+          new Text(left, style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,),
+          new Text(middle, style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,),
+          new Text(right, style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,),
+        ],
+        onPressed: onPressed,
+        isSelected: isSelected,
+      ),
+    );
+  }
+}
+
 class TwoToggle extends StatelessWidget {
   final Function(int) onPressed;
   final List<bool> isSelected;
@@ -621,23 +728,23 @@ class TwoToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Container(
       decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(10),
         color: Color(0xFFD2D2D2),
       ),
-        child: ToggleButtons(
-      fillColor: Color(0xFFB7CDFF),
-      borderWidth: 0.0,
-      constraints: BoxConstraints(minWidth: (MediaQuery.of(context).size.width - 110)/2, minHeight: MediaQuery.of(context).size.height / 25),
-      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-      children: <Widget>[
-        new Text(left, style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,),
-        new Text(right, style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,),
-      ],
-      onPressed: onPressed,
-      isSelected: isSelected,
-    ),
+      child: ToggleButtons(
+        fillColor: Color(0xFFB7CDFF),
+        borderWidth: 0.0,
+        constraints: BoxConstraints(minWidth: (MediaQuery.of(context).size.width - 110)/2, minHeight: MediaQuery.of(context).size.height / 25),
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        children: <Widget>[
+          new Text(left, style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,),
+          new Text(right, style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,),
+        ],
+        onPressed: onPressed,
+        isSelected: isSelected,
+      ),
     );
   }
 }
