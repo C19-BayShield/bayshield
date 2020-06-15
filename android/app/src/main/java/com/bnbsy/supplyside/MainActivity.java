@@ -1,4 +1,4 @@
-package org.c19bayshield.c19bayshield;
+package org.bayshield.bayshield;
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity;
