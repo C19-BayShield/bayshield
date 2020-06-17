@@ -294,8 +294,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                           },
                           isSelected: _isSelectedProfilePage,
                         ),
-                        if (_displayStatus) new Text("TODO: Organization Details", style: TextStyle(color: Colors.black, fontSize: 25, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.left,),
+                        if (_displayStatus) new MedorgsStatus(user: user),
                         if (_displaySettings) new ProfileSettings(user: user, title: "Personal Information"),
                       ]
                   )

@@ -51,7 +51,8 @@ class User {
 
 class MedicalFacility extends User {
 
-  MedicalFacility({id, String email, String phoneNumber, this.address, @required this.medicalFacilityName, this.staffSize}) :
+  MedicalFacility({id, String email, String phoneNumber, 
+  this.address, @required this.medicalFacilityName, int staff, int cases, List<int> supply}) :
     super(
       id: id, 
       email: email, 
@@ -65,10 +66,29 @@ class MedicalFacility extends User {
       name = data['name'],
       address = data['address'],
       phoneNumber = data['phoneNumber'],
-      medicalFacilityName = data['medicalFacilityName'];
+      medicalFacilityName = data['medicalFacilityName'],
+      staff = data["staff"],
+      cases = data["cases"],
+      shieldSupply = data["shieldSupply"],
+      gownSupply = data["gownSupply"],
+      gloveSupply = data["gloveSupply"],
+      maskSupply = data["maskSupply"]
+      ;
 
   String getFacilityName() {
     return this.medicalFacilityName;
+  }
+
+  int getStaff() {
+    return this.staff;
+  }
+
+  int getCases() {
+    return this.cases;
+  }
+
+  List<int> getSupply() {
+    return [shieldSupply ?? 0, gownSupply ?? 0, gloveSupply ?? 0, maskSupply ?? 0];
   }
 
   String id;
@@ -76,7 +96,12 @@ class MedicalFacility extends User {
   String name;
   String address;
   String medicalFacilityName;
-  int staffSize;
+  int shieldSupply;
+  int gownSupply;
+  int gloveSupply;
+  int maskSupply;
+  int staff;
+  int cases;
   String contactPersonName;
   String contactPersonTitle;
   String phoneNumber;
