@@ -858,52 +858,52 @@ class OrderConfirmationCard extends StatelessWidget {
     return new Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        new Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              new Container(
-                height: 65,
-                width: 65,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(18)),
-                  border: Border.all(
-                    color: Color(0xFF283568),
-                    width: .5,
-                  ),
-                ),
-              ),
-              new Padding(
-                padding: EdgeInsets.all(5),
-                child: new Container(
-                  height: 55,
-                  width: 55,
+        new Padding(
+          padding: EdgeInsets.only(bottom: 16, right: 16),
+          child: new Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                new Container(
+                  height: 65,
+                  width: 65,
                   decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(asset),
-                      fit: BoxFit.fitWidth,
-                    ),
+                    color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(18)),
+                    border: Border.all(
+                      color: Color(0xFF283568),
+                      width: .5,
+                    ),
                   ),
                 ),
-              )
-            ]
+                new Padding(
+                  padding: EdgeInsets.all(5),
+                  child: new Container(
+                    height: 55,
+                    width: 55,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(asset),
+                        fit: BoxFit.fitWidth,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(18)),
+                    ),
+                  ),
+                )
+              ]
+          ),
         ),
         new Container (
           width: (MediaQuery.of(context).size.width - 110) / 2,
-          child: new Padding(
-            padding: EdgeInsets.only(left: 16, top: 8, bottom: 16, right: 4),
-            child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  new Text(itemName,
-                    style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.left,),
-                  new Text(itemType,
-                    style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
-                ]
-            ),
-          )
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Text(itemName.toUpperCase(),
+                  style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto',), textAlign: TextAlign.left,),
+                SizedBox(height: 5),
+                new Text(itemType.toUpperCase(),
+                  style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+              ]
+          ),
         ),
         new Column(
           crossAxisAlignment: CrossAxisAlignment.start,
