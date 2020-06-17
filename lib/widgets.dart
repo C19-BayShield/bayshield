@@ -786,9 +786,9 @@ class OrderCard extends StatelessWidget {
                       padding: EdgeInsets.only(bottom: 8),
                       child: new Container(
                         alignment: Alignment.bottomRight,
-                        width: 42,
+                        width: 50,
                         child: new TextField(
-                          style: TextStyle(color: Colors.white,),
+                          style: TextStyle(color: Colors.white, fontSize: 20),
                           textAlign: TextAlign.center,
                           maxLines: 1,
                           autofocus: false,
@@ -814,7 +814,7 @@ class OrderCard extends StatelessWidget {
             )
         ),
         new Container(
-          height: 120,
+          height: 115,
           width: 145,
           decoration: BoxDecoration(
             color: Colors.white,
@@ -828,8 +828,8 @@ class OrderCard extends StatelessWidget {
         new Padding(
           padding: EdgeInsets.all(5),
           child: new Container(
-            height: 110,
-            width: 110,
+            height: 105,
+            width: 105,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(asset),
