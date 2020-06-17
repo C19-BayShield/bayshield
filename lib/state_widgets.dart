@@ -313,7 +313,7 @@ class _MedorgsStatusState extends State<MedorgsStatus>{
               children: <Widget>[
                 new Container(
                   width: MediaQuery.of(context).size.width * 0.5,
-                  child: new Text("Number of Personell", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                  child: new Text("Number of Personnel", style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                     textAlign: TextAlign.left,)
                 ),
                 if (!_editButtonPressed)
