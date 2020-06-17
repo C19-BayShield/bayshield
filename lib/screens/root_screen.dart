@@ -104,7 +104,7 @@ class _RootScreenState extends State<RootScreen> {
         if (_userId.length > 0 && _userId != null) {
           switch(_userType) { 
               case 'Medical Facility': { 
-                return new ConsumerScreen(
+                return new MedicalOrganizationScreen(
                   userId: _userId,
                   auth: widget.auth,
                   logoutCallback: logoutCallback,

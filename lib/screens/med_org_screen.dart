@@ -9,19 +9,19 @@ import 'package:supplyside/widgets.dart';
 import 'package:supplyside/state_widgets.dart';
 
 
-class ConsumerScreen extends StatefulWidget {
+class MedicalOrganizationScreen extends StatefulWidget {
 
-  ConsumerScreen({Key key, this.auth, this.userId, this.logoutCallback}) : super(key: key);
+  MedicalOrganizationScreen({Key key, this.auth, this.userId, this.logoutCallback}) : super(key: key);
 
   final BaseAuth auth;
   final VoidCallback logoutCallback;
   final String userId;
 
   @override
-  State<StatefulWidget> createState() => new _ConsumerScreenState();
+  State<StatefulWidget> createState() => new _MedicalOrganizationScreenState();
 }
 
-class _ConsumerScreenState extends State<ConsumerScreen> {
+class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
 
   final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
   MedicalFacility user;
