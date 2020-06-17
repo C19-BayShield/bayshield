@@ -748,3 +748,90 @@ class TwoToggle extends StatelessWidget {
     );
   }
 }
+
+class OrderCard extends StatelessWidget {
+
+  final Function() onPressed;
+  final String asset;
+
+  OrderCard({Key key, @required this.onPressed, @required this.asset}) : super(key: key);
+
+  Widget build(BuildContext context) {
+    return new FlatButton(
+      child: new Stack(
+          children: <Widget>[
+            new Container(
+              height: 150,
+              width: 145,
+              decoration: BoxDecoration(
+                color: Color(0xFF283568),
+                borderRadius: BorderRadius.all(Radius.circular(18)),
+              ),
+              alignment: Alignment.bottomCenter,
+            ),
+            new Container(
+              height: 120,
+              width: 145,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(asset),
+                  fit: BoxFit.fitWidth,
+                ),
+                borderRadius: BorderRadius.only(topRight: Radius.circular(18), topLeft: Radius.circular(18)),
+                border: Border.all(
+                  color: Color(0xFF283568),
+                  width: .5,
+                ),
+              ),
+            ),
+            new Container(
+                height: 150,
+                width: 145,
+                alignment: Alignment.bottomCenter,
+                child: new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      new Container(
+                          alignment: Alignment.bottomCenter,
+                          child: new Padding(
+                            padding: EdgeInsets.only(bottom: 8),
+                            child: new Text("QUANTITY", style: TextStyle(color: Colors.white, fontSize: 12, fontFamily: 'Roboto', fontWeight: FontWeight.bold),),
+                          )
+                      ),
+                      new Padding(
+                          padding: EdgeInsets.only(bottom: 8),
+                          child: new Container(
+                            alignment: Alignment.bottomRight,
+                            width: 45,
+                            child: new TextField(
+                              style: TextStyle(color: Colors.white,),
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              autofocus: false,
+                              decoration: new InputDecoration(
+                                  contentPadding: EdgeInsets.all(0),
+                                  isDense: true,
+                                  enabledBorder: new UnderlineInputBorder(
+                                      borderSide: new BorderSide(color: Colors.white, width: 2)
+                                  ),
+                                  focusedBorder: new UnderlineInputBorder(
+                                      borderSide: new BorderSide(color: Colors.white, width: 2)
+                                  )
+                              ),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                WhitelistingTextInputFormatter.digitsOnly
+                              ],
+                              onChanged: null,
+                            ),
+                          )
+                      )
+                    ]
+                )
+            ),
+          ]
+      ),
+      onPressed: onPressed,
+    );
+  }
+}

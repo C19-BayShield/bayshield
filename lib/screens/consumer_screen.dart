@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:supplyside/datamodels/order.dart';
 import 'package:supplyside/datamodels/user.dart';
-import 'package:supplyside/util/consts.dart';
 import 'package:supplyside/util/mock_consts.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/util/firestore_users.dart';
 import 'package:supplyside/locator.dart';
 import 'package:supplyside/widgets.dart';
 import 'package:supplyside/state_widgets.dart';
+import 'package:flutter/services.dart';
 
 
 class ConsumerScreen extends StatefulWidget {
@@ -27,6 +27,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
   final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
   MedicalFacility user;
   int _selectedIndex = 1; // default loads Home Page.
+
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
@@ -50,6 +51,8 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
   bool _displayPending = false;
   bool _displayShipped = false;
 
+  bool _newOrder = false;
+
   bool _displaySettings = true;
   bool _displayStatus = false;
   List<bool> _isSelectedProfilePage = [true, false]; 
@@ -65,6 +68,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
       _initialized = false;
       _displayStatus = false;
       _displaySettings = true;
+      _newOrder = false;
 
       nameController.clear();
       emailController.clear();
@@ -146,7 +150,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     );
   }
 
-   signOut() async {
+  signOut() async {
     try {
       await widget.auth.signOut();
       widget.logoutCallback();
@@ -207,7 +211,10 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                                   ]
                               )
                           ),
-                          new NewOrderButton(onPressed: () => Navigator.pushNamed(context, REQUEST_SCREEN),),
+                          new NewOrderButton(onPressed: () {
+                            _newOrder = true;
+                            build(context);
+                          }),
                            Container(
                               height: MediaQuery.of(context).size.height / 15,
                               width: MediaQuery.of(context).size.width - 110,
@@ -303,7 +310,10 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                           )
                       ),
                      showShippedItems(),
-                     new NewOrderPlus(onPressed: () => Navigator.pushNamed(context, REQUEST_SCREEN),),
+                     new NewOrderPlus(onPressed: () {
+                       _newOrder = true;
+                       build(context);
+                     }),
                     ],
                   )
               )
@@ -314,7 +324,110 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     );
   }
 
-
+  Widget buildNewOrdersPage() {
+    return new Scaffold(
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+        child: new MainAppBar(signOut: signOut),
+      ),
+      body: SafeArea(
+          child: new SingleChildScrollView(
+            child: Container(
+                child: Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          new Container(
+                            width: MediaQuery.of(context).size.width - 110,
+                            color: Colors.transparent,
+                            child: new Padding(
+                                child: new Text("New Order", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.left,),
+                                padding: EdgeInsets.only(top: 30, bottom: 15)
+                            ),
+                          ),
+                          new Container(
+                            width: MediaQuery.of(context).size.width - 110,
+                            color: Colors.transparent,
+                            child: new Padding(
+                                child: new Text("SELECT ITEMS", style: TextStyle(color: Colors.black, fontSize: 16, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.left,),
+                                padding: EdgeInsets.only(bottom: 25)
+                            ),
+                          ),
+                          new Container(
+                            width: MediaQuery.of(context).size.width - 55,
+                            child: new Column(
+                                children: <Widget>[
+                                  new Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        OrderCard(
+                                          asset: "assets/images/face_shield_icon.png",
+                                          onPressed: null,
+                                        ),
+                                        OrderCard(
+                                          asset: "assets/images/face_shield_icon.png",
+                                          onPressed: null,
+                                        )
+                                      ]
+                                  ),
+                                  SizedBox(height: 20),
+                                  new Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        OrderCard(
+                                          asset: "assets/images/face_shield_icon.png",
+                                          onPressed: null,
+                                        ),
+                                        OrderCard(
+                                          asset: "assets/images/face_shield_icon.png",
+                                          onPressed: null,
+                                        )
+                                      ]
+                                  ),
+                                  SizedBox(height: 20),
+                                  new Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        OrderCard(
+                                          asset: "assets/images/face_shield_icon.png",
+                                          onPressed: null,
+                                        ),
+                                        OrderCard(
+                                          asset: "assets/images/face_shield_icon.png",
+                                          onPressed: null,
+                                        )
+                                      ]
+                                  ),
+                                  SizedBox(height: 30),
+                                  new Container(
+                                      width: MediaQuery.of(context).size.width - 110,
+                                      decoration: BoxDecoration(
+                                          color: Color(0xFF283568),
+                                          borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                      child: new FlatButton(
+                                        child: new Text("Next",
+                                          style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                          textAlign: TextAlign.center,),
+                                        onPressed: () {
+                                        },
+                                      )
+                                  ),
+                                  SizedBox(height: 20),
+                                ]
+                            )
+                          ),
+                        ]
+                    )
+                )
+            )
+          )
+      ),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex , onItemTapped: _onNavigationIconTapped),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -322,7 +435,9 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
     if (user == null) {
       return buildWaitingScreen();
     } else {
-      if (_selectedIndex == 0) {
+      if (_newOrder) {
+        return buildNewOrdersPage();
+      } else if (_selectedIndex == 0) {
         return buildOrdersPage();
       } else if (_selectedIndex == 1) {
         return buildHomePage();
