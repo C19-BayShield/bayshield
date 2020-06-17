@@ -280,7 +280,6 @@ class NewOrderPlus extends StatelessWidget {
   }
 }
 
-
 class ItemCard extends StatelessWidget {
   final String asset;
   final String itemName;
@@ -340,7 +339,7 @@ class ItemCard extends StatelessWidget {
               new Text(deliveryDate,
                 style: TextStyle(color: Color(0xFF555555), fontSize: 14, fontFamily: 'Roboto'), textAlign: TextAlign.center,),
               new Text(deliveryLocation,
-                style: TextStyle(color: Color(0xFF555555), fontSize: 14, fontFamily: 'Roboto'), textAlign: TextAlign.left,)
+                style: TextStyle(color: Color(0xFF555555), fontSize: 14, fontFamily: 'Roboto'), textAlign: TextAlign.center,)
             ]
           )
         ]
@@ -745,6 +744,178 @@ class TwoToggle extends StatelessWidget {
         onPressed: onPressed,
         isSelected: isSelected,
       ),
+    );
+  }
+}
+
+class OrderCard extends StatelessWidget {
+
+  final Function() onPressed;
+  final Function(String) onChanged;
+  final String asset;
+
+  OrderCard({Key key, @required this.onPressed, @required this.onChanged, @required this.asset}) : super(key: key);
+
+  Widget build(BuildContext context) {
+    return new Stack(
+      alignment: Alignment.topCenter,
+      children: <Widget>[
+        new Container(
+          height: 150,
+          width: 145,
+          decoration: BoxDecoration(
+            color: Color(0xFF283568),
+            borderRadius: BorderRadius.all(Radius.circular(18)),
+          ),
+        ),
+        new Container(
+            height: 150,
+            width: 145,
+            alignment: Alignment.bottomCenter,
+            child: new Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  new Container(
+                      alignment: Alignment.bottomCenter,
+                      child: new Padding(
+                        padding: EdgeInsets.only(bottom: 8),
+                        child: new Text("QUANTITY", style: TextStyle(color: Colors.white, fontSize: 12, fontFamily: 'Roboto', fontWeight: FontWeight.bold),),
+                      )
+                  ),
+                  new Padding(
+                      padding: EdgeInsets.only(bottom: 8),
+                      child: new Container(
+                        alignment: Alignment.bottomRight,
+                        width: 50,
+                        child: new TextField(
+                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          autofocus: false,
+                          decoration: new InputDecoration(
+                              contentPadding: EdgeInsets.all(0),
+                              isDense: true,
+                              enabledBorder: new UnderlineInputBorder(
+                                  borderSide: new BorderSide(color: Colors.white, width: 2)
+                              ),
+                              focusedBorder: new UnderlineInputBorder(
+                                  borderSide: new BorderSide(color: Colors.white, width: 2)
+                              )
+                          ),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            WhitelistingTextInputFormatter.digitsOnly
+                          ],
+                          onChanged: onChanged,
+                        ),
+                      )
+                  )
+                ]
+            )
+        ),
+        new Container(
+          height: 115,
+          width: 145,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(topRight: Radius.circular(18), topLeft: Radius.circular(18)),
+            border: Border.all(
+              color: Color(0xFF283568),
+              width: .5,
+            ),
+          ),
+        ),
+        new Padding(
+          padding: EdgeInsets.all(5),
+          child: new Container(
+            height: 105,
+            width: 105,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(asset),
+                fit: BoxFit.fitWidth,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(18)),
+            ),
+          ),
+        )
+      ]
+    );
+  }
+}
+
+class OrderConfirmationCard extends StatelessWidget {
+  final String asset;
+  final String itemName;
+  final int quantity;
+  final String itemType;
+
+  OrderConfirmationCard({Key key, @required this.asset, @required this.itemName, @required this.quantity,
+    @required this.itemType,}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return new Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        new Padding(
+          padding: EdgeInsets.only(bottom: 16, right: 16),
+          child: new Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                new Container(
+                  height: 65,
+                  width: 65,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                    border: Border.all(
+                      color: Color(0xFF283568),
+                      width: .5,
+                    ),
+                  ),
+                ),
+                new Padding(
+                  padding: EdgeInsets.all(5),
+                  child: new Container(
+                    height: 55,
+                    width: 55,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(asset),
+                        fit: BoxFit.fitWidth,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(18)),
+                    ),
+                  ),
+                )
+              ]
+          ),
+        ),
+        new Container (
+          width: (MediaQuery.of(context).size.width - 130) / 2,
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Text(itemName.toUpperCase(),
+                  style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto',), textAlign: TextAlign.left,),
+                SizedBox(height: 5),
+                new Text(itemType.toUpperCase(),
+                  style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+              ]
+          ),
+        ),
+        new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Container(
+              alignment: Alignment.centerRight,
+              child: new Text(quantity.toString() + "X",
+                style: TextStyle(color: Colors.black, fontSize: 30, fontFamily: 'Roboto', fontWeight: FontWeight.bold), textAlign: TextAlign.left,)
+            )
+          ]
+        )
+      ]
     );
   }
 }

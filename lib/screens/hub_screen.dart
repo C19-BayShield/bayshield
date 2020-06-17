@@ -135,7 +135,7 @@ class _HubScreenState extends State<HubScreen>{
 
   Widget showIncomingItems() {
     // TODO: replace hard-coded values.
-    String asset = "assets/images/face_shield_icon.png";
+    String asset = "assets/images/face_shield_card.png";
     String icon = "assets/images/add_button.png";
     String itemName = "Face Shield";
     int quantity = 50;
@@ -160,7 +160,7 @@ class _HubScreenState extends State<HubScreen>{
 
   Widget showPendingItems() {
     // TODO: replace hard-coded values.
-    String asset = "assets/images/face_shield_icon.png";
+    String asset = "assets/images/face_shield_card.png";
     String icon = "assets/images/arrow.png";
     String itemName = "Face Shield";
     int quantity = 50;
@@ -184,7 +184,7 @@ class _HubScreenState extends State<HubScreen>{
 
   Widget showShippedItems() {
     // TODO: replace hard-coded values.
-    String asset = "assets/images/face_shield_icon.png";
+    String asset = "assets/images/face_shield_card.png";
     String itemName = "Face Shield";
     int quantity = 50;
     String itemType = "USCF V1";
@@ -581,7 +581,7 @@ class _HubScreenState extends State<HubScreen>{
   }
 
   Widget buildInventoryPage() {
-    String asset = "assets/images/face_shield_icon.png";
+    String asset = "assets/images/face_shield_card.png";
     String itemName = "Face Shield";
     int quantity = 5000;
     String itemType = "USCF V1";

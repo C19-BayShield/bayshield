@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supplyside/screens/login_screen.dart';
 import 'package:supplyside/util/authentication.dart';
-import 'package:supplyside/screens/consumer_screen.dart';
+import 'package:supplyside/screens/med_org_screen.dart';
 import 'package:supplyside/screens/maker_screen.dart';
 import 'package:supplyside/screens/hub_screen.dart';
 import 'package:supplyside/util/firestore_users.dart';
@@ -104,7 +104,7 @@ class _RootScreenState extends State<RootScreen> {
         if (_userId.length > 0 && _userId != null) {
           switch(_userType) { 
               case 'Medical Facility': { 
-                return new ConsumerScreen(
+                return new MedicalOrganizationScreen(
                   userId: _userId,
                   auth: widget.auth,
                   logoutCallback: logoutCallback,
