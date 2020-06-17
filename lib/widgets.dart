@@ -891,9 +891,9 @@ class OrderConfirmationCard extends StatelessWidget {
                 ]
             ),
             new Container (
-              width: (MediaQuery.of(context).size.width - 100) / 2,
+              width: (MediaQuery.of(context).size.width - 140) / 2,
               child: new Padding(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(16),
                 child: new Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[

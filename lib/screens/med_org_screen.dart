@@ -444,8 +444,16 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                                           style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                                           textAlign: TextAlign.center,),
                                         onPressed: () {
-                                          _quantitiesChosen = true;
-                                          build(context);
+                                          int total = sanitizerCount + gogglesCount + glovesCount + gownCount + faceShieldCount + sanitizerCount;
+                                          if (total == 0) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) => _buildPopUp(context),
+                                            );
+                                          } else {
+                                            _quantitiesChosen = true;
+                                            build(context);
+                                          }
                                         },
                                       )
                                   ),
@@ -470,149 +478,170 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
         child: new MainAppBar(signOut: signOut),
       ),
-      body: SafeArea(
-          child: new SingleChildScrollView(
-              child: Container(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        new Container(
-                          width: MediaQuery.of(context).size.width - 110,
-                          color: Colors.transparent,
-                          child: new Padding(
-                              child: new Text("New Order", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.left,),
-                              padding: EdgeInsets.only(top: 30, bottom: 15)
-                          ),
-                        ),
-                        new Container(
-                          width: MediaQuery.of(context).size.width - 110,
-                          color: Colors.transparent,
-                          child: new Padding(
-                            child: new Text("ORDER SUMMARY", style: TextStyle(color: Colors.black, fontSize: 16, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.left,),
-                            padding: EdgeInsets.only(bottom: 25)
-                          ),
-                        ),
-                        new Container(
-                          width: MediaQuery.of(context).size.width - 100,
-                          child: new Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              if (faceShieldCount > 0)
-                                OrderConfirmationCard(
-                                  asset: "assets/images/face_shield_icon.png",
-                                  itemName: "Face Shield",
-                                  itemType: "USCF V1",
-                                  quantity: faceShieldCount,
+      body: Builder(
+        builder: (BuildContext context) {
+          return SafeArea(
+              child: new SingleChildScrollView(
+                  child: Container(
+                      child: Center(
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                new Container(
+                                  width: MediaQuery.of(context).size.width - 110,
+                                  color: Colors.transparent,
+                                  child: new Padding(
+                                      child: new Text("New Order", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.left,),
+                                      padding: EdgeInsets.only(top: 30, bottom: 15)
+                                  ),
                                 ),
-                              if (n95Count > 0)
-                                OrderConfirmationCard(
-                                  asset: "assets/images/n95_icon.png",
-                                  itemName: "N95 Mask",
-                                  itemType: "3M, MFD 2019",
-                                  quantity: n95Count,
+                                new Container(
+                                  width: MediaQuery.of(context).size.width - 110,
+                                  color: Colors.transparent,
+                                  child: new Padding(
+                                      child: new Text("ORDER SUMMARY", style: TextStyle(color: Colors.black, fontSize: 16, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.left,),
+                                      padding: EdgeInsets.only(bottom: 25)
+                                  ),
                                 ),
-                              if (glovesCount > 0)
-                                OrderConfirmationCard(
-                                  asset: "assets/images/gloves_icon.png",
-                                  itemName: "Gloves",
-                                  itemType: "Surgical",
-                                  quantity: glovesCount,
+                                new Container(
+                                    width: MediaQuery.of(context).size.width - 80,
+                                    child: new Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          if (faceShieldCount > 0)
+                                            OrderConfirmationCard(
+                                              asset: "assets/images/face_shield_icon.png",
+                                              itemName: "Face Shield",
+                                              itemType: "USCF V1",
+                                              quantity: faceShieldCount,
+                                            ),
+                                          if (n95Count > 0)
+                                            OrderConfirmationCard(
+                                              asset: "assets/images/n95_icon.png",
+                                              itemName: "N95 Mask",
+                                              itemType: "3M, MFD 2019",
+                                              quantity: n95Count,
+                                            ),
+                                          if (glovesCount > 0)
+                                            OrderConfirmationCard(
+                                              asset: "assets/images/gloves_icon.png",
+                                              itemName: "Gloves",
+                                              itemType: "Surgical",
+                                              quantity: glovesCount,
+                                            ),
+                                          if (gogglesCount > 0)
+                                            OrderConfirmationCard(
+                                              asset: "assets/images/goggles_icon.png",
+                                              itemName: "Goggles",
+                                              itemType: "Surgical",
+                                              quantity: gogglesCount,
+                                            ),
+                                          if (gownCount > 0)
+                                            OrderConfirmationCard(
+                                              asset: "assets/images/gown_icon.png",
+                                              itemName: "Gown",
+                                              itemType: "Regular",
+                                              quantity: gownCount,
+                                            ),
+                                          if (sanitizerCount > 0)
+                                            OrderConfirmationCard(
+                                              asset: "assets/images/sanitizer_icon.png",
+                                              itemName: "Sanitizer",
+                                              itemType: "",
+                                              quantity: sanitizerCount,
+                                            ),
+                                        ]
+                                    )
                                 ),
-                              if (gogglesCount > 0)
-                                OrderConfirmationCard(
-                                  asset: "assets/images/goggles_icon.png",
-                                  itemName: "Goggles",
-                                  itemType: "Surgical",
-                                  quantity: gogglesCount,
+                                new Padding (
+                                  padding: EdgeInsets.only(top: 30),
+                                  child: new Text("Special Instructions", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.left,),
                                 ),
-                              if (gownCount > 0)
-                                OrderConfirmationCard(
-                                  asset: "assets/images/gown_icon.png",
-                                  itemName: "Gown",
-                                  itemType: "Regular",
-                                  quantity: gownCount,
+                                new Container (
+                                  width: MediaQuery.of(context).size.width - 100,
+                                  alignment: Alignment.centerLeft,
+                                  child: new TextField(
+                                    style: TextStyle(color: Colors.black),
+                                    textAlign: TextAlign.left,
+                                    scrollPadding: EdgeInsets.symmetric(horizontal: 16),
+                                    maxLines: 1,
+                                    autofocus: false,
+                                    decoration: new InputDecoration(
+                                        hintText: "Enter here",
+                                        hintStyle: new TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                        enabledBorder: new UnderlineInputBorder(
+                                            borderSide: new BorderSide(color: Colors.black)
+                                        ),
+                                        focusedBorder: new UnderlineInputBorder(
+                                            borderSide: new BorderSide(color: Colors.black)
+                                        )
+                                    ),
+                                    keyboardType: TextInputType.text,
+                                    onChanged: null,
+                                  ),
                                 ),
-                              if (sanitizerCount > 0)
-                                OrderConfirmationCard(
-                                  asset: "assets/images/sanitizer_icon.png",
-                                  itemName: "Sanitizer",
-                                  itemType: "",
-                                  quantity: sanitizerCount,
+                                SizedBox(height: 20),
+                                new Container(
+                                    width: MediaQuery.of(context).size.width - 110,
+                                    decoration: BoxDecoration(
+                                        color: Color(0xFFD48032),
+                                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                    child: new FlatButton(
+                                      child: new Text("Complete Order",
+                                        style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,),
+                                      onPressed: () {
+                                        _quantitiesChosen = false;
+                                        _newOrder = false;
+                                        build(context);
+                                      },
+                                    )
                                 ),
-                            ]
+                                new Container(
+                                    width: MediaQuery.of(context).size.width - 110,
+                                    child: new FlatButton(
+                                      child: new Text("Back",
+                                        style: TextStyle(color: Color(0xFF283568), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                                        textAlign: TextAlign.center,),
+                                      onPressed: () {
+                                        _quantitiesChosen = false;
+                                        build(context);
+                                      },
+                                    )
+                                ),
+                                SizedBox(height: 20),
+                              ]
                           )
-                        ),
-                        new Padding (
-                          padding: EdgeInsets.only(top: 30),
-                          child: new Text("Special Instructions", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.left,),
-                        ),
-                        new Container (
-                          width: MediaQuery.of(context).size.width - 100,
-                          alignment: Alignment.centerLeft,
-                          child: new TextField(
-                            style: TextStyle(color: Colors.black),
-                            textAlign: TextAlign.left,
-                            scrollPadding: EdgeInsets.symmetric(horizontal: 16),
-                            maxLines: 1,
-                            autofocus: false,
-                            decoration: new InputDecoration(
-                                hintText: "Enter here",
-                                hintStyle: new TextStyle(
-                                  color: Colors.grey,
-                                ),
-                                enabledBorder: new UnderlineInputBorder(
-                                    borderSide: new BorderSide(color: Colors.black)
-                                ),
-                                focusedBorder: new UnderlineInputBorder(
-                                    borderSide: new BorderSide(color: Colors.black)
-                                )
-                            ),
-                            keyboardType: TextInputType.text,
-                            onChanged: null,
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        new Container(
-                            width: MediaQuery.of(context).size.width - 110,
-                            decoration: BoxDecoration(
-                                color: Color(0xFFD48032),
-                                borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                            child: new FlatButton(
-                              child: new Text("Complete Order",
-                                style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,),
-                              onPressed: () {
-                                _quantitiesChosen = false;
-                                _newOrder = false;
-                                build(context);
-                              },
-                            )
-                        ),
-                        new Container(
-                            width: MediaQuery.of(context).size.width - 110,
-                            child: new FlatButton(
-                              child: new Text("Back",
-                                style: TextStyle(color: Color(0xFF283568), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
-                                textAlign: TextAlign.center,),
-                              onPressed: () {
-                                _quantitiesChosen = false;
-                                build(context);
-                              },
-                            )
-                        ),
-                        SizedBox(height: 20),
-                      ]
-                    )
+                      )
                   )
               )
-          )
+          );
+        }
       ),
       bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex , onItemTapped: _onNavigationIconTapped),
+    );
+  }
+
+  Widget _buildPopUp(BuildContext context) {
+    return new AlertDialog(
+      backgroundColor: Colors.white,
+      titleTextStyle: TextStyle(fontSize: 18, fontFamily: "Roboto", color: Colors.black),
+      title: Text("Please order at least one item."),
+      actions: <Widget>[
+        new FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          textColor: Color(0xFF283568),
+          child: const Text('Close'),
+        ) ,
+      ],
     );
   }
 
