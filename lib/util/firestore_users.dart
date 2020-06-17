@@ -96,4 +96,36 @@ class FirestoreUsers {
       return e.message;
     }
   }
+
+  Future setOrgDetails(String id, int staff, int cases, 
+  int shieldSupply, int gownSupply, int gloveSupply, int maskSupply) async {
+    try {
+      if (staff != null && staff >= 0) {
+        await _usersCollectionReference.document(id).updateData({"staff": staff});
+        print('Saved new staff number: $staff');
+      }
+      if (cases != null && cases >= 0) {
+        await _usersCollectionReference.document(id).updateData({"cases": cases});
+        print('Saved new reported case number: $cases');
+      }
+      if (shieldSupply != null && shieldSupply >= 0) {
+        await _usersCollectionReference.document(id).updateData({"shieldSupply": shieldSupply});
+        print('Saved new shield supply number: $shieldSupply');
+      }
+      if (gownSupply != null && gownSupply >= 0) {
+        await _usersCollectionReference.document(id).updateData({"gownSupply": gownSupply});
+        print('Saved new gown supply number: $gownSupply');
+      }
+      if (gloveSupply != null && gloveSupply >= 0) {
+        await _usersCollectionReference.document(id).updateData({"gloveSupply": gloveSupply});
+        print('Saved new glove supply number: $gloveSupply');
+      }
+      if (maskSupply != null && maskSupply >= 0) {
+        await _usersCollectionReference.document(id).updateData({"maskSupply": maskSupply});
+        print('Saved new mask supply number: $maskSupply');
+      }
+    } catch (e) {
+      return e.message;
+    }
+  }
 }
