@@ -233,6 +233,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                           ),
                           new NewOrderButton(onPressed: () {
                             _newOrder = true;
+                            _selectedIndex = 0;
                             build(context);
                           }),
                            Container(
@@ -332,6 +333,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                      showShippedItems(),
                      new NewOrderPlus(onPressed: () {
                        _newOrder = true;
+                       _selectedIndex = 0;
                        build(context);
                      }),
                     ],
@@ -444,7 +446,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                                           style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
                                           textAlign: TextAlign.center,),
                                         onPressed: () {
-                                          int total = sanitizerCount + gogglesCount + glovesCount + gownCount + faceShieldCount + sanitizerCount;
+                                          int total = sanitizerCount + gogglesCount + glovesCount + gownCount + faceShieldCount + n95Count;
                                           if (total == 0) {
                                             showDialog(
                                               context: context,
@@ -486,7 +488,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                       child: Center(
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 new Container(
                                   width: MediaQuery.of(context).size.width - 110,
@@ -556,10 +558,14 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                                         ]
                                     )
                                 ),
-                                new Padding (
-                                  padding: EdgeInsets.only(top: 30),
-                                  child: new Text("Special Instructions", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.left,),
+                                new Container(
+                                  width: MediaQuery.of(context).size.width - 100,
+                                  alignment: Alignment.centerLeft,
+                                  child: new Padding (
+                                    padding: EdgeInsets.only(top: 30),
+                                    child: new Text("SPECIAL INSTRUCTIONS", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.left,),
+                                  ),
                                 ),
                                 new Container (
                                   width: MediaQuery.of(context).size.width - 100,
@@ -571,16 +577,16 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                                     maxLines: 1,
                                     autofocus: false,
                                     decoration: new InputDecoration(
-                                        hintText: "Enter here",
-                                        hintStyle: new TextStyle(
-                                          color: Colors.grey,
-                                        ),
-                                        enabledBorder: new UnderlineInputBorder(
-                                            borderSide: new BorderSide(color: Colors.black)
-                                        ),
-                                        focusedBorder: new UnderlineInputBorder(
-                                            borderSide: new BorderSide(color: Colors.black)
-                                        )
+                                      hintText: "Enter here",
+                                      hintStyle: new TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                      enabledBorder: new UnderlineInputBorder(
+                                          borderSide: new BorderSide(color: Colors.black)
+                                      ),
+                                      focusedBorder: new UnderlineInputBorder(
+                                          borderSide: new BorderSide(color: Colors.black)
+                                      )
                                     ),
                                     keyboardType: TextInputType.text,
                                     onChanged: null,
@@ -588,20 +594,20 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                                 ),
                                 SizedBox(height: 20),
                                 new Container(
-                                    width: MediaQuery.of(context).size.width - 110,
-                                    decoration: BoxDecoration(
-                                        color: Color(0xFFD48032),
-                                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                                    child: new FlatButton(
-                                      child: new Text("Complete Order",
-                                        style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                                        textAlign: TextAlign.center,),
-                                      onPressed: () {
-                                        _quantitiesChosen = false;
-                                        _newOrder = false;
-                                        build(context);
-                                      },
-                                    )
+                                  width: MediaQuery.of(context).size.width - 110,
+                                  decoration: BoxDecoration(
+                                      color: Color(0xFFD48032),
+                                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                                  child: new FlatButton(
+                                    child: new Text("Complete Order",
+                                      style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.center,),
+                                    onPressed: () {
+                                      _quantitiesChosen = false;
+                                      _newOrder = false;
+                                      build(context);
+                                    },
+                                  )
                                 ),
                                 new Container(
                                     width: MediaQuery.of(context).size.width - 110,

@@ -855,69 +855,67 @@ class OrderConfirmationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new Padding(
-      padding: EdgeInsets.only(bottom: 16),
-      child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            new Stack(
-                children: <Widget>[
-                  new Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(18)),
-                      border: Border.all(
-                        color: Color(0xFF283568),
-                        width: .5,
-                      ),
-                    ),
+    return new Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        new Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              new Container(
+                height: 65,
+                width: 65,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(18)),
+                  border: Border.all(
+                    color: Color(0xFF283568),
+                    width: .5,
                   ),
-                  new Padding(
-                    padding: EdgeInsets.all(5),
-                    child: new Container(
-                      height: 70,
-                      width: 70,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(asset),
-                          fit: BoxFit.fitWidth,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(18)),
-                      ),
+                ),
+              ),
+              new Padding(
+                padding: EdgeInsets.all(5),
+                child: new Container(
+                  height: 55,
+                  width: 55,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(asset),
+                      fit: BoxFit.fitWidth,
                     ),
-                  )
-                ]
-            ),
-            new Container (
-              width: (MediaQuery.of(context).size.width - 140) / 2,
-              child: new Padding(
-                padding: EdgeInsets.all(16),
-                child: new Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      new Text(itemName,
-                        style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.left,),
-                      new Text(itemType,
-                        style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
-                    ]
+                    borderRadius: BorderRadius.all(Radius.circular(18)),
+                  ),
                 ),
               )
+            ]
+        ),
+        new Container (
+          width: (MediaQuery.of(context).size.width - 110) / 2,
+          child: new Padding(
+            padding: EdgeInsets.only(left: 16, top: 8, bottom: 16, right: 4),
+            child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text(itemName,
+                    style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,),
+                  new Text(itemType,
+                    style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                ]
             ),
-            new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new Container(
-                  alignment: Alignment.centerRight,
-                  child: new Text(quantity.toString() + "X",
-                    style: TextStyle(color: Colors.black, fontSize: 30, fontFamily: 'Roboto', fontWeight: FontWeight.bold), textAlign: TextAlign.left,)
-                )
-              ]
+          )
+        ),
+        new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Container(
+              alignment: Alignment.centerRight,
+              child: new Text(quantity.toString() + "X",
+                style: TextStyle(color: Colors.black, fontSize: 30, fontFamily: 'Roboto', fontWeight: FontWeight.bold), textAlign: TextAlign.left,)
             )
           ]
-      )
+        )
+      ]
     );
   }
 }
