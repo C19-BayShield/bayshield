@@ -605,6 +605,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                                     onPressed: () {
                                       _quantitiesChosen = false;
                                       _newOrder = false;
+                                      resetQuantities();
                                       build(context);
                                     },
                                   )
@@ -617,6 +618,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                                         textAlign: TextAlign.center,),
                                       onPressed: () {
                                         _quantitiesChosen = false;
+                                        resetQuantities();
                                         build(context);
                                       },
                                     )
