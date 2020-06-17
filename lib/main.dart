@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:supplyside/screens/consumer_request_screen.dart';
 import 'package:supplyside/screens/login_screen.dart';
 import 'package:supplyside/theme.dart';
 import 'package:supplyside/locator.dart';
@@ -21,7 +20,6 @@ class MyApp extends StatelessWidget {
       theme: SupplySideTheme,
       routes: {
         LOGIN_SCREEN: (BuildContext context) => LoginSignupScreen(),
-        REQUEST_SCREEN: (BuildContext context) => OrderRequestPage(),
       },
       home: new RootScreen(auth: new Auth()));
   }
