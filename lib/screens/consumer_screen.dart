@@ -368,7 +368,7 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                                           onPressed: null,
                                         ),
                                         OrderCard(
-                                          asset: "assets/images/face_shield_icon.png",
+                                          asset: "assets/images/n95_icon.png",
                                           onPressed: null,
                                         )
                                       ]
@@ -378,11 +378,11 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: <Widget>[
                                         OrderCard(
-                                          asset: "assets/images/face_shield_icon.png",
+                                          asset: "assets/images/gown_icon.png",
                                           onPressed: null,
                                         ),
                                         OrderCard(
-                                          asset: "assets/images/face_shield_icon.png",
+                                          asset: "assets/images/goggles_icon.png",
                                           onPressed: null,
                                         )
                                       ]
@@ -392,11 +392,11 @@ class _ConsumerScreenState extends State<ConsumerScreen> {
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: <Widget>[
                                         OrderCard(
-                                          asset: "assets/images/face_shield_icon.png",
+                                          asset: "assets/images/sanitizer_icon.png",
                                           onPressed: null,
                                         ),
                                         OrderCard(
-                                          asset: "assets/images/face_shield_icon.png",
+                                          asset: "assets/images/gloves_icon.png",
                                           onPressed: null,
                                         )
                                       ]

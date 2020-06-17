@@ -759,6 +759,7 @@ class OrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return new FlatButton(
       child: new Stack(
+          alignment: Alignment.topCenter,
           children: <Widget>[
             new Container(
               height: 150,
@@ -766,22 +767,6 @@ class OrderCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Color(0xFF283568),
                 borderRadius: BorderRadius.all(Radius.circular(18)),
-              ),
-              alignment: Alignment.bottomCenter,
-            ),
-            new Container(
-              height: 120,
-              width: 145,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(asset),
-                  fit: BoxFit.fitWidth,
-                ),
-                borderRadius: BorderRadius.only(topRight: Radius.circular(18), topLeft: Radius.circular(18)),
-                border: Border.all(
-                  color: Color(0xFF283568),
-                  width: .5,
-                ),
               ),
             ),
             new Container(
@@ -829,6 +814,32 @@ class OrderCard extends StatelessWidget {
                     ]
                 )
             ),
+            new Container(
+              height: 120,
+              width: 145,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(topRight: Radius.circular(18), topLeft: Radius.circular(18)),
+                border: Border.all(
+                  color: Color(0xFF283568),
+                  width: .5,
+                ),
+              ),
+            ),
+            new Padding(
+              padding: EdgeInsets.all(5),
+              child: new Container(
+                height: 110,
+                width: 110,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(asset),
+                    fit: BoxFit.fitWidth,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(18)),
+                ),
+              ),
+            )
           ]
       ),
       onPressed: onPressed,
