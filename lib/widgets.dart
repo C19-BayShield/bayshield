@@ -893,7 +893,7 @@ class OrderConfirmationCard extends StatelessWidget {
           ),
         ),
         new Container (
-          width: (MediaQuery.of(context).size.width - 110) / 2,
+          width: (MediaQuery.of(context).size.width - 130) / 2,
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[

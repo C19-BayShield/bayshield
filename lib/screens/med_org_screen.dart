@@ -552,7 +552,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                                             OrderConfirmationCard(
                                               asset: "assets/images/sanitizer_icon.png",
                                               itemName: "Sanitizer",
-                                              itemType: "",
+                                              itemType: "Hand Sanitizer",
                                               quantity: sanitizerCount,
                                             ),
                                         ]
