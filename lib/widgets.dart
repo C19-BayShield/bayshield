@@ -425,8 +425,9 @@ class InventoryEditCard extends StatelessWidget {
   final String itemName;
   final int quantity;
   final String itemType;
+  final TextEditingController controller;
 
-  InventoryEditCard({Key key, @required this.asset, @required this.itemName, @required this.quantity, @required this.itemType}) : super(key: key);
+  InventoryEditCard({Key key, @required this.asset, @required this.itemName, @required this.quantity, @required this.itemType, @required this.controller}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return new Row(
@@ -442,10 +443,29 @@ class InventoryEditCard extends StatelessWidget {
                     textAlign: TextAlign.left,),
                   new Container(
                       width: MediaQuery.of(context).size.width * 0.5,
-                      child: new EditFormField(
-                        type: TextInputType.number,
-                        hint: quantity.toString(),
-                        maxLines: 1,
+                      child: new Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: new TextField(
+                          style: TextStyle(color: Colors.black),
+                          textAlign: TextAlign.left,
+                          maxLines: 1,
+                          autofocus: false,
+                          decoration: new InputDecoration(
+                              hintText: quantity.toString(),
+                              hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
+                              enabledBorder: new UnderlineInputBorder(
+                                  borderSide: new BorderSide(color: Colors.black)
+                              ),
+                              focusedBorder: new UnderlineInputBorder(
+                                  borderSide: new BorderSide(color: Colors.black)
+                              )
+                          ),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            WhitelistingTextInputFormatter.digitsOnly
+                          ],
+                          controller: controller,
+                        ),
                       )
                   ),
                   SizedBox(height: 10),

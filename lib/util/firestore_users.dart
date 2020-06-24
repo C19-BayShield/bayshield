@@ -34,6 +34,15 @@ class FirestoreUsers {
     }
   }
 
+  Future getCollectionHub(String id) async {
+    try {
+      var userData = await _usersCollectionReference.document(id).get();
+      return CollectionHub.fromData(userData.data);
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future updateUserType(String id, String type) async {
     try {
       await _usersCollectionReference.document(id).updateData({"type": type});
@@ -92,6 +101,14 @@ class FirestoreUsers {
     try {
       await _usersCollectionReference.document(id).updateData({"address": address});
       print('Saved address: $address');
+    } catch (e) {
+      return e.message;
+    }
+  }
+
+  Future setHubInventory(String id, String itemName, String itemType, int quantity) async {
+    try {
+      await _usersCollectionReference.document(id).updateData({itemName + "." + itemType: quantity});
     } catch (e) {
       return e.message;
     }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/widgets.dart';
 import 'package:supplyside/state_widgets.dart';
 import 'package:supplyside/locator.dart';
 import 'package:supplyside/datamodels/user.dart';
 import 'package:supplyside/util/firestore_users.dart';
+
 
 class HubScreen extends StatefulWidget {
 
@@ -57,7 +58,7 @@ class _HubScreenState extends State<HubScreen>{
   bool _displaySettings = false;
 
   // User variables
-  User user;
+  CollectionHub user;
 
   void _onNavigationIconTapped(int index) {
     setState(() {
@@ -119,11 +120,6 @@ class _HubScreenState extends State<HubScreen>{
     build(context);
   }
 
-  void _onInventoryEditButtonPressed() {
-    _inventoryEditButtonPressed = !_inventoryEditButtonPressed;
-    build(context);
-  }
-
   void signOut() async {
     try {
       await widget.auth.signOut();
@@ -135,11 +131,11 @@ class _HubScreenState extends State<HubScreen>{
 
   Widget showIncomingItems() {
     // TODO: replace hard-coded values.
-    String asset = "assets/images/face_shield_card.png";
+    String asset = "assets/images/gloves_card.png";
     String icon = "assets/images/add_button.png";
-    String itemName = "Face Shield";
+    String itemName = "Gloves";
     int quantity = 50;
-    String itemType = "USCF V1";
+    String itemType = "Neoprene";
     String date = "02/01/2020";
 
     return new Padding (
@@ -207,7 +203,7 @@ class _HubScreenState extends State<HubScreen>{
     );
   }
 
-  Widget _buildConfirmationPopUp(BuildContext context, String itemName, int quantity) {
+  Widget _buildConfirmationPopUp(BuildContext context, String itemName, String itemType, int quantity) {
     if (quantity == 0) {
       return new AlertDialog(
         backgroundColor: Colors.white,
@@ -224,6 +220,7 @@ class _HubScreenState extends State<HubScreen>{
         ],
       );
     }
+
     return new AlertDialog(
       backgroundColor: Colors.white,
       titleTextStyle: TextStyle(fontSize: 18, fontFamily: "Roboto", color: Colors.black),
@@ -231,6 +228,8 @@ class _HubScreenState extends State<HubScreen>{
       actions: <Widget>[
         new FlatButton(
           onPressed: () {
+            _firestoreUsers.setHubInventory(widget.userId, itemName, itemType, quantity + user.getSupply(itemName, itemType));
+            getUser();
             Navigator.of(context).pop();
           },
           textColor: Color(0xFF283568),
@@ -276,9 +275,11 @@ class _HubScreenState extends State<HubScreen>{
                   ),
                   new Container(
                       width: MediaQuery.of(context).size.width - 110,
-                      child: new QuantityInputField(onChanged: (value) {
-                        _newQuantity = int.parse(value);
-                      }),
+                      child: new QuantityInputField(
+                        onChanged: (value) {
+                          _newQuantity = int.parse(value);
+                        }
+                      ),
                   ),
                   new Padding (
                     padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
@@ -294,7 +295,7 @@ class _HubScreenState extends State<HubScreen>{
                         onPressed: () {
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) => _buildConfirmationPopUp(context, _itemConfirmationCard.itemName, _newQuantity),
+                            builder: (BuildContext context) => _buildConfirmationPopUp(context, _itemConfirmationCard.itemName, _itemConfirmationCard.itemType, _newQuantity),
                           );
                         },
                       )
@@ -564,11 +565,14 @@ class _HubScreenState extends State<HubScreen>{
                               if (_displayInventory) {
                                 _settingsEditButtonPressed = false;
                               }
+                              if (_displayInventory) {
+                                _inventoryEditButtonPressed = false;
+                              }
                             });
                           },
                           isSelected: _isSelectedProfilePage,
                         ),
-                        if (_displayInventory) buildInventoryPage(),
+                        if (_displayInventory) new InventoryPage(user: user),
                         if (_displaySettings) new ProfileSettings(user: user, title: ""),
                       ]
                   )
@@ -580,73 +584,8 @@ class _HubScreenState extends State<HubScreen>{
     );
   }
 
-  Widget buildInventoryPage() {
-    String asset = "assets/images/face_shield_card.png";
-    String itemName = "Face Shield";
-    int quantity = 5000;
-    String itemType = "USCF V1";
-    String itemType2 = "USCF V3";
-
-    return new Padding (
-        padding: EdgeInsets.only(top: 10.0),
-        child: Container(
-            width: MediaQuery.of(context).size.width - 100,
-            child: new Column (
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget> [
-                  new Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        new IconButton(
-                          onPressed: _onInventoryEditButtonPressed,
-                          icon: Image.asset("assets/images/edit_button.png", height: 26, alignment: Alignment.centerRight),
-                        )
-                      ]
-                  ),
-                  if (!_inventoryEditButtonPressed) new InventoryCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType,),
-                  if (!_inventoryEditButtonPressed) new InventoryCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType2,),
-                  if (_inventoryEditButtonPressed) new InventoryEditCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType),
-                  if (_inventoryEditButtonPressed) new InventoryEditCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType2),
-                  if (_inventoryEditButtonPressed) new Row (
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        new Padding (
-                          padding: EdgeInsets.only(right: 4),
-                          child: new Container(
-                              width: (MediaQuery.of(context).size.width - 120) * 0.5,
-                              child: new FlatButton(
-                                child: new Text("Save",
-                                  style: TextStyle(color: Color(0xFF283568), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
-                                  textAlign: TextAlign.center,),
-                                onPressed: () {
-                                  _inventoryEditButtonPressed = false;
-                                  build(context);
-                                },
-                              )
-                          ),
-                        ),
-                        new Container(
-                            width: (MediaQuery.of(context).size.width - 120) * 0.5,
-                            child: new FlatButton(
-                              child: new Text("Cancel",
-                                style: TextStyle(color: Color(0xFFD48032), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
-                                textAlign: TextAlign.center,),
-                              onPressed: () {
-                                _inventoryEditButtonPressed = false;
-                                build(context);
-                              },
-                            )
-                        ),
-                      ]
-                  )
-                ]
-            )
-        ),
-    );
-  }
-
   Future getUser() async {
-    User currUser = await _firestoreUsers.getUser(widget.userId);
+    CollectionHub currUser = await _firestoreUsers.getCollectionHub(widget.userId);
 
     if (currUser != null) {
       if (!mounted) return;
