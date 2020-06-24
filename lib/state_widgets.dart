@@ -528,3 +528,265 @@ class _MedorgsStatusState extends State<MedorgsStatus>{
     );
   }
 }
+
+class InventoryPage extends StatefulWidget {
+  InventoryPage({Key key, @required this.user}) : super(key: key);
+
+  final CollectionHub user;
+
+  @override
+  State<StatefulWidget> createState() => new _InventoryPageState();
+}
+
+class _InventoryPageState extends State<InventoryPage> {
+
+  final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
+
+  bool _inventoryEditButtonPressed = false;
+
+  int faceShieldUCSFA1;
+  int faceShieldUCSFC1;
+  int maskCloth;
+  int maskN95;
+  int maskSurgical;
+  int glovesSurgical;
+  int glovesNitrile;
+  int glovesNeoprene;
+  int gogglesSurgical;
+  int gown;
+  int handSanitizer;
+
+  TextEditingController faceShieldController1 = TextEditingController();
+  TextEditingController faceShieldController2 = TextEditingController();
+  TextEditingController maskController1 = TextEditingController();
+  TextEditingController maskController2 = TextEditingController();
+  TextEditingController maskController3 = TextEditingController();
+  TextEditingController glovesController1 = TextEditingController();
+  TextEditingController glovesController2 = TextEditingController();
+  TextEditingController glovesController3 = TextEditingController();
+  TextEditingController gogglesController = TextEditingController();
+  TextEditingController gownController = TextEditingController();
+  TextEditingController handSanitizerController = TextEditingController();
+
+  void _onInventoryEditButtonPressed() {
+    _inventoryEditButtonPressed = !_inventoryEditButtonPressed;
+    clearControllers();
+    build(context);
+  }
+
+  void clearControllers() {
+    faceShieldController1.clear();
+    faceShieldController2.clear();
+    maskController1.clear();
+    maskController2.clear();
+    maskController3.clear();
+    glovesController1.clear();
+    glovesController2.clear();
+    glovesController3.clear();
+    gogglesController.clear();
+    gownController.clear();
+    handSanitizerController.clear();
+  }
+
+  Widget showInventoryCards(bool edit) {
+
+    List<Widget> list = new List<Widget>();
+
+    faceShieldUCSFA1 = widget.user.getSupply("Face Shield", "UCSF A1") ?? 0;
+    faceShieldUCSFC1 = widget.user.getSupply("Face Shield", "UCSF C1") ?? 0;
+    maskCloth = widget.user.getSupply("Mask", "Cloth") ?? 0;
+    maskN95 = widget.user.getSupply("Mask", "N95") ?? 0;
+    maskSurgical = widget.user.getSupply("Mask", "Surgical") ?? 0;
+    glovesSurgical = widget.user.getSupply("Gloves", "Surgical") ?? 0;
+    glovesNitrile = widget.user.getSupply("Gloves", "Nitrile") ?? 0;
+    glovesNeoprene = widget.user.getSupply("Gloves", "Neoprene") ?? 0;
+    gogglesSurgical = widget.user.getSupply("Goggles", "Surgical") ?? 0;
+    gown = widget.user.getSupply("Gown", "Regular") ?? 0;
+    handSanitizer = widget.user.getSupply("Hand Sanitizer", "Regular") ?? 0;
+
+    if (faceShieldUCSFA1 > 0) {
+      if (edit) {
+        list.add(InventoryEditCard(asset: "assets/images/face_shield_card.png",
+            itemName: "Face Shield", quantity: faceShieldUCSFA1, itemType: "UCSF A1", controller: faceShieldController1));
+      } else {
+        list.add(InventoryCard(asset: "assets/images/face_shield_card.png",
+            itemName: "Face Shield", quantity: faceShieldUCSFA1, itemType: "UCSF A1"));
+      }
+    }
+
+    if (faceShieldUCSFC1 > 0) {
+      if (edit) {
+        list.add(InventoryEditCard(asset: "assets/images/face_shield_card.png",
+            itemName: "Face Shield", quantity: faceShieldUCSFC1, itemType: "UCSF C1", controller: faceShieldController2));
+      } else {
+        list.add(InventoryCard(asset: "assets/images/face_shield_card.png",
+            itemName: "Face Shield", quantity: faceShieldUCSFC1, itemType: "UCSF C1"));
+      }
+    }
+
+    if (maskCloth > 0) {
+      if (edit) {
+        list.add(InventoryEditCard(asset: "assets/images/n95_card.png",
+            itemName: "Mask", quantity: maskCloth, itemType: "Cloth", controller: maskController1));
+      } else {
+        list.add(InventoryCard(asset: "assets/images/n95_card.png",
+            itemName: "Mask", quantity: maskCloth, itemType: "Cloth"));
+      }
+    }
+
+    if (maskN95 > 0) {
+      if (edit) {
+        list.add(InventoryEditCard(asset: "assets/images/n95_card.png",
+            itemName: "Mask", quantity: maskN95, itemType: "N95", controller: maskController2));
+      } else {
+        list.add(InventoryCard(asset: "assets/images/n95_card.png",
+            itemName: "Mask", quantity: maskN95, itemType: "N95"));
+      }
+    }
+
+    if (maskSurgical > 0) {
+      if (edit) {
+        list.add(InventoryEditCard(asset: "assets/images/n95_card.png",
+            itemName: "Mask", quantity: maskSurgical, itemType: "Surgical", controller: maskController3));
+      } else {
+        list.add(InventoryCard(asset: "assets/images/n95_card.png",
+            itemName: "Mask", quantity: maskSurgical, itemType: "Surgical"));
+      }
+    }
+
+    if (glovesSurgical > 0) {
+      if (edit) {
+        list.add(InventoryEditCard(asset: "assets/images/gloves_card.png",
+            itemName: "Gloves", quantity: glovesSurgical, itemType: "Surgical", controller: glovesController1));
+      } else {
+        list.add(InventoryCard(asset: "assets/images/gloves_card.png",
+            itemName: "Gloves", quantity: glovesSurgical, itemType: "Surgical"));
+      }
+    }
+
+    if (glovesNitrile > 0) {
+      if (edit) {
+        list.add(InventoryEditCard(asset: "assets/images/gloves_card.png",
+            itemName: "Gloves", quantity: glovesNitrile, itemType: "Nitrile", controller: glovesController2));
+      } else {
+        list.add(InventoryCard(asset: "assets/images/gloves_card.png",
+            itemName: "Gloves", quantity: glovesNitrile, itemType: "Nitrile"));
+      }
+    }
+
+    if (glovesNeoprene > 0) {
+      if (edit) {
+        list.add(InventoryEditCard(asset: "assets/images/gloves_card.png",
+            itemName: "Gloves", quantity: glovesNeoprene, itemType: "Neoprene", controller: glovesController3));
+      } else {
+        list.add(InventoryCard(asset: "assets/images/gloves_card.png",
+            itemName: "Gloves", quantity: glovesNeoprene, itemType: "Neoprene"));
+      }
+    }
+
+    if (gogglesSurgical > 0) {
+      if (edit) {
+        list.add(InventoryEditCard(asset: "assets/images/goggles_card.png",
+            itemName: "Goggles", quantity: gogglesSurgical, itemType: "Surgical", controller: gogglesController));
+      } else {
+        list.add(InventoryCard(asset: "assets/images/goggles_card.png",
+            itemName: "Goggles", quantity: gogglesSurgical, itemType: "Surgical"));
+      }
+    }
+
+    if (gown > 0) {
+      if (edit) {
+        list.add(InventoryEditCard(asset: "assets/images/gown_card.png",
+            itemName: "Gown", quantity: gown, itemType: "Regular", controller: gownController));
+      } else {
+        list.add(InventoryCard(asset: "assets/images/gown_card.png",
+            itemName: "Gown", quantity: gown, itemType: "Regular"));
+      }
+    }
+
+    if (handSanitizer > 0) {
+      if (edit) {
+        list.add(InventoryEditCard(asset: "assets/images/sanitizer_card.png",
+            itemName: "Hand Sanitizer", quantity: handSanitizer, itemType: "Regular", controller: handSanitizerController));
+      } else {
+        list.add(InventoryCard(asset: "assets/images/sanitizer_card.png",
+            itemName: "Hand Sanitizer", quantity: handSanitizer, itemType: "Regular"));
+      }
+    }
+
+    return new Column(children: list);
+  }
+
+  void updateInventory() async {
+    _firestoreUsers.setHubInventory(widget.user.id, "Gown", "Regular", gownController.text == "" ? gown : int.parse(gownController.text));
+    _firestoreUsers.setHubInventory(widget.user.id, "Face Shield", "UCSF A1", faceShieldController1.text == "" ? faceShieldUCSFA1 : int.parse(faceShieldController1.text));
+    _firestoreUsers.setHubInventory(widget.user.id, "Face Shield", "UCSF C1", faceShieldController2.text == "" ? faceShieldUCSFC1 : int.parse(faceShieldController2.text));
+    _firestoreUsers.setHubInventory(widget.user.id, "Mask", "Cloth", maskController1.text == "" ? maskCloth : int.parse(maskController1.text));
+    _firestoreUsers.setHubInventory(widget.user.id, "Mask", "N95", maskController2.text == "" ? maskN95 : int.parse(maskController2.text));
+    _firestoreUsers.setHubInventory(widget.user.id, "Mask", "Surgical", maskController3.text == "" ? maskSurgical : int.parse(maskController3.text));
+    _firestoreUsers.setHubInventory(widget.user.id, "Gloves", "Surgical", glovesController1.text == "" ? glovesSurgical : int.parse(glovesController1.text));
+    _firestoreUsers.setHubInventory(widget.user.id, "Gloves", "Nitrile", glovesController2.text == "" ? glovesNitrile : int.parse(glovesController2.text));
+    _firestoreUsers.setHubInventory(widget.user.id, "Gloves", "Neoprene", glovesController3.text == "" ? glovesNeoprene : int.parse(glovesController3.text));
+    _firestoreUsers.setHubInventory(widget.user.id, "Goggles", "Surgical", gogglesController.text == "" ? gogglesSurgical : int.parse(gogglesController.text));
+    _firestoreUsers.setHubInventory(widget.user.id, "Hand Sanitizer", "Regular", handSanitizerController.text == "" ? handSanitizer : int.parse(handSanitizerController.text));
+  }
+
+  Widget build(BuildContext context) {
+    return new Padding (
+      padding: EdgeInsets.only(top: 10.0, bottom: 20.0),
+      child: Container(
+        width: MediaQuery.of(context).size.width - 100,
+        child: new Column (
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget> [
+            new Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  new IconButton(
+                    onPressed: _onInventoryEditButtonPressed,
+                    icon: Image.asset("assets/images/edit_button.png", height: 26, alignment: Alignment.centerRight),
+                  )
+                ]
+            ),
+            if (!_inventoryEditButtonPressed) showInventoryCards(false),
+            if (_inventoryEditButtonPressed) showInventoryCards(true),
+            if (_inventoryEditButtonPressed) new Row (
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new Padding (
+                  padding: EdgeInsets.only(right: 4),
+                  child: new Container(
+                      width: (MediaQuery.of(context).size.width - 120) * 0.5,
+                      child: new FlatButton(
+                        child: new Text("Save",
+                          style: TextStyle(color: Color(0xFF283568), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                          textAlign: TextAlign.center,),
+                        onPressed: () {
+                          updateInventory();
+                          clearControllers();
+                          _inventoryEditButtonPressed = false;
+                          build(context);
+                        },
+                      )
+                  ),
+                ),
+                new Container(
+                    width: (MediaQuery.of(context).size.width - 120) * 0.5,
+                    child: new FlatButton(
+                      child: new Text("Cancel",
+                        style: TextStyle(color: Color(0xFFD48032), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                        textAlign: TextAlign.center,),
+                      onPressed: () {
+                        _inventoryEditButtonPressed = false;
+                        build(context);
+                      },
+                    )
+                  ),
+                ]
+              )
+            ]
+          )
+      ),
+    );
+  }
+}
