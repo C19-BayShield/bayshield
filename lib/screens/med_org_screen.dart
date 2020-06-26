@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:supplyside/datamodels/order.dart';
 import 'package:supplyside/datamodels/user.dart';
-import 'package:supplyside/util/mock_consts.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/util/firestore_users.dart';
 import 'package:supplyside/locator.dart';
 import 'package:supplyside/widgets.dart';
 import 'package:supplyside/state_widgets.dart';
+import 'package:supplyside/util/firestore_orders.dart';
 
 
 class MedicalOrganizationScreen extends StatefulWidget {
@@ -23,32 +23,21 @@ class MedicalOrganizationScreen extends StatefulWidget {
 
 class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
 
+  // firestore dependent variables
   final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
+  final FirestoreOrders _firestoreOrders = locator<FirestoreOrders>();
   MedicalFacility user;
-  int _selectedIndex = 1; // default loads Home Page.
+  List<SupplyOrder> orders;
+  Map<String, List<SupplyRequest>> requests = new Map();
 
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
+  int _selectedIndex = 1; // default loads Home Page.
 
   TextStyle orderStyle = TextStyle(fontSize: 16.0,letterSpacing: .5, color: Color(0xFF263151));
   TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
   String _message = "Alert: PPE Design Update. Read More";
   int _pending = 4;
-  int _newQuantity = 0;
-
-  int _index = 0;
-
-  bool _initialized = false;
-  bool _addButtonPressed = false;
-  bool _arrowPressed = false;
+ 
   bool _editButtonPressed = false;
-
-  List<bool> _isSelectedOrdersPage = [true, false, false]; // defaults at Incoming tab.
-  bool _displayIncoming = true;
-  bool _displayPending = false;
-  bool _displayShipped = false;
 
   bool _newOrder = false;
   bool _quantitiesChosen = false;
@@ -68,21 +57,12 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
 
   void _onNavigationIconTapped(int index) {
     setState(() {
-      _index = 0;
       _selectedIndex = index;
-      _addButtonPressed = false;
-      _arrowPressed = false;
       _editButtonPressed = false;
-      _initialized = false;
       _displayStatus = false;
       _displaySettings = true;
       _newOrder = false;
       _quantitiesChosen = false;
-
-      nameController.clear();
-      emailController.clear();
-      phoneNumberController.clear();
-      addressController.clear();
 
       resetQuantities();
 
@@ -101,6 +81,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
     sanitizerCount = 0;
   }
 
+/* Async functions fetching from DB BEGIN */
 
   Future getUser() async {
     MedicalFacility currUser = await _firestoreUsers.getMedicalFacility(widget.userId);
@@ -112,54 +93,59 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
     }
   }
 
-  Widget _buildRequestItem(SupplyRequest req, BuildContext context) {
-    String asset = req.item.imageUrl ?? "assets/images/logo.png";
-    String itemName =  req.item.name;
-    int quantity = req.amtOrdered;
+  Future getOrders() async {
+    List<SupplyOrder> temp = await _firestoreOrders.getOrders(widget.userId);
+    if (temp != null) {
+      if (!mounted) return;
 
-    return new ItemCard(asset: asset, itemName: itemName, quantity: quantity, 
-      itemType: "USCF V1", date: "06 May 2020", hasShipped: true, isPending: false,
-      status: req.statusToString(),  
-      deliveryLocation: user.getFacilityName(),
-      deliveryDate: "10 May 2020",
-    );
+      setState(() {
+        orders = temp; // initialize orders
+      });
+
+      // parse requests for each order
+      for (final order in temp) {
+        List<SupplyRequest> reqs = [];
+        for (final r in order.getRequests()) {
+          SupplyRequest req = await _firestoreOrders.getRequest(r);
+          reqs.add(req);
+        }
+        setState(() {
+          requests[order.supplyNo] = reqs; // initialize requests for this order
+        });
+      }
+    }
   }
 
-    Widget showShippedItems() {
-    // TODO: replace hard-coded values.
-    String asset = "assets/images/face_shield_card.png";
-    String itemName = "Face Shield";
-    int quantity = 50;
-    String itemType = "USCF V1";
-    String date = "02/01/2020";
-    String status = "Expected\nDelivery";
-    String deliveryDate = "02/06/2020";
-    String deliveryLocation = "Tang Center";
+  /* Async functions END */
 
-    return new Padding (
-        padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
-        child: Container(
-            width: MediaQuery.of(context).size.width - 80,
-            child: new Column (
-                children: <Widget> [
-                  new ItemCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType, date: date, hasShipped: true, isPending: false,
-                    status: status, deliveryDate: deliveryDate, deliveryLocation: deliveryLocation),
-                ]
-            )
-        )
-    );
+
+  /* Order display functions BEGIN */
+
+  Widget _buildOrderDisplay(SupplyOrder order, BuildContext context) {
+    if (requests != null && requests[order.supplyNo] != null) {
+      return Column(
+        children: <Widget>[
+        for (final req in requests[order.supplyNo]) 
+          new RequestCard(req: req, date: order.timestamp.toDate())
+        ],
+      );
+    } else {
+      return new Container();
+    }
   }
 
-  Widget _buildRequestList() {
+   Widget _buildRequestList() {
     return ListView(
       shrinkWrap: true,
       physics: AlwaysScrollableScrollPhysics(),
         children: <Widget>[
-            for(final req in TEST_REQS)
-        Padding(child: _buildRequestItem(req, context),padding: EdgeInsets.symmetric(vertical: 8)),         
+          for (final order in orders)
+            Padding(child: _buildOrderDisplay(order, context),padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32.0)),         
         ], 
     );
   }
+
+  /* Order display functions END */ 
 
   Widget buildWaitingScreen() {
     return Scaffold(
@@ -180,7 +166,6 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   }
 
   void _onPendingPressed() {
-    _index = 1;
     _onNavigationIconTapped(0);
   }
 
@@ -329,7 +314,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                               padding: EdgeInsets.only(top: 30, bottom: 25)
                           )
                       ),
-                     showShippedItems(),
+                     _buildRequestList(),
                      new NewOrderPlus(onPressed: () {
                        _newOrder = true;
                        _selectedIndex = 0;
@@ -655,6 +640,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   @override
   Widget build(BuildContext context) {
     getUser();
+    getOrders();
     if (user == null) {
       return buildWaitingScreen();
     } else {

@@ -8,43 +8,43 @@ Item aerosolBox =
   );
 Item gown = 
   Item('Gown', 
-    'assets/images/gown_card.jpg', 
+    'assets/images/gown_card.png', 
     '', 
     []
   );
 Item faceShield = 
   Item('Face Shield', 
-    'assets/images/face_shield_card.jpeg', 
+    'assets/images/face_shield_card.png', 
     'To protect your face', 
     [ItemRequirement.fabricator]
   );
 Item gloves = 
   Item('Gloves', 
-    'assets/images/gloves_card.jpg', 
+    'assets/images/gloves_card.png', 
     '', 
     []
   );
 Item goggles = 
   Item('Goggles', 
-    'assets/images/goggles_card.jpeg', 
+    'assets/images/goggles_card.png', 
     '', 
     []
   );
 Item n95Regular = 
   Item('N95 Regular', 
-    'assets/images/n95_card.jpg', 
+    'assets/images/n95_card.png', 
     '', 
     []
   );
 Item n95Small = 
   Item('N95 Small', 
-    'assets/images/n95_card.jpeg', 
+    'assets/images/n95_card.png', 
     '', 
     []
   );
 Item sanitizer = 
   Item('Sanitizer', 
-    'assets/images/hand_sanitizer_card.jpeg', 
+    'assets/images/hand_sanitizer_card.png', 
     '', 
     []
   );
@@ -56,7 +56,7 @@ Item surgicalMask =
   );
 Item wipes = 
   Item('Wipes', 
-    'assets/images/logo_small.jpg', 
+    'assets/images/logo_small.png', 
     '', 
     []
   );
