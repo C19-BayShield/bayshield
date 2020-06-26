@@ -147,7 +147,9 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   int getTotalRequests() {
     int total = 0;
     for (final order in orders) {
-      total += requests[order.supplyNo].length;
+      if (requests[order.supplyNo] != null) {
+        total += requests[order.supplyNo].length;
+      }
     }
     return total;
   } 

@@ -7,6 +7,29 @@ class FirestoreOrders {
   final CollectionReference _ordersRef = Firestore.instance.collection("orders");
   final CollectionReference _requestsRef = Firestore.instance.collection("requests");
 
+  Future createOrder(SupplyOrder order) async {
+    try {
+      DocumentReference docRef = await _ordersRef.add(order.toJson());
+      print('Saved order to db on: $order.time');
+      String orderID = docRef.documentID;
+      order.setSupplyNo(orderID);
+    } catch (e) {
+      return e.message;
+    }
+  }
+
+  Future createRequest(SupplyRequest request) async {
+    try {
+      DocumentReference docRef = await _requestsRef.add(request.toJson());
+      print('Saved request to db');
+      String reqID = docRef.documentID;
+      request.setRequestNo(reqID);
+      return reqID;
+    } catch (e) {
+      return e.message;
+    }
+  }
+
   Future<List<SupplyOrder>> getOrders(String userId) async {
     try {
       QuerySnapshot qShot =

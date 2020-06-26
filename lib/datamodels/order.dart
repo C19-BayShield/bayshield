@@ -13,6 +13,18 @@ enum Status {
   delivered
 }
 
+String statusToString(Status status) {
+  switch (status) {
+      case Status.delivered:
+        return 'Delivered';
+      case Status.ordered:
+        return 'Ordered';
+      case Status.arrived:
+        return 'Arrived at Distribution';
+      default: return 'TBD';
+    }
+}
+
 /// A Supply Request is an individual request for a single item
 class SupplyRequest {
 
@@ -28,6 +40,18 @@ class SupplyRequest {
       requestNo = id,
       amtOrdered = data['amtOrdered'],
       status = SupplyRequest.stringToStatus(data['status']);
+
+  Map<String, dynamic> toJson() {
+    return {
+      'item': item.name,
+      'status': statusToString(),
+      'amtOrdered': amtOrdered,
+    };
+  }
+
+  void setRequestNo(String id) {
+    this.requestNo = id;
+  }
 
   String statusToString(){
     switch (status) {
@@ -73,6 +97,19 @@ class SupplyOrder {
       requests = List.from(data['requests']),
       status = SupplyRequest.stringToStatus(data['status']),
       timestamp = data['time'];
+  
+  void setSupplyNo(String id) {
+    this.supplyNo = id;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'status': statusToString(status),
+      'time': new DateTime.now(),
+      'requests': requests,
+    };
+  }
   
   List<String> getRequests() {
     return requests;
