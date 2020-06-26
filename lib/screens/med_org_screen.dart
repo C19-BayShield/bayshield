@@ -35,7 +35,6 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   TextStyle orderStyle = TextStyle(fontSize: 16.0,letterSpacing: .5, color: Color(0xFF263151));
   TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
   String _message = "Alert: PPE Design Update. Read More";
-  int _pending = 4;
  
   bool _editButtonPressed = false;
 
@@ -145,6 +144,14 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
     );
   }
 
+  int getTotalRequests() {
+    int total = 0;
+    for (final order in orders) {
+      total += requests[order.supplyNo].length;
+    }
+    return total;
+  } 
+
   /* Order display functions END */ 
 
   Widget buildWaitingScreen() {
@@ -205,7 +212,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                                       height: MediaQuery.of(context).size.height / 7,
                                       width: (MediaQuery.of(context).size.width - 120) / 2,
                                       color: Colors.transparent,
-                                      child: new PendingItemsCard(pending: _pending, onPressed: _onPendingPressed),
+                                      child: new PendingItemsCard(pending: getTotalRequests(), onPressed: _onPendingPressed),
                                     ),
                                     Container(
                                       height: MediaQuery.of(context).size.height / 7,
