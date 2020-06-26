@@ -116,6 +116,10 @@ class SupplyOrder {
       'requests': requests,
     };
   }
+
+  void deleteRequest(String requestNo) {
+    requests.remove(requestNo);
+  }
   
   List<String> getRequests() {
     return requests;

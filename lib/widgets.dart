@@ -948,9 +948,10 @@ class OrderConfirmationCard extends StatelessWidget {
 class RequestCard extends StatelessWidget {
 
   final SupplyRequest req;
-  final DateTime date;
+  final SupplyOrder order;
+  final Function onDelete;
 
-  RequestCard({Key key, @required this.req, this.date}) : super(key: key);
+  RequestCard({Key key, @required this.req, @required this.order, @required this.onDelete}) : super(key: key);
 
   String truncateWithEllipsis(int cutoff, String myString) {
   return (myString.length <= cutoff)
@@ -961,6 +962,7 @@ class RequestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Item item = req.item; 
+    DateTime date = order.timestamp.toDate();
     String formattedDate = new DateFormat.yMd().format(date);
     return new Row(
         children: <Widget>[
@@ -986,7 +988,9 @@ class RequestCard extends StatelessWidget {
           ),
           Spacer(),
           new IconButton(
-            onPressed: () => {},
+            onPressed: () => {
+              onDelete(order, req),
+            },
             icon: Icon(Icons.cancel),
             color: Color(0xFFC4C4C4),
             iconSize: 24.0,

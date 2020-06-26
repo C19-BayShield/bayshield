@@ -117,6 +117,48 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
     }
   }
 
+  // creating orders and requests
+  void validateAndSubmit() async {
+    if (validateAndSave()) {
+      List<String> requestIDs = [];
+      try {
+        // create individual requests 
+        List<int> counts = [faceShieldCount, n95Count, glovesCount, 
+        gogglesCount, gownCount, sanitizerCount];
+        List<Item> items = [faceShield, n95Regular, gloves, goggles, gown, sanitizer];
+        for (int i = 0; i < counts.length; i++) {
+          if (counts[i] > 0) {
+            String reqID = await _firestoreOrders.createRequest
+            (SupplyRequest(amtOrdered: counts[i] , item: items[i], status: Status.pending));
+            requestIDs.add(reqID);
+          }
+        }
+
+        // now that we have IDs for requests, create the overarching order
+        SupplyOrder currOrder = new SupplyOrder(userId: widget.userId, 
+        requests: requestIDs, status: Status.pending);
+        await _firestoreOrders.createOrder(currOrder);
+      } catch (e) {
+        print('Error: $e');
+      }
+    }
+  }
+
+  void deleteRequest(SupplyOrder order, SupplyRequest req) async {
+    // first delete reference in order datamodel
+    order.deleteRequest(req.requestNo);
+    try {
+      await _firestoreOrders.deleteRequest(order, req.requestNo);
+      requests[order.supplyNo].remove(req);
+      if (order.requests.length == 0) {
+        orders.remove(order);
+        await _firestoreOrders.deleteOrder(order.supplyNo);
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
+
   /* Async functions END */
 
 
@@ -127,7 +169,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
       return Column(
         children: <Widget>[
         for (final req in requests[order.supplyNo]) 
-          new RequestCard(req: req, date: order.timestamp.toDate())
+          new RequestCard(req: req, order: order, onDelete: deleteRequest,)
         ],
       );
     } else {
@@ -138,7 +180,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
    Widget _buildRequestList() {
     return ListView(
       shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(),
+      physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
           for (final order in orders)
             Padding(child: _buildOrderDisplay(order, context),padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32.0)),         
@@ -190,33 +232,6 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
     glovesCount > 0 || gogglesCount > 0 ||  gownCount > 0 || 
     sanitizerCount > 0;
     return nonNeg && oneNonZero;
-  }
-
-  // Perform login or signup
-  void validateAndSubmit() async {
-    if (validateAndSave()) {
-      List<String> requestIDs = [];
-      try {
-        // create individual requests 
-        List<int> counts = [faceShieldCount, n95Count, glovesCount, 
-        gogglesCount, gownCount, sanitizerCount];
-        List<Item> items = [faceShield, n95Regular, gloves, goggles, gown, sanitizer];
-        for (int i = 0; i < counts.length; i++) {
-          if (counts[i] > 0) {
-            String reqID = await _firestoreOrders.createRequest
-            (SupplyRequest(amtOrdered: counts[i] , item: items[i], status: Status.pending));
-            requestIDs.add(reqID);
-          }
-        }
-
-        // now that we have IDs for requests, create the overarching order
-        SupplyOrder currOrder = new SupplyOrder(userId: widget.userId, 
-        requests: requestIDs, status: Status.pending);
-        await _firestoreOrders.createOrder(currOrder);
-      } catch (e) {
-        print('Error: $e');
-      }
-    }
   }
 
 

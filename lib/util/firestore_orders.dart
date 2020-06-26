@@ -30,6 +30,26 @@ class FirestoreOrders {
     }
   }
 
+  Future deleteRequest(SupplyOrder order, String requestID) async {
+    try {
+      await _ordersRef.document(order.supplyNo).
+      updateData({"requests": order.requests});
+      await _requestsRef.document(requestID).delete();
+      print('Deleted request no: $requestID');
+    } catch (e) {
+      return e.message;
+    }
+  }
+
+  Future deleteOrder(String id) async {
+    try {
+      await _ordersRef.document(id).delete();
+      print('Deleted order no: $id');
+    } catch (e) {
+      return e.message;
+    }
+  }
+
   Future<List<SupplyOrder>> getOrders(String userId) async {
     try {
       QuerySnapshot qShot =
@@ -50,7 +70,9 @@ class FirestoreOrders {
       var doc = await _requestsRef.document(requestId).get();
       return SupplyRequest.fromData(doc.documentID, doc.data);
     } catch (e) {
-      print(e.message);
+      if (e.message != null) {
+        print(e.message);
+      }
       return null;
     }
   }
