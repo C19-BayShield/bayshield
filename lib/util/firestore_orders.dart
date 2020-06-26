@@ -32,8 +32,13 @@ class FirestoreOrders {
 
   Future deleteRequest(SupplyOrder order, String requestID) async {
     try {
-      await _ordersRef.document(order.supplyNo).
+      order.deleteRequest(requestID);
+      if (order.getRequests().length == 0) {
+        await deleteOrder(order.supplyNo);
+      } else {
+        await _ordersRef.document(order.supplyNo).
       updateData({"requests": order.requests});
+      }
       await _requestsRef.document(requestID).delete();
       print('Deleted request no: $requestID');
     } catch (e) {
@@ -70,10 +75,7 @@ class FirestoreOrders {
       var doc = await _requestsRef.document(requestId).get();
       return SupplyRequest.fromData(doc.documentID, doc.data);
     } catch (e) {
-      if (e.message != null) {
-        print(e.message);
-      }
-      return null;
+      print('Error: $e');
     }
   }
 }

@@ -31,6 +31,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   MedicalFacility user;
   List<SupplyOrder> orders;
   Map<String, List<SupplyRequest>> requests = new Map();
+  bool _isLoading;
 
   int _selectedIndex = 1; // default loads Home Page.
 
@@ -54,6 +55,12 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   int gogglesCount = 0;
   int gownCount = 0;
   int sanitizerCount = 0;
+
+  @override 
+  void initState() {
+    _isLoading = false;
+    super.initState();
+  }
 
 
   void _onNavigationIconTapped(int index) {
@@ -106,13 +113,16 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
       // parse requests for each order
       for (final order in temp) {
         List<SupplyRequest> reqs = [];
-        for (final r in order.getRequests()) {
-          SupplyRequest req = await _firestoreOrders.getRequest(r);
-          reqs.add(req);
-        }
-        setState(() {
+        List<String> ordersReqs = order.getRequests();
+        if (ordersReqs.length > 0) {
+          for (String r in ordersReqs) {
+            SupplyRequest req = await _firestoreOrders.getRequest(r);
+            reqs.add(req);
+          }
+          setState(() {
           requests[order.supplyNo] = reqs; // initialize requests for this order
         });
+        } 
       }
     }
   }
@@ -146,17 +156,17 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
 
   void deleteRequest(SupplyOrder order, SupplyRequest req) async {
     // first delete reference in order datamodel
-    order.deleteRequest(req.requestNo);
+    setState(() {
+      _isLoading = true;
+    });
     try {
       await _firestoreOrders.deleteRequest(order, req.requestNo);
-      requests[order.supplyNo].remove(req);
-      if (order.requests.length == 0) {
-        orders.remove(order);
-        await _firestoreOrders.deleteOrder(order.supplyNo);
-      }
     } catch (e) {
       print('Error: $e');
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   /* Async functions END */
@@ -707,10 +717,10 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   @override
   Widget build(BuildContext context) {
     getUser();
-    getOrders();
-    if (user == null) {
+    if (user == null || _isLoading) {
       return buildWaitingScreen();
     } else {
+      getOrders();
       if (_newOrder) {
         if (_quantitiesChosen) {
           return buildOrderSummaryPage();
