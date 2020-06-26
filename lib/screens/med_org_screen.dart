@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:supplyside/datamodels/order.dart';
 import 'package:supplyside/datamodels/user.dart';
+import 'package:supplyside/datamodels/item.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/util/firestore_users.dart';
 import 'package:supplyside/locator.dart';
 import 'package:supplyside/widgets.dart';
 import 'package:supplyside/state_widgets.dart';
 import 'package:supplyside/util/firestore_orders.dart';
+import 'package:supplyside/util/item_consts.dart';
 
 
 class MedicalOrganizationScreen extends StatefulWidget {
@@ -146,9 +148,11 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
 
   int getTotalRequests() {
     int total = 0;
-    for (final order in orders) {
-      if (requests[order.supplyNo] != null) {
-        total += requests[order.supplyNo].length;
+    if (orders != null) {
+      for (final order in orders) {
+        if (requests[order.supplyNo] != null) {
+          total += requests[order.supplyNo].length;
+        }
       }
     }
     return total;
@@ -177,6 +181,44 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   void _onPendingPressed() {
     _onNavigationIconTapped(0);
   }
+
+  bool validateAndSave() {
+    bool nonNeg = faceShieldCount >= 0 && n95Count >= 0 &&
+    glovesCount >= 0 && gogglesCount >= 0 &&  gownCount >= 0 && 
+    sanitizerCount >= 0;
+    bool oneNonZero =  faceShieldCount > 0 || n95Count > 0 ||
+    glovesCount > 0 || gogglesCount > 0 ||  gownCount > 0 || 
+    sanitizerCount > 0;
+    return nonNeg && oneNonZero;
+  }
+
+  // Perform login or signup
+  void validateAndSubmit() async {
+    if (validateAndSave()) {
+      List<String> requestIDs = [];
+      try {
+        // create individual requests 
+        List<int> counts = [faceShieldCount, n95Count, glovesCount, 
+        gogglesCount, gownCount, sanitizerCount];
+        List<Item> items = [faceShield, n95Regular, gloves, goggles, gown, sanitizer];
+        for (int i = 0; i < counts.length; i++) {
+          if (counts[i] > 0) {
+            String reqID = await _firestoreOrders.createRequest
+            (SupplyRequest(amtOrdered: counts[i] , item: items[i], status: Status.pending));
+            requestIDs.add(reqID);
+          }
+        }
+
+        // now that we have IDs for requests, create the overarching order
+        SupplyOrder currOrder = new SupplyOrder(userId: widget.userId, 
+        requests: requestIDs, status: Status.pending);
+        await _firestoreOrders.createOrder(currOrder);
+      } catch (e) {
+        print('Error: $e');
+      }
+    }
+  }
+
 
   Widget buildHomePage() {
     String firstName = user.getName().split(" ")[0];
@@ -598,6 +640,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                                     onPressed: () {
                                       _quantitiesChosen = false;
                                       _newOrder = false;
+                                      validateAndSubmit();
                                       resetQuantities();
                                       build(context);
                                     },

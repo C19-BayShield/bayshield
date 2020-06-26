@@ -17,10 +17,12 @@ String statusToString(Status status) {
   switch (status) {
       case Status.delivered:
         return 'Delivered';
-      case Status.ordered:
+      case Status.ordered: 
         return 'Ordered';
       case Status.arrived:
         return 'Arrived at Distribution';
+      case Status.pending:
+        return 'Pending';
       default: return 'TBD';
     }
 }
@@ -61,6 +63,8 @@ class SupplyRequest {
         return 'Ordered';
       case Status.arrived:
         return 'Arrived at Distribution';
+      case Status.pending:
+        return 'Pending';
       default: return 'TBD';
     }
   }
@@ -73,6 +77,8 @@ class SupplyRequest {
         return Status.ordered;
       case 'Arrived at Distribution':
         return Status.arrived;
+      case 'Pending':
+        return Status.pending;
       default: return null;
     }
   }
@@ -83,7 +89,7 @@ class SupplyRequest {
 /// A SupplyOrder is an overall request for a group of items
 class SupplyOrder {
 
-  SupplyOrder({this.supplyNo, this.requests, this.status, this.userId});
+  SupplyOrder({this.supplyNo, @required this.requests, @required this.status, @required this.userId});
 
   String userId;
   String supplyNo;

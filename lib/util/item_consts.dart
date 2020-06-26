@@ -44,7 +44,7 @@ Item n95Small =
   );
 Item sanitizer = 
   Item('Sanitizer', 
-    'assets/images/hand_sanitizer_card.png', 
+    'assets/images/sanitizer_card.png', 
     '', 
     []
   );
