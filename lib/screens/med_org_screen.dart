@@ -38,8 +38,6 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   TextStyle orderStyle = TextStyle(fontSize: 16.0,letterSpacing: .5, color: Color(0xFF263151));
   TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
   String _message = "Alert: PPE Design Update. Read More";
- 
-  bool _editButtonPressed = false;
 
   bool _newOrder = false;
   bool _quantitiesChosen = false;
@@ -66,7 +64,6 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   void _onNavigationIconTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _editButtonPressed = false;
       _displayStatus = false;
       _displaySettings = true;
       _newOrder = false;
@@ -179,7 +176,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
       return Column(
         children: <Widget>[
         for (final req in requests[order.supplyNo]) 
-          new RequestCard(req: req, order: order, onDelete: deleteRequest,)
+          new RequestCard(req: req, order: order, onDelete: _buildDeleteConfirmation,)
         ],
       );
     } else {
@@ -211,6 +208,31 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   } 
 
   /* Order display functions END */ 
+
+  Widget _buildDeleteConfirmation(BuildContext context, SupplyOrder order, SupplyRequest req) {
+    return new AlertDialog(
+      backgroundColor: Colors.white,
+      titleTextStyle: TextStyle(fontSize: 18, fontFamily: "Roboto", color: Colors.black),
+      title: Text('Are you sure you want to delete the order of ' + req.amtOrdered.toString() + " " + req.item.name + " from your pending orders? You cannot undo this action."),
+      actions: <Widget>[
+        new FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            deleteRequest(order, req);
+          },
+          textColor: Color(0xFF283568),
+          child: const Text('Yes'),
+        ),
+        new FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          textColor: Color(0xFF283568),
+          child: const Text('No'),
+        ) ,
+      ],
+    );
+  }
 
   Widget buildWaitingScreen() {
     return Scaffold(
@@ -348,9 +370,6 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                               _isSelectedProfilePage[1 - index] = false;
                               _displaySettings = _isSelectedProfilePage[0];
                               _displayStatus = _isSelectedProfilePage[1];
-                              if (_displaySettings) {
-                                _editButtonPressed = false;
-                              }
                             });
                           },
                           isSelected: _isSelectedProfilePage,

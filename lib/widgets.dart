@@ -989,7 +989,10 @@ class RequestCard extends StatelessWidget {
           Spacer(),
           new IconButton(
             onPressed: () => {
-              onDelete(order, req),
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => onDelete(context, order, req),
+              )
             },
             icon: Icon(Icons.cancel),
             color: Color(0xFFC4C4C4),
