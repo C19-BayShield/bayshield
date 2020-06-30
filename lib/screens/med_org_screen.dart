@@ -46,6 +46,10 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   bool _displayStatus = false;
   List<bool> _isSelectedProfilePage = [true, false];
 
+  List<bool> _isSelectedOrdersPage = [true, false]; // defaults at Incoming tab.
+  bool _displayPending = true;
+  bool _displayShipped = false;
+
   // Order quantities
   int faceShieldCount = 0;
   int n95Count = 0;
@@ -66,6 +70,8 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
       _selectedIndex = index;
       _displayStatus = false;
       _displaySettings = true;
+      _displayPending = true;
+      _displayShipped = false;
       _newOrder = false;
       _quantitiesChosen = false;
 
@@ -73,6 +79,8 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
 
       _isSelectedProfilePage[0] = _displaySettings;
       _isSelectedProfilePage[1] = _displayStatus;
+      _isSelectedOrdersPage[0] = _displayPending;
+      _isSelectedOrdersPage[1] = _displayShipped;
       build(context);
     });
   }
@@ -184,22 +192,41 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
     }
   }
 
-   Widget _buildRequestList() {
-    return ListView(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-        children: <Widget>[
-          for (final order in orders)
-            Padding(child: _buildOrderDisplay(order, context),padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32.0)),         
-        ], 
-    );
+   Widget _buildRequestList(bool pending) {
+    return new Container (
+      padding: EdgeInsets.only(top: 16.0),
+      child: ListView(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+          children: <Widget>[
+            for (final order in orders) 
+               (pending && order.status != Status.shipped) ?
+                Padding(child: _buildOrderDisplay(order, context),padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32.0))    
+                : (!pending && order.status == Status.shipped) ? 
+                Padding(child: _buildOrderDisplay(order, context),padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32.0))
+                : new Container()
+          ], 
+        )
+      );
   }
 
-  int getTotalRequests() {
+  int getTotalPendingRequests() {
     int total = 0;
     if (orders != null) {
       for (final order in orders) {
-        if (requests[order.supplyNo] != null) {
+        if (order.status != Status.shipped && requests[order.supplyNo] != null) {
+          total += requests[order.supplyNo].length;
+        }
+      }
+    }
+    return total;
+  } 
+
+  int getTotalShippedRequests() {
+    int total = 0;
+    if (orders != null) {
+      for (final order in orders) {
+        if (order.status == Status.shipped && requests[order.supplyNo] != null) {
           total += requests[order.supplyNo].length;
         }
       }
@@ -256,6 +283,16 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
     _onNavigationIconTapped(0);
   }
 
+  void _onShippedPressed() {
+    _onNavigationIconTapped(0);
+    setState(() {
+      _displayShipped = true;
+      _displayPending = false;
+      _isSelectedOrdersPage[0] = _displayPending;
+      _isSelectedOrdersPage[1] = _displayShipped;
+    });
+  }
+
   bool validateAndSave() {
     bool nonNeg = faceShieldCount >= 0 && n95Count >= 0 &&
     glovesCount >= 0 && gogglesCount >= 0 &&  gownCount >= 0 && 
@@ -303,13 +340,13 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                                       height: MediaQuery.of(context).size.height / 7,
                                       width: (MediaQuery.of(context).size.width - 120) / 2,
                                       color: Colors.transparent,
-                                      child: new PendingItemsCard(pending: getTotalRequests(), onPressed: _onPendingPressed),
+                                      child: new PendingItemsCard(pending: getTotalPendingRequests(), onPressed: _onPendingPressed),
                                     ),
                                     Container(
                                       height: MediaQuery.of(context).size.height / 7,
                                       width: (MediaQuery.of(context).size.width - 120) / 2,
                                       color: Colors.transparent,
-                                      child: new ShippedItemsCard(shipped: 100, onPressed: () => {}),
+                                      child: new ShippedItemsCard(shipped: getTotalShippedRequests(), onPressed: _onShippedPressed),
                                     ),
                                   ]
                               )
@@ -409,7 +446,20 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                               padding: EdgeInsets.only(top: 30, bottom: 25)
                           )
                       ),
-                     _buildRequestList(),
+                    TwoToggle(
+                      left: "Pending",
+                      right: "Shipped",
+                      onPressed: (int index) {
+                        setState(() {
+                          _isSelectedOrdersPage[index] = true;
+                          _isSelectedOrdersPage[1 - index] = false;
+                          _displayPending = _isSelectedOrdersPage[0];
+                          _displayShipped= _isSelectedOrdersPage[1];
+                        });
+                      },
+                      isSelected: _isSelectedOrdersPage,
+                    ),
+                    _buildRequestList(_displayPending),
                      new NewOrderPlus(onPressed: () {
                        _newOrder = true;
                        _selectedIndex = 0;

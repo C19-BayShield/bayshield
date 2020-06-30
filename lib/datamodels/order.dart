@@ -17,6 +17,8 @@ String statusToString(Status status) {
   switch (status) {
       case Status.delivered:
         return 'Delivered';
+      case Status.shipped:
+        return 'Shipped';
       case Status.ordered: 
         return 'Ordered';
       case Status.arrived:
@@ -59,6 +61,8 @@ class SupplyRequest {
     switch (status) {
       case Status.delivered:
         return 'Delivered';
+      case Status.shipped:
+        return 'Shipped';
       case Status.ordered:
         return 'Ordered';
       case Status.arrived:
@@ -73,6 +77,8 @@ class SupplyRequest {
     switch (s) {
       case 'Delivered':
         return Status.delivered;
+      case 'Shipped':
+        return Status.shipped;
       case 'Ordered':
         return Status.ordered;
       case 'Arrived at Distribution':
