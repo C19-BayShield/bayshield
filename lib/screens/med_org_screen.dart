@@ -194,7 +194,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
 
    Widget _buildRequestList(bool pending) {
     return new Container (
-      padding: EdgeInsets.only(top: 16.0),
+      padding: EdgeInsets.only(top: 8.0),
       child: ListView(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
@@ -446,25 +446,26 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                               padding: EdgeInsets.only(top: 30, bottom: 25)
                           )
                       ),
-                    TwoToggle(
-                      left: "Pending",
-                      right: "Shipped",
-                      onPressed: (int index) {
-                        setState(() {
-                          _isSelectedOrdersPage[index] = true;
-                          _isSelectedOrdersPage[1 - index] = false;
-                          _displayPending = _isSelectedOrdersPage[0];
-                          _displayShipped= _isSelectedOrdersPage[1];
-                        });
-                      },
-                      isSelected: _isSelectedOrdersPage,
-                    ),
-                    _buildRequestList(_displayPending),
-                     new NewOrderPlus(onPressed: () {
-                       _newOrder = true;
-                       _selectedIndex = 0;
-                       build(context);
-                     }),
+                        TwoToggle(
+                          left: "Pending",
+                          right: "Shipped",
+                          onPressed: (int index) {
+                            setState(() {
+                              _isSelectedOrdersPage[index] = true;
+                              _isSelectedOrdersPage[1 - index] = false;
+                              _displayPending = _isSelectedOrdersPage[0];
+                              _displayShipped= _isSelectedOrdersPage[1];
+                            });
+                          },
+                          isSelected: _isSelectedOrdersPage,
+                      ),
+                      new SizedBox(height: 16,),
+                      new NewOrderPlus(onPressed: () {
+                        _newOrder = true;
+                        _selectedIndex = 0;
+                        build(context);
+                      }),
+                      _buildRequestList(_displayPending),
                     ],
                   )
               )

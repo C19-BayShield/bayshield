@@ -268,7 +268,7 @@ class NewOrderPlus extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.transparent,
-      padding: EdgeInsets.only(top: 8, left: 40),
+      padding: EdgeInsets.only(top: 8, left: 32),
       alignment: Alignment.centerLeft,
       child: Container(
           child: new FlatButton.icon(
