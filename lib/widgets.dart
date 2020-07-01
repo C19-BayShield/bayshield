@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:supplyside/datamodels/order.dart';
+import 'package:supplyside/datamodels/item.dart';
+import 'package:intl/intl.dart';
 
 class BayShieldAppBar extends StatelessWidget {
   final String title;
@@ -265,7 +268,7 @@ class NewOrderPlus extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.transparent,
-      padding: EdgeInsets.only(top: 8, left: 40),
+      padding: EdgeInsets.only(top: 8, left: 32),
       alignment: Alignment.centerLeft,
       child: Container(
           child: new FlatButton.icon(
@@ -768,6 +771,8 @@ class TwoToggle extends StatelessWidget {
   }
 }
 
+/* Order Cards BEGIN */
+
 class OrderCard extends StatelessWidget {
 
   final Function() onPressed;
@@ -939,3 +944,63 @@ class OrderConfirmationCard extends StatelessWidget {
     );
   }
 }
+
+class RequestCard extends StatelessWidget {
+
+  final SupplyRequest req;
+  final SupplyOrder order;
+  final Function onDelete;
+
+  RequestCard({Key key, @required this.req, @required this.order, @required this.onDelete}) : super(key: key);
+
+  String truncateWithEllipsis(int cutoff, String myString) {
+  return (myString.length <= cutoff)
+    ? myString
+    : '${myString.substring(0, cutoff)}...';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Item item = req.item; 
+    DateTime date = order.timestamp.toDate();
+    String formattedDate = new DateFormat.yMd().format(date);
+    return new Row(
+        children: <Widget>[
+          Image.asset(item.imageUrl, height: 70),
+          new Padding (
+            padding: EdgeInsets.only(left: 16.0, bottom: 16.0),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text(item.name,
+                    style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.left,),
+                  new Row(
+                      children: <Widget>[
+                        new Text("x" + req.amtOrdered.toString(),
+                          style: TextStyle(color: Colors.black, fontSize: 20, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                      ]
+                  ),
+                  new Text(formattedDate,
+                    style: TextStyle(color: Colors.black, fontSize: 14, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                ]
+            ),
+          ),
+          Spacer(),
+          new IconButton(
+            onPressed: () => {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => onDelete(context, order, req),
+              )
+            },
+            icon: Icon(Icons.cancel),
+            color: Color(0xFFC4C4C4),
+            iconSize: 24.0,
+          ),
+        ]
+    );
+  }
+}
+
+/* Order Cards END */

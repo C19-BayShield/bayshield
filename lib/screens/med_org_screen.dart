@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:supplyside/datamodels/order.dart';
 import 'package:supplyside/datamodels/user.dart';
-import 'package:supplyside/util/mock_consts.dart';
+import 'package:supplyside/datamodels/item.dart';
 import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/util/firestore_users.dart';
 import 'package:supplyside/locator.dart';
 import 'package:supplyside/widgets.dart';
 import 'package:supplyside/state_widgets.dart';
+import 'package:supplyside/util/firestore_orders.dart';
+import 'package:supplyside/util/item_consts.dart';
 
 
 class MedicalOrganizationScreen extends StatefulWidget {
@@ -23,32 +25,19 @@ class MedicalOrganizationScreen extends StatefulWidget {
 
 class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
 
+  // firestore dependent variables
   final FirestoreUsers _firestoreUsers = locator<FirestoreUsers>();
+  final FirestoreOrders _firestoreOrders = locator<FirestoreOrders>();
   MedicalFacility user;
-  int _selectedIndex = 1; // default loads Home Page.
+  List<SupplyOrder> orders;
+  Map<String, List<SupplyRequest>> requests = new Map();
+  bool _isLoading;
 
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
-  TextEditingController addressController = TextEditingController();
+  int _selectedIndex = 1; // default loads Home Page.
 
   TextStyle orderStyle = TextStyle(fontSize: 16.0,letterSpacing: .5, color: Color(0xFF263151));
   TextStyle orderSubtitleStyle = TextStyle(fontSize: 14.0,letterSpacing: .5, color: Color(0xFFA5A9B4));
   String _message = "Alert: PPE Design Update. Read More";
-  int _pending = 4;
-  int _newQuantity = 0;
-
-  int _index = 0;
-
-  bool _initialized = false;
-  bool _addButtonPressed = false;
-  bool _arrowPressed = false;
-  bool _editButtonPressed = false;
-
-  List<bool> _isSelectedOrdersPage = [true, false, false]; // defaults at Incoming tab.
-  bool _displayIncoming = true;
-  bool _displayPending = false;
-  bool _displayShipped = false;
 
   bool _newOrder = false;
   bool _quantitiesChosen = false;
@@ -56,6 +45,10 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   bool _displaySettings = true;
   bool _displayStatus = false;
   List<bool> _isSelectedProfilePage = [true, false];
+
+  List<bool> _isSelectedOrdersPage = [true, false]; // defaults at Incoming tab.
+  bool _displayPending = true;
+  bool _displayShipped = false;
 
   // Order quantities
   int faceShieldCount = 0;
@@ -65,29 +58,29 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   int gownCount = 0;
   int sanitizerCount = 0;
 
+  @override 
+  void initState() {
+    _isLoading = false;
+    super.initState();
+  }
+
 
   void _onNavigationIconTapped(int index) {
     setState(() {
-      _index = 0;
       _selectedIndex = index;
-      _addButtonPressed = false;
-      _arrowPressed = false;
-      _editButtonPressed = false;
-      _initialized = false;
       _displayStatus = false;
       _displaySettings = true;
+      _displayPending = true;
+      _displayShipped = false;
       _newOrder = false;
       _quantitiesChosen = false;
-
-      nameController.clear();
-      emailController.clear();
-      phoneNumberController.clear();
-      addressController.clear();
 
       resetQuantities();
 
       _isSelectedProfilePage[0] = _displaySettings;
       _isSelectedProfilePage[1] = _displayStatus;
+      _isSelectedOrdersPage[0] = _displayPending;
+      _isSelectedOrdersPage[1] = _displayShipped;
       build(context);
     });
   }
@@ -101,6 +94,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
     sanitizerCount = 0;
   }
 
+/* Async functions fetching from DB BEGIN */
 
   Future getUser() async {
     MedicalFacility currUser = await _firestoreUsers.getMedicalFacility(widget.userId);
@@ -112,52 +106,158 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
     }
   }
 
-  Widget _buildRequestItem(SupplyRequest req, BuildContext context) {
-    String asset = req.item.imageUrl ?? "assets/images/logo.png";
-    String itemName =  req.item.name;
-    int quantity = req.amtOrdered;
+  Future getOrders() async {
+    List<SupplyOrder> temp = await _firestoreOrders.getOrders(widget.userId);
+    if (temp != null) {
+      if (!mounted) return;
 
-    return new ItemCard(asset: asset, itemName: itemName, quantity: quantity, 
-      itemType: "USCF V1", date: "06 May 2020", hasShipped: true, isPending: false,
-      status: req.statusToString(),  
-      deliveryLocation: user.getFacilityName(),
-      deliveryDate: "10 May 2020",
-    );
+      setState(() {
+        orders = temp; // initialize orders
+      });
+
+      // parse requests for each order
+      for (final order in temp) {
+        List<SupplyRequest> reqs = [];
+        List<String> ordersReqs = order.getRequests();
+        if (ordersReqs.length > 0) {
+          for (String r in ordersReqs) {
+            SupplyRequest req = await _firestoreOrders.getRequest(r);
+            reqs.add(req);
+          }
+          setState(() {
+          requests[order.supplyNo] = reqs; // initialize requests for this order
+        });
+        } 
+      }
+    }
   }
 
-    Widget showShippedItems() {
-    // TODO: replace hard-coded values.
-    String asset = "assets/images/face_shield_card.png";
-    String itemName = "Face Shield";
-    int quantity = 50;
-    String itemType = "USCF V1";
-    String date = "02/01/2020";
-    String status = "Expected\nDelivery";
-    String deliveryDate = "02/06/2020";
-    String deliveryLocation = "Tang Center";
+  // creating orders and requests
+  void validateAndSubmit() async {
+    if (validateAndSave()) {
+      List<String> requestIDs = [];
+      try {
+        // create individual requests 
+        List<int> counts = [faceShieldCount, n95Count, glovesCount, 
+        gogglesCount, gownCount, sanitizerCount];
+        List<Item> items = [faceShield, n95Regular, gloves, goggles, gown, sanitizer];
+        for (int i = 0; i < counts.length; i++) {
+          if (counts[i] > 0) {
+            String reqID = await _firestoreOrders.createRequest
+            (SupplyRequest(amtOrdered: counts[i] , item: items[i], status: Status.pending));
+            requestIDs.add(reqID);
+          }
+        }
 
-    return new Padding (
-        padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
-        child: Container(
-            width: MediaQuery.of(context).size.width - 80,
-            child: new Column (
-                children: <Widget> [
-                  new ItemCard(asset: asset, itemName: itemName, quantity: quantity, itemType: itemType, date: date, hasShipped: true, isPending: false,
-                    status: status, deliveryDate: deliveryDate, deliveryLocation: deliveryLocation),
-                ]
-            )
-        )
-    );
+        // now that we have IDs for requests, create the overarching order
+        SupplyOrder currOrder = new SupplyOrder(userId: widget.userId, 
+        requests: requestIDs, status: Status.pending);
+        await _firestoreOrders.createOrder(currOrder);
+      } catch (e) {
+        print('Error: $e');
+      }
+    }
   }
 
-  Widget _buildRequestList() {
-    return ListView(
-      shrinkWrap: true,
-      physics: AlwaysScrollableScrollPhysics(),
+  void deleteRequest(SupplyOrder order, SupplyRequest req) async {
+    // first delete reference in order datamodel
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      await _firestoreOrders.deleteRequest(order, req.requestNo);
+    } catch (e) {
+      print('Error: $e');
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  /* Async functions END */
+
+
+  /* Order display functions BEGIN */
+
+  Widget _buildOrderDisplay(SupplyOrder order, BuildContext context) {
+    if (requests != null && requests[order.supplyNo] != null) {
+      return Column(
         children: <Widget>[
-            for(final req in TEST_REQS)
-        Padding(child: _buildRequestItem(req, context),padding: EdgeInsets.symmetric(vertical: 8)),         
-        ], 
+        for (final req in requests[order.supplyNo]) 
+          new RequestCard(req: req, order: order, onDelete: _buildDeleteConfirmation,)
+        ],
+      );
+    } else {
+      return new Container();
+    }
+  }
+
+   Widget _buildRequestList(bool pending) {
+    return new Container (
+      padding: EdgeInsets.only(top: 8.0),
+      child: ListView(
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+          children: <Widget>[
+            for (final order in orders) 
+               (pending && order.status != Status.shipped) ?
+                Padding(child: _buildOrderDisplay(order, context),padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32.0))    
+                : (!pending && order.status == Status.shipped) ? 
+                Padding(child: _buildOrderDisplay(order, context),padding: EdgeInsets.symmetric(vertical: 8, horizontal: 32.0))
+                : new Container()
+          ], 
+        )
+      );
+  }
+
+  int getTotalPendingRequests() {
+    int total = 0;
+    if (orders != null) {
+      for (final order in orders) {
+        if (order.status != Status.shipped && requests[order.supplyNo] != null) {
+          total += requests[order.supplyNo].length;
+        }
+      }
+    }
+    return total;
+  } 
+
+  int getTotalShippedRequests() {
+    int total = 0;
+    if (orders != null) {
+      for (final order in orders) {
+        if (order.status == Status.shipped && requests[order.supplyNo] != null) {
+          total += requests[order.supplyNo].length;
+        }
+      }
+    }
+    return total;
+  } 
+
+  /* Order display functions END */ 
+
+  Widget _buildDeleteConfirmation(BuildContext context, SupplyOrder order, SupplyRequest req) {
+    return new AlertDialog(
+      backgroundColor: Colors.white,
+      titleTextStyle: TextStyle(fontSize: 18, fontFamily: "Roboto", color: Colors.black),
+      title: Text('Are you sure you want to delete the order of ' + req.amtOrdered.toString() + " " + req.item.name + " from your pending orders? You cannot undo this action."),
+      actions: <Widget>[
+        new FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            deleteRequest(order, req);
+          },
+          textColor: Color(0xFF283568),
+          child: const Text('Yes'),
+        ),
+        new FlatButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          textColor: Color(0xFF283568),
+          child: const Text('No'),
+        ) ,
+      ],
     );
   }
 
@@ -180,9 +280,29 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   }
 
   void _onPendingPressed() {
-    _index = 1;
     _onNavigationIconTapped(0);
   }
+
+  void _onShippedPressed() {
+    _onNavigationIconTapped(0);
+    setState(() {
+      _displayShipped = true;
+      _displayPending = false;
+      _isSelectedOrdersPage[0] = _displayPending;
+      _isSelectedOrdersPage[1] = _displayShipped;
+    });
+  }
+
+  bool validateAndSave() {
+    bool nonNeg = faceShieldCount >= 0 && n95Count >= 0 &&
+    glovesCount >= 0 && gogglesCount >= 0 &&  gownCount >= 0 && 
+    sanitizerCount >= 0;
+    bool oneNonZero =  faceShieldCount > 0 || n95Count > 0 ||
+    glovesCount > 0 || gogglesCount > 0 ||  gownCount > 0 || 
+    sanitizerCount > 0;
+    return nonNeg && oneNonZero;
+  }
+
 
   Widget buildHomePage() {
     String firstName = user.getName().split(" ")[0];
@@ -220,13 +340,13 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                                       height: MediaQuery.of(context).size.height / 7,
                                       width: (MediaQuery.of(context).size.width - 120) / 2,
                                       color: Colors.transparent,
-                                      child: new PendingItemsCard(pending: _pending, onPressed: _onPendingPressed),
+                                      child: new PendingItemsCard(pending: getTotalPendingRequests(), onPressed: _onPendingPressed),
                                     ),
                                     Container(
                                       height: MediaQuery.of(context).size.height / 7,
                                       width: (MediaQuery.of(context).size.width - 120) / 2,
                                       color: Colors.transparent,
-                                      child: new ShippedItemsCard(shipped: 100, onPressed: () => {}),
+                                      child: new ShippedItemsCard(shipped: getTotalShippedRequests(), onPressed: _onShippedPressed),
                                     ),
                                   ]
                               )
@@ -287,9 +407,6 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                               _isSelectedProfilePage[1 - index] = false;
                               _displaySettings = _isSelectedProfilePage[0];
                               _displayStatus = _isSelectedProfilePage[1];
-                              if (_displaySettings) {
-                                _editButtonPressed = false;
-                              }
                             });
                           },
                           isSelected: _isSelectedProfilePage,
@@ -329,12 +446,26 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                               padding: EdgeInsets.only(top: 30, bottom: 25)
                           )
                       ),
-                     showShippedItems(),
-                     new NewOrderPlus(onPressed: () {
-                       _newOrder = true;
-                       _selectedIndex = 0;
-                       build(context);
-                     }),
+                        TwoToggle(
+                          left: "Pending",
+                          right: "Shipped",
+                          onPressed: (int index) {
+                            setState(() {
+                              _isSelectedOrdersPage[index] = true;
+                              _isSelectedOrdersPage[1 - index] = false;
+                              _displayPending = _isSelectedOrdersPage[0];
+                              _displayShipped= _isSelectedOrdersPage[1];
+                            });
+                          },
+                          isSelected: _isSelectedOrdersPage,
+                      ),
+                      new SizedBox(height: 16,),
+                      new NewOrderPlus(onPressed: () {
+                        _newOrder = true;
+                        _selectedIndex = 0;
+                        build(context);
+                      }),
+                      _buildRequestList(_displayPending),
                     ],
                   )
               )
@@ -604,6 +735,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                                     onPressed: () {
                                       _quantitiesChosen = false;
                                       _newOrder = false;
+                                      validateAndSubmit();
                                       resetQuantities();
                                       build(context);
                                     },
@@ -655,9 +787,10 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
   @override
   Widget build(BuildContext context) {
     getUser();
-    if (user == null) {
+    if (user == null || _isLoading) {
       return buildWaitingScreen();
     } else {
+      getOrders();
       if (_newOrder) {
         if (_quantitiesChosen) {
           return buildOrderSummaryPage();
