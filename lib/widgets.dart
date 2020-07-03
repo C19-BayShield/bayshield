@@ -36,13 +36,6 @@ class MainAppBar extends StatelessWidget {
         child: Image.asset(
             'assets/images/logo.png', color: Colors.white, height: 64),
       ),
-//      actions: <Widget>[
-//        new FlatButton(
-//            child: new Text('Logout',
-//                style: new TextStyle(fontSize: 17.0, color: Colors.white)),
-//            onPressed: signOut,
-//        ),
-//      ],
     );
   }
 }
