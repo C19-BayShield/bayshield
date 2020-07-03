@@ -270,7 +270,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
     );
   }
 
-  signOut() async {
+  void signOut() async {
     try {
       await widget.auth.signOut();
       widget.logoutCallback();
@@ -314,7 +314,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
           backgroundColor: Colors.white,
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
-            child: new MainAppBar(signOut: signOut),
+            child: new MainAppBar(),
           ),
           body: SafeArea(
             child: new Container(
@@ -379,7 +379,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
-        child: new MainAppBar(signOut: signOut),
+        child: new MainAppBar(),
       ),
       body: SafeArea(
         child: new SingleChildScrollView(
@@ -412,7 +412,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
                           isSelected: _isSelectedProfilePage,
                         ),
                         if (_displayStatus) new MedorgsStatus(user: user),
-                        if (_displaySettings) new ProfileSettings(user: user, title: "Personal Information"),
+                        if (_displaySettings) new ProfileSettings(user: user, title: "Personal Information", callback: signOut)
                       ]
                   )
               )
@@ -428,7 +428,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
-        child: new MainAppBar(signOut: signOut),
+        child: new MainAppBar(),
       ),
       body: SafeArea(
         child: new SingleChildScrollView(
@@ -481,7 +481,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
-        child: new MainAppBar(signOut: signOut),
+        child: new MainAppBar(),
       ),
       body: SafeArea(
           child: new SingleChildScrollView(
@@ -608,7 +608,7 @@ class _MedicalOrganizationScreenState extends State<MedicalOrganizationScreen> {
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
-        child: new MainAppBar(signOut: signOut),
+        child: new MainAppBar(),
       ),
       body: Builder(
         builder: (BuildContext context) {
