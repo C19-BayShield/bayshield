@@ -251,7 +251,7 @@ class _HubScreenState extends State<HubScreen>{
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
-        child: new MainAppBar(signOut: signOut),
+        child: new MainAppBar(),
       ),
       body: SafeArea(
         child: new Container(
@@ -328,7 +328,7 @@ class _HubScreenState extends State<HubScreen>{
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
-        child: new MainAppBar(signOut: signOut),
+        child: new MainAppBar(),
       ),
       body: SafeArea(
           child: new Container(
@@ -403,7 +403,7 @@ class _HubScreenState extends State<HubScreen>{
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
-        child: new MainAppBar(signOut: signOut),
+        child: new MainAppBar(),
       ),
       body: SafeArea(
         child: new Container(
@@ -476,7 +476,7 @@ class _HubScreenState extends State<HubScreen>{
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
-        child: new MainAppBar(signOut: signOut),
+        child: new MainAppBar(),
       ),
       body: SafeArea(
         child: new SingleChildScrollView(
@@ -535,7 +535,7 @@ class _HubScreenState extends State<HubScreen>{
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
-        child: new MainAppBar(signOut: signOut),
+        child: new MainAppBar(),
       ),
       body: SafeArea(
         child: new SingleChildScrollView(
@@ -573,7 +573,7 @@ class _HubScreenState extends State<HubScreen>{
                           isSelected: _isSelectedProfilePage,
                         ),
                         if (_displayInventory) new InventoryPage(user: user),
-                        if (_displaySettings) new ProfileSettings(user: user, title: ""),
+                        if (_displaySettings) ProfileSettings(user: user, title: "", callback: signOut),
                       ]
                   )
               )

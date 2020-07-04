@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:supplyside/locator.dart';
 import 'package:supplyside/widgets.dart';
+import 'package:supplyside/util/authentication.dart';
 import 'package:supplyside/datamodels/user.dart';
 import 'package:supplyside/util/firestore_users.dart';
 
 class ProfileSettings extends StatefulWidget {
   
-  ProfileSettings({Key key, @required this.user, @required this.title}) : super(key: key);
+  ProfileSettings({Key key, @required this.user, @required this.title, this.callback}) : super(key: key);
 
   final User user;
   final String title;
+  final VoidCallback callback;
 
   @override
   State<StatefulWidget> createState() => new _ProfileSettingState();
@@ -225,7 +227,25 @@ class _ProfileSettingState extends State<ProfileSettings>{
                         )
                     ),
                   ]
-              )
+              ),
+            if (_editButtonPressed) SizedBox(height: 20),
+            new Padding (
+              padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
+              child: new Container(
+                  width: MediaQuery.of(context).size.width - 110,
+                  decoration: BoxDecoration(
+                      color: Color(0xFF283568),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                  child: new FlatButton(
+                    child: new Text("Sign Out",
+                      style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,),
+                    onPressed: () {
+                      widget.callback();
+                    },
+                  )
+              ),
+            ),
           ]
         )
       )

@@ -23,9 +23,8 @@ class BayShieldAppBar extends StatelessWidget {
 }
 
 class MainAppBar extends StatelessWidget {
-  VoidCallback signOut;
 
-  MainAppBar({Key key, @required this.signOut}) : super(key: key);
+  MainAppBar({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return new AppBar(
@@ -37,13 +36,6 @@ class MainAppBar extends StatelessWidget {
         child: Image.asset(
             'assets/images/logo.png', color: Colors.white, height: 64),
       ),
-      actions: <Widget>[
-        new FlatButton(
-            child: new Text('Logout',
-                style: new TextStyle(fontSize: 17.0, color: Colors.white)),
-            onPressed: signOut,
-        ),
-      ],
     );
   }
 }
