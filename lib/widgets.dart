@@ -252,6 +252,56 @@ class NewOrderButton extends StatelessWidget {
   }
 }
 
+class NewPickupButton extends StatelessWidget {
+  final Function() onPressed;
+
+  NewPickupButton({Key key, @required this.onPressed}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height / 12,
+      width: MediaQuery.of(context).size.width - 110,
+      color: Colors.transparent,
+      child: Container(
+          decoration: BoxDecoration(
+              color: Color(0xFF283568),
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: new FlatButton(
+            child: new Text("New Pickup",
+              style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,),
+            onPressed: onPressed,
+          )
+      ),
+    );
+  }
+}
+
+class OrderSuppliesButton extends StatelessWidget {
+  final Function() onPressed;
+
+  OrderSuppliesButton({Key key, @required this.onPressed}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height / 12,
+      width: MediaQuery.of(context).size.width - 110,
+      color: Colors.transparent,
+      child: Container(
+          decoration: BoxDecoration(
+              color: Color(0xFF283568),
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: new FlatButton(
+            child: new Text("Order Supplies",
+              style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,),
+            onPressed: onPressed,
+          )
+      ),
+    );
+  }
+}
+
 class NewOrderPlus extends StatelessWidget {
   final Function() onPressed;
 
@@ -266,6 +316,29 @@ class NewOrderPlus extends StatelessWidget {
           child: new FlatButton.icon(
             icon: Icon(Icons.add_circle, color: Color(0XFFB7CDFF), size: 48.0), 
             label: new Text("   Add Order",
+              style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto',),
+              textAlign: TextAlign.left,),
+            onPressed: onPressed,
+          )
+      ),
+    );
+  }
+}
+
+class NewPickupPlus extends StatelessWidget {
+  final Function() onPressed;
+
+  NewPickupPlus ({Key key, @required this.onPressed}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.transparent,
+      padding: EdgeInsets.only(top: 8, left: 32),
+      alignment: Alignment.centerLeft,
+      child: Container(
+          child: new FlatButton.icon(
+            icon: Icon(Icons.add_circle, color: Color(0XFFB7CDFF), size: 48.0),
+            label: new Text("   Add Pick Up",
               style: TextStyle(color: Colors.black, fontSize: 24, fontFamily: 'Roboto',),
               textAlign: TextAlign.left,),
             onPressed: onPressed,

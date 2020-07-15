@@ -43,6 +43,16 @@ class FirestoreUsers {
     }
   }
 
+  Future getMaker(String id) async {
+    try {
+      var userData = await _usersCollectionReference.document(id).get();
+      return Maker.fromData(userData.data);
+    } catch (e) {
+      print(e.message);
+      return null;
+    }
+  }
+
   Future updateUserType(String id, String type) async {
     try {
       await _usersCollectionReference.document(id).updateData({"type": type});

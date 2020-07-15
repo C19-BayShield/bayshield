@@ -107,6 +107,32 @@ class MedicalFacility extends User {
 
 }
 
+class Maker extends User {
+
+  Maker({id, String email, String phoneNumber,
+    this.address,}) :
+        super(
+          id: id,
+          email: email,
+          type: "Maker"
+      );
+
+  @override
+  Maker.fromData(Map<String, dynamic> data)
+      : id = data['id'],
+        email = data['email'],
+        name = data['name'],
+        address = data['address'],
+        phoneNumber = data['phoneNumber']
+  ;
+
+  String id;
+  String email;
+  String name;
+  String address;
+  String phoneNumber;
+}
+
 class CollectionHub extends User {
 
   String id;
