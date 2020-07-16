@@ -810,3 +810,271 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 }
+
+class PickupPage extends StatefulWidget {
+
+  PickupPage({Key key, @required this.user}) : super(key: key);
+
+  final Maker user;
+
+  @override
+  State<StatefulWidget> createState() => new _PickupPageState();
+}
+
+class _PickupPageState extends State<PickupPage>{
+
+  int _itemValue;
+  int _materialValue;
+  int _newQuantity;
+  String _date = "";
+  String _time = "";
+
+  bool _faceShieldChosen = false;
+
+  List<DropdownMenuItem<dynamic>> items = [
+    DropdownMenuItem(
+      child: Text("Booties"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("Face Shield"),
+      value: 1,
+    ),
+    DropdownMenuItem(
+        child: Text("Gown"),
+        value: 2
+    ),
+    DropdownMenuItem(
+        child: Text("Mask"),
+        value: 3
+    ),
+  ];
+
+  List<DropdownMenuItem<dynamic>> faceShieldMaterials = [
+    DropdownMenuItem(
+      child: Text("PETG"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("Acrylic"),
+      value: 1,
+    ),
+    DropdownMenuItem(
+        child: Text("Other"),
+        value: 2
+    ),
+  ];
+
+  List<DropdownMenuItem<dynamic>> otherMaterials = [
+    DropdownMenuItem(
+      child: Text("Cloth"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("Wool"),
+      value: 1,
+    ),
+    DropdownMenuItem(
+        child: Text("Synthetic Fibers"),
+        value: 2
+    ),
+    DropdownMenuItem(
+        child: Text("Other"),
+        value: 3
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+        child: new MainAppBar(),
+      ),
+      body: SafeArea(
+        child: new SingleChildScrollView(
+            child: new Container(
+                child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                            width: MediaQuery.of(context).size.width - 110,
+                            color: Colors.transparent,
+                            child: new Padding(
+                                child: new Text("New Pickup", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.left,),
+                                padding: EdgeInsets.only(top: 30, bottom: 25)
+                            )
+                        ),
+                        Container(
+                            width: MediaQuery.of(context).size.width - 110,
+                            color: Colors.transparent,
+                            child: new Padding(
+                                child: new Text("ITEM TO BE PICKED UP", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.left,),
+                                padding: EdgeInsets.only(top: 15)
+                            )
+                        ),
+                        new DropDownMenu(
+                          value: _itemValue,
+                          hint: "Select Item",
+                          items: items,
+                          onChanged: (value) {
+                            setState(() {
+                              _itemValue = value;
+                              _faceShieldChosen = _itemValue == 1;
+                            });
+                          }
+                        ),
+                        Container(
+                            width: MediaQuery.of(context).size.width - 110,
+                            color: Colors.transparent,
+                            child: new Padding(
+                                child: new Text("MATERIAL", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.left,),
+                                padding: EdgeInsets.only(top: 15)
+                            )
+                        ),
+                        if (_faceShieldChosen) new DropDownMenu(
+                          value: _materialValue,
+                          hint: "Select Type",
+                          items: faceShieldMaterials,
+                          onChanged: (value) {
+                            setState(() {
+                              _materialValue = value;
+                            });
+                          }
+                        ),
+                        if (!_faceShieldChosen) new DropDownMenu(
+                            value: _materialValue,
+                            hint: "Select Type",
+                            items: otherMaterials,
+                            onChanged: (value) {
+                              setState(() {
+                                _materialValue = value;
+                              });
+                            }
+                        ),
+                        new Container(
+                          width: MediaQuery.of(context).size.width - 110,
+                          child: Column (
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                new Padding (
+                                  padding: EdgeInsets.only(top: 15),
+                                  child: new Text("QUANTITY", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.left,),
+                                ),
+                                new Container (
+                                  child: new TextField(
+                                    style: TextStyle(color: Colors.black),
+                                    textAlign: TextAlign.left,
+                                    scrollPadding: EdgeInsets.symmetric(horizontal: 16),
+                                    maxLines: 1,
+                                    autofocus: false,
+                                    decoration: new InputDecoration(
+                                        labelText: "Ex. 100",
+                                        labelStyle: TextStyle(fontSize: 15,
+                                            color: Color(0xFFB3B3B3)
+                                        ),
+                                        enabledBorder: new UnderlineInputBorder(
+                                            borderSide: new BorderSide(color: Colors.black, width: 1,)
+                                        ),
+                                        focusedBorder: new UnderlineInputBorder(
+                                            borderSide: new BorderSide(color: Colors.black, width: 1,)
+                                        )
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: <TextInputFormatter>[
+                                      WhitelistingTextInputFormatter.digitsOnly
+                                    ],
+                                    onChanged: (value) {
+                                      _newQuantity = int.parse(value);
+                                    },
+                                  ),
+                                ),
+                              ]
+                          ),
+                        ),
+                        Container(
+                            width: MediaQuery.of(context).size.width - 110,
+                            color: Colors.transparent,
+                            child: new Padding(
+                                child: new Text("DATE AND TIME", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.left,),
+                                padding: EdgeInsets.only(top: 15, bottom: 15)
+                            )
+                        ),
+                        Container(
+                            width: MediaQuery.of(context).size.width - 110,
+                            color: Colors.transparent,
+                            child: new Row (
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: <Widget>[
+                                  new Text("Date:", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto',), textAlign: TextAlign.left,),
+                                  new Container(
+                                    child: new FlatButton(
+                                      child: new Text("Choose",
+                                        style: TextStyle(color: Color(0xFF283568), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                                        textAlign: TextAlign.center,),
+                                      onPressed: () {
+                                        showDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime.now().subtract(Duration(days: 1)),
+                                          lastDate: DateTime(DateTime.now().year + 1),
+                                        ).then((date) {
+                                          setState(() {
+                                            DateTime unformatted = DateTime.parse(date.toString());
+                                            _date = "${unformatted.month}/${unformatted.day}/${unformatted.year}";
+                                          });
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  new Text(_date, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                                ]
+                            ),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width - 110,
+                          color: Colors.transparent,
+                          child: new Row (
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                new Text("Time:", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                                new Container(
+                                  child: new FlatButton(
+                                    child: new Text("Choose",
+                                      style: TextStyle(color: Color(0xFF283568), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                                      textAlign: TextAlign.center,),
+                                    onPressed: () {
+                                      showTimePicker(
+                                        context: context,
+                                        initialTime: TimeOfDay.now(),
+                                      ).then((time) {
+                                        setState(() {
+                                          _time = time.format(context).toString();
+                                        });
+                                      });
+                                    },
+                                  )
+                                ),
+                                new Text(_time, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left),
+                              ]
+                          ),
+                        ),
+                        SizedBox(height: 30),
+                        new RequestButton(onPressed: null),
+                        SizedBox(height: 20),
+                      ],
+                    )
+                )
+            )
+        ),
+      )
+    );
+  }
+}

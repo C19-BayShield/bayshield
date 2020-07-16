@@ -302,6 +302,32 @@ class OrderSuppliesButton extends StatelessWidget {
   }
 }
 
+class RequestButton extends StatelessWidget {
+  final Function() onPressed;
+
+  RequestButton({Key key, @required this.onPressed}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height / 12,
+      width: MediaQuery.of(context).size.width - 110,
+      color: Colors.transparent,
+      child: Container(
+          decoration: BoxDecoration(
+              color: Color(0xFF283568),
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: new FlatButton(
+            child: new Text("Request",
+              style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,),
+            onPressed: onPressed,
+          )
+      ),
+    );
+  }
+}
+
+
 class NewOrderPlus extends StatelessWidget {
   final Function() onPressed;
 
@@ -831,6 +857,44 @@ class TwoToggle extends StatelessWidget {
         ],
         onPressed: onPressed,
         isSelected: isSelected,
+      ),
+    );
+  }
+}
+
+class DropDownMenu extends StatelessWidget {
+
+  final String hint;
+  final Function(dynamic) onChanged;
+  final List<DropdownMenuItem<dynamic>> items;
+  final int value;
+
+  DropDownMenu({Key key, @required this.hint, @required this.onChanged, @required this.items, @required this.value}) : super(key: key);
+
+  Widget build(BuildContext context) {
+    return new Container(
+      width: MediaQuery.of(context).size.width - 110,
+      color: Colors.transparent,
+      child: new Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Colors.white,
+        ),
+        child: DropdownButton(
+            value: value,
+            icon: Icon(Icons.arrow_drop_down, color: Color(0xFFC4C4C4), size: 70),
+            style: TextStyle(
+              fontSize: 18,
+              fontFamily: "Roboto",
+              color: Colors.black,
+            ),
+            underline: Container(
+              height: 1,
+              color: Colors.black,
+            ),
+            isExpanded: true,
+            hint: new Text(hint, style: TextStyle(fontSize: 15, color: Color(0xFFB3B3B3))),
+            items: items,
+            onChanged: onChanged),
       ),
     );
   }

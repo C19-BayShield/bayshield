@@ -285,7 +285,7 @@ class _MakerScreenState extends State<MakerScreen>{
                         new NewPickupButton(onPressed: () {
                           _newPickup = true;
                           _selectedIndex = 0;
-                          //build(context);
+                          build(context);
                         }),
                         new OrderSuppliesButton(onPressed: () {
                           _orderSupplies = true;
@@ -420,6 +420,9 @@ class _MakerScreenState extends State<MakerScreen>{
     } else {
       getOrders();
       if (_selectedIndex == 0) {
+        if (_newPickup) {
+          return new PickupPage(user: user);
+        }
         return buildOrdersPage();
       } else if (_selectedIndex == 1) {
         return buildHomePage();
