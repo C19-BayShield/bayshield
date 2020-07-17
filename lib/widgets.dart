@@ -302,6 +302,31 @@ class OrderSuppliesButton extends StatelessWidget {
   }
 }
 
+class AddMethodButton extends StatelessWidget {
+  final Function() onPressed;
+
+  AddMethodButton({Key key, @required this.onPressed}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height / 12,
+      width: MediaQuery.of(context).size.width - 110,
+      color: Colors.transparent,
+      child: Container(
+          decoration: BoxDecoration(
+              color: Color(0xFF283568),
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          child: new FlatButton(
+            child: new Text("Add Maker Method",
+              style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,),
+            onPressed: onPressed,
+          )
+      ),
+    );
+  }
+}
+
 class RequestButton extends StatelessWidget {
   final Function() onPressed;
 
@@ -326,7 +351,6 @@ class RequestButton extends StatelessWidget {
     );
   }
 }
-
 
 class NewOrderPlus extends StatelessWidget {
   final Function() onPressed;

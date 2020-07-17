@@ -290,7 +290,7 @@ class _MakerScreenState extends State<MakerScreen>{
                         new OrderSuppliesButton(onPressed: () {
                           _orderSupplies = true;
                           _selectedIndex = 0;
-                          //build(context);
+                          build(context);
                         }),
                         Container(
                           height: MediaQuery.of(context).size.height / 15,
@@ -347,7 +347,7 @@ class _MakerScreenState extends State<MakerScreen>{
                             },
                             isSelected: _isSelectedProfilePage,
                           ),
-//                          if (_displayMethods)
+                          if (_displayMethods) new MethodPage(user: user),
                           if (_displaySettings) new ProfileSettings(user: user, title: "Personal Information", callback: signOut)
                         ]
                     )
@@ -412,6 +412,58 @@ class _MakerScreenState extends State<MakerScreen>{
     );
   }
 
+  Widget buildPickupPage() {
+    return new Scaffold(
+      resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+        child: new MainAppBar(),
+      ),
+      body: SafeArea(
+        child: new SingleChildScrollView(
+          child: new Container(
+            child: Center(
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  new PickupPage(user: user),
+                ]
+              )
+            )
+          )
+        ),
+      ),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onNavigationIconTapped),
+    );
+  }
+
+  Widget buildOrderSuppliesPage() {
+    return new Scaffold(
+      resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+        child: new MainAppBar(),
+      ),
+      body: SafeArea(
+        child: new SingleChildScrollView(
+            child: new Container(
+                child: Center(
+                    child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          new OrderSuppliesPage(user: user),
+                        ]
+                    )
+                )
+            )
+        ),
+      ),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onNavigationIconTapped),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     getUser();
@@ -421,7 +473,10 @@ class _MakerScreenState extends State<MakerScreen>{
       getOrders();
       if (_selectedIndex == 0) {
         if (_newPickup) {
-          return new PickupPage(user: user);
+          return buildPickupPage();
+        }
+        if (_orderSupplies) {
+          return buildOrderSuppliesPage();
         }
         return buildOrdersPage();
       } else if (_selectedIndex == 1) {
