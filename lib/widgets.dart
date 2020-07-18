@@ -343,11 +343,42 @@ class RequestButton extends StatelessWidget {
               borderRadius: BorderRadius.all(Radius.circular(10.0))),
           child: new FlatButton(
             child: new Text("Request",
-              style: TextStyle(color: Colors.white, fontSize: 24, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,),
             onPressed: onPressed,
           )
       ),
+    );
+  }
+}
+
+class MethodButton extends StatelessWidget {
+
+  final String method;
+  final Function() onPressed;
+
+  MethodButton({Key key, @required this.onPressed, @required this.method,}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return new Padding (
+      padding: EdgeInsets.only(bottom: 10),
+      child: Container(
+        height: MediaQuery.of(context).size.height / 12,
+        width: MediaQuery.of(context).size.width - 110,
+        color: Colors.transparent,
+        child: Container(
+            decoration: BoxDecoration(
+                color: Color(0xFF283568),
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            child: new FlatButton(
+              child: new Text(method,
+                style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,),
+              onPressed: onPressed,
+            )
+        ),
+      )
     );
   }
 }

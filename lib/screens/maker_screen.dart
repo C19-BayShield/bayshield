@@ -33,6 +33,7 @@ class _MakerScreenState extends State<MakerScreen>{
 
   bool _isLoading;
   int _selectedIndex = 1; // default loads Home Page.
+  bool _editButtonPressed = false;
 
   String _message = "Alert: PPE Design Update. Read More";
 
@@ -41,6 +42,7 @@ class _MakerScreenState extends State<MakerScreen>{
 
   bool _displaySettings = true;
   bool _displayMethods = false;
+  bool _addMethodPage = false;
   List<bool> _isSelectedProfilePage = [true, false];
 
   List<bool> _isSelectedOrdersPage = [true, false]; // defaults at Incoming tab.
@@ -53,6 +55,12 @@ class _MakerScreenState extends State<MakerScreen>{
     super.initState();
   }
 
+  void _onEditButtonPressed() {
+    _editButtonPressed = !_editButtonPressed;
+    build(context);
+  }
+
+
   void _onNavigationIconTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -60,6 +68,7 @@ class _MakerScreenState extends State<MakerScreen>{
       _displaySettings = true;
       _displayPending = true;
       _displayShipped = false;
+      _addMethodPage = false;
       _newPickup = false;
       _orderSupplies = false;
 
@@ -347,7 +356,7 @@ class _MakerScreenState extends State<MakerScreen>{
                             },
                             isSelected: _isSelectedProfilePage,
                           ),
-                          if (_displayMethods) new MethodPage(user: user),
+                          if (_displayMethods) buildMakerMethodPage(),
                           if (_displaySettings) new ProfileSettings(user: user, title: "Personal Information", callback: signOut)
                         ]
                     )
@@ -438,6 +447,64 @@ class _MakerScreenState extends State<MakerScreen>{
     );
   }
 
+  Widget buildMakerMethodPage() {
+    return new Padding (
+        padding: EdgeInsets.only(top: 10.0),
+        child: Container(
+            width: MediaQuery.of(context).size.width - 100,
+            child: new Column (
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  new Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        new Text("Maker Methods", style:
+                        TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto', fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                          textAlign: TextAlign.left,),
+                        new IconButton(
+                          onPressed: _onEditButtonPressed,
+                          icon: Image.asset("assets/images/edit_button.png", height: 26, alignment: Alignment.centerRight),
+                        )
+                      ]
+                  ),
+                  SizedBox(height: 20),
+                  new AddMethodButton(onPressed: () {
+                    _addMethodPage = true;
+                    build(context);
+                  }),
+                ]
+            )
+        )
+    );
+  }
+
+  Widget buildAddMakerMethodPage() {
+    return new Scaffold(
+      resizeToAvoidBottomPadding: false,
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height / 10),
+        child: new MainAppBar(),
+      ),
+      body: SafeArea(
+        child: new SingleChildScrollView(
+            child: new Container(
+                child: Center(
+                    child: new Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          new AddMethodPage(user: user),
+                        ]
+                    )
+                )
+            )
+        ),
+      ),
+      bottomNavigationBar: new MainBottomNavigationBar(selectedIndex: _selectedIndex, onItemTapped: _onNavigationIconTapped),
+    );
+  }
+
   Widget buildOrderSuppliesPage() {
     return new Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -482,6 +549,9 @@ class _MakerScreenState extends State<MakerScreen>{
       } else if (_selectedIndex == 1) {
         return buildHomePage();
       } else if (_selectedIndex == 2) {
+        if (_addMethodPage) {
+          return buildAddMakerMethodPage();
+        }
         return buildProfilePage();
       }
     }
