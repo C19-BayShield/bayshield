@@ -810,3 +810,749 @@ class _InventoryPageState extends State<InventoryPage> {
     );
   }
 }
+
+class PickupPage extends StatefulWidget {
+
+  PickupPage({Key key, @required this.user}) : super(key: key);
+
+  final Maker user;
+
+  @override
+  State<StatefulWidget> createState() => new _PickupPageState();
+}
+
+class _PickupPageState extends State<PickupPage>{
+
+  int _itemValue;
+  int _materialValue;
+  int _newQuantity;
+
+  String _date = "";
+  String _time = "";
+
+  bool _bootiesChosen = false;
+  bool _faceShieldChosen = false;
+  bool _gownChosen = false;
+  bool _maskChosen = false;
+
+  List<DropdownMenuItem<dynamic>> items = [
+    DropdownMenuItem(
+      child: Text("Booties"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("Face Shield"),
+      value: 1,
+    ),
+    DropdownMenuItem(
+      child: Text("Gown"),
+      value: 2
+    ),
+    DropdownMenuItem(
+      child: Text("Mask"),
+      value: 3
+    ),
+  ];
+
+  List<DropdownMenuItem<dynamic>> faceShieldMaterials = [
+    DropdownMenuItem(
+      child: Text("PETG"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("Acrylic"),
+      value: 1,
+    ),
+    DropdownMenuItem(
+      child: Text("Other"),
+      value: 2
+    ),
+  ];
+
+  List<DropdownMenuItem<dynamic>> otherMaterials = [
+    DropdownMenuItem(
+      child: Text("Cloth"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("Wool"),
+      value: 1,
+    ),
+    DropdownMenuItem(
+      child: Text("Synthetic Fibers"),
+      value: 2
+    ),
+    DropdownMenuItem(
+      child: Text("Other"),
+      value: 3
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+      child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                  width: MediaQuery.of(context).size.width - 110,
+                  color: Colors.transparent,
+                  child: new Padding(
+                      child: new Text("New Pickup", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,),
+                      padding: EdgeInsets.only(top: 30, bottom: 25)
+                  )
+              ),
+              Container(
+                  width: MediaQuery.of(context).size.width - 110,
+                  color: Colors.transparent,
+                  child: new Padding(
+                      child: new Text("ITEM TO BE PICKED UP", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,),
+                      padding: EdgeInsets.only(top: 15)
+                  )
+              ),
+              new DropDownMenu(
+                value: _itemValue,
+                hint: "Select Item",
+                items: items,
+                onChanged: (value) {
+                  setState(() {
+                    _itemValue = value;
+                    _materialValue = null;
+                    _bootiesChosen = _itemValue == 0;
+                    _faceShieldChosen = _itemValue == 1;
+                    _gownChosen = _itemValue == 2;
+                    _maskChosen = _itemValue == 3;
+                  });
+                }
+              ),
+              Container(
+                  width: MediaQuery.of(context).size.width - 110,
+                  color: Colors.transparent,
+                  child: new Padding(
+                      child: new Text("MATERIAL", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,),
+                      padding: EdgeInsets.only(top: 15)
+                  )
+              ),
+              if (_faceShieldChosen) new DropDownMenu(
+                value: _materialValue,
+                hint: "Select Type",
+                items: faceShieldMaterials,
+                onChanged: (value) {
+                  setState(() {
+                    _materialValue = value;
+                  });
+                }
+              ),
+              if (!_bootiesChosen && !_faceShieldChosen && !_gownChosen && !_maskChosen) new DropDownMenu(
+                  value: _materialValue,
+                  hint: "Select Type",
+                  items: [
+                    DropdownMenuItem(
+                    child: Text("Please first choose an item"))
+                  ],
+                  onChanged: (value) {
+                  }
+              ),
+              if (!_faceShieldChosen && (_bootiesChosen || _gownChosen || _maskChosen)) new DropDownMenu(
+                  value: _materialValue,
+                  hint: "Select Type",
+                  items: otherMaterials,
+                  onChanged: (value) {
+                    setState(() {
+                      _materialValue = value;
+                    });
+                  }
+              ),
+              new Container(
+                width: MediaQuery.of(context).size.width - 110,
+                child: Column (
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      new Padding (
+                        padding: EdgeInsets.only(top: 15),
+                        child: new Text("QUANTITY", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.left,),
+                      ),
+                      new Container (
+                        child: new TextField(
+                          style: TextStyle(color: Colors.black),
+                          textAlign: TextAlign.left,
+                          scrollPadding: EdgeInsets.symmetric(horizontal: 16),
+                          maxLines: 1,
+                          autofocus: false,
+                          decoration: new InputDecoration(
+                              labelText: "Ex. 100",
+                              labelStyle: TextStyle(fontSize: 15,
+                                  color: Color(0xFFB3B3B3)
+                              ),
+                              enabledBorder: new UnderlineInputBorder(
+                                  borderSide: new BorderSide(color: Colors.black, width: 1,)
+                              ),
+                              focusedBorder: new UnderlineInputBorder(
+                                  borderSide: new BorderSide(color: Colors.black, width: 1,)
+                              )
+                          ),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            WhitelistingTextInputFormatter.digitsOnly
+                          ],
+                          onChanged: (value) {
+                            _newQuantity = int.parse(value);
+                          },
+                        ),
+                      ),
+                    ]
+                ),
+              ),
+              Container(
+                  width: MediaQuery.of(context).size.width - 110,
+                  color: Colors.transparent,
+                  child: new Padding(
+                      child: new Text("DATE AND TIME", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.left,),
+                      padding: EdgeInsets.only(top: 15, bottom: 15)
+                  )
+              ),
+              Container(
+                  width: MediaQuery.of(context).size.width - 110,
+                  color: Colors.transparent,
+                  child: new Row (
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        new Text("Date:", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto',), textAlign: TextAlign.left,),
+                        new Container(
+                          child: new FlatButton(
+                            child: new Text("Choose",
+                              style: TextStyle(color: Color(0xFF283568), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                              textAlign: TextAlign.center,),
+                            onPressed: () {
+                              showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now().subtract(Duration(days: 1)),
+                                lastDate: DateTime(DateTime.now().year + 1),
+                              ).then((date) {
+                                setState(() {
+                                  DateTime unformatted = DateTime.parse(date.toString());
+                                  _date = "${unformatted.month}/${unformatted.day}/${unformatted.year}";
+                                });
+                              });
+                            },
+                          ),
+                        ),
+                        new Text(_date, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                      ]
+                  ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width - 110,
+                color: Colors.transparent,
+                child: new Row (
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      new Text("Time:", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
+                      new Container(
+                        child: new FlatButton(
+                          child: new Text("Choose",
+                            style: TextStyle(color: Color(0xFF283568), fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold, decoration: TextDecoration.underline),
+                            textAlign: TextAlign.center,),
+                          onPressed: () {
+                            showTimePicker(
+                              context: context,
+                              initialTime: TimeOfDay.now(),
+                            ).then((time) {
+                              setState(() {
+                                _time = time.format(context).toString();
+                              });
+                            });
+                          },
+                        )
+                      ),
+                      new Text(_time, style: TextStyle(color: Colors.black, fontSize: 18, fontFamily: 'Roboto'), textAlign: TextAlign.left),
+                    ]
+                ),
+              ),
+              SizedBox(height: 30),
+              new RequestButton(onPressed: null),
+              SizedBox(height: 20),
+            ],
+          )
+      )
+    );
+  }
+}
+
+class OrderSuppliesPage extends StatefulWidget {
+
+  OrderSuppliesPage({Key key, @required this.user}) : super(key: key);
+
+  final Maker user;
+
+  @override
+  State<StatefulWidget> createState() => new _OrderSuppliesPageState();
+}
+
+class _OrderSuppliesPageState extends State<OrderSuppliesPage>{
+
+  int _itemValue;
+  int _materialValue;
+  int _newQuantity;
+
+  List<DropdownMenuItem<dynamic>> items = [
+    DropdownMenuItem(
+      child: Text("3-D Printing - ABS Filament"),
+      value: 0
+    ),
+    DropdownMenuItem(
+      child: Text("3-D Printing - PLA Filament"),
+      value: 1
+    ),
+    DropdownMenuItem(
+      child: Text("3-D Printing - PETG Filament"),
+      value: 2
+    ),
+    DropdownMenuItem(
+      child: Text("3-D Printing - Ziplock Bags"),
+      value: 3
+    ),
+    DropdownMenuItem(
+      child: Text("Sewing - Cloth Material"),
+      value: 4
+    ),
+    DropdownMenuItem(
+      child: Text("Sewing - Elastic Banding"),
+      value: 5
+    ),
+    DropdownMenuItem(
+      child: Text("Sewing - Needles"),
+      value: 6
+    ),
+    DropdownMenuItem(
+      child: Text("Sewing - Sewing Thread"),
+      value: 7
+    ),
+    DropdownMenuItem(
+      child: Text("Laser Cutting - PETG Plastic Sheet"),
+      value: 8
+    ),
+    DropdownMenuItem(
+      child: Text("Laser Cutting - Acrylic Sheet"),
+      value: 9
+    ),
+    DropdownMenuItem(
+      child: Text("Hand Cutting - Xacto Knife Blades"),
+      value: 10
+    ),
+    DropdownMenuItem(
+      child: Text("Hand Cutting - Scissors"),
+      value: 11
+    ),
+    DropdownMenuItem(
+      child: Text("Hand Cutting - Cloth Material"),
+      value: 12
+    ),
+    DropdownMenuItem(
+      child: Text("Hand Cutting - PETG Plastic Sheet"),
+      value: 13
+    ),
+    DropdownMenuItem(
+      child: Text("Hand Cutting - Acrylic Sheet"),
+      value: 14
+    ),
+    DropdownMenuItem(
+      child: Text("Hand Cutting - Elastic Banding"),
+      value: 15
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return new Container(
+        child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                    width: MediaQuery.of(context).size.width - 100,
+                    color: Colors.transparent,
+                    child: new Padding(
+                        child: new Text("Order Supplies", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.left,),
+                        padding: EdgeInsets.only(top: 30, bottom: 25)
+                    )
+                ),
+                Container(
+                    width: MediaQuery.of(context).size.width - 110,
+                    color: Colors.transparent,
+                    child: new Padding(
+                        child: new Text("WHAT DO YOU NEED?", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.left,),
+                        padding: EdgeInsets.only(top: 15)
+                    )
+                ),
+                new DropDownMenu(
+                    value: _itemValue,
+                    hint: "Select Item",
+                    items: items,
+                    onChanged: (value) {
+                      setState(() {
+                        _itemValue = value;
+                      });
+                    }
+                ),
+                new Container(
+                  width: MediaQuery.of(context).size.width - 110,
+                  child: Column (
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        new Padding (
+                          padding: EdgeInsets.only(top: 15),
+                          child: new Text("QUANTITY", style: TextStyle(color: Colors.black, fontSize: 15, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.left,),
+                        ),
+                        new Container (
+                          child: new TextField(
+                            style: TextStyle(color: Colors.black),
+                            textAlign: TextAlign.left,
+                            scrollPadding: EdgeInsets.symmetric(horizontal: 16),
+                            maxLines: 1,
+                            autofocus: false,
+                            decoration: new InputDecoration(
+                                labelText: "Ex. 100",
+                                labelStyle: TextStyle(fontSize: 15,
+                                    color: Color(0xFFB3B3B3)
+                                ),
+                                enabledBorder: new UnderlineInputBorder(
+                                    borderSide: new BorderSide(color: Colors.black, width: 1,)
+                                ),
+                                focusedBorder: new UnderlineInputBorder(
+                                    borderSide: new BorderSide(color: Colors.black, width: 1,)
+                                )
+                            ),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: <TextInputFormatter>[
+                              WhitelistingTextInputFormatter.digitsOnly
+                            ],
+                            onChanged: (value) {
+                              _newQuantity = int.parse(value);
+                            },
+                          ),
+                        ),
+                      ]
+                  ),
+                ),
+                SizedBox(height: 20),
+                new RequestButton(onPressed: null),
+                SizedBox(height: 20),
+              ],
+            )
+        )
+    );
+  }
+}
+
+class AddMethodPage extends StatefulWidget {
+
+  AddMethodPage({Key key, @required this.user}) : super(key: key);
+
+  final User user;
+
+  @override
+  State<StatefulWidget> createState() => new _AddMethodPageState();
+}
+
+class _AddMethodPageState extends State<AddMethodPage>{
+
+  int _methodValue;
+  int _materialValue;
+  int _ppeValue;
+  int _newQuantity;
+
+  bool _printingChosen = false;
+  bool _sewingChosen = false;
+  bool _laserCuttingChosen = false;
+  bool _handCuttingChosen = false;
+
+  List<DropdownMenuItem<dynamic>> cuttingMaterials = [
+    DropdownMenuItem(
+      child: Text("PETG"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("Acrylic"),
+      value: 1,
+    ),
+    DropdownMenuItem(
+        child: Text("Other"),
+        value: 2
+    ),
+  ];
+
+  List<DropdownMenuItem<dynamic>> laserCuttingPPE = [
+    DropdownMenuItem(
+      child: Text("USCF Shield"),
+    ),
+  ];
+
+  List<DropdownMenuItem<dynamic>> handCuttingPPE = [
+    DropdownMenuItem(
+      child: Text("USCF Shield"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("Elastic Shield Band"),
+      value: 1,
+    ),
+  ];
+
+  List<DropdownMenuItem<dynamic>> sewingMaterials = [
+    DropdownMenuItem(
+      child: Text("Cloth"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("Wool"),
+      value: 1,
+    ),
+    DropdownMenuItem(
+        child: Text("Synthetic Fibers"),
+        value: 2
+    ),
+    DropdownMenuItem(
+        child: Text("Other"),
+        value: 3
+    ),
+  ];
+
+  List<DropdownMenuItem<dynamic>> sewingPPE = [
+    DropdownMenuItem(
+      child: Text("Face Mask"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("Surgical Gown"),
+      value: 1,
+    ),
+    DropdownMenuItem(
+        child: Text("Booties"),
+        value: 2
+    ),
+    DropdownMenuItem(
+        child: Text("Coveralls"),
+        value: 3
+    ),
+  ];
+
+  List<DropdownMenuItem<dynamic>> printingMaterials = [
+    DropdownMenuItem(
+      child: Text("ABS"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("PLA"),
+      value: 1,
+    ),
+    DropdownMenuItem(
+        child: Text("PETG"),
+        value: 2
+    ),
+  ];
+
+  List<DropdownMenuItem<dynamic>> printingPPE = [
+    DropdownMenuItem(
+      child: Text("USCF Shield A1"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("USCF Shield C1"),
+      value: 1,
+    ),
+  ];
+
+  List<DropdownMenuItem<dynamic>> methods = [
+    DropdownMenuItem(
+      child: Text("3D Printing"),
+      value: 0,
+    ),
+    DropdownMenuItem(
+      child: Text("Sewing"),
+      value: 1,
+    ),
+    DropdownMenuItem(
+        child: Text("Laser Cutting"),
+        value: 2
+    ),
+    DropdownMenuItem(
+        child: Text("Hand Cutting"),
+        value: 3
+    ),
+  ];
+
+  Widget build(BuildContext context) {
+
+    return new Padding (
+        padding: EdgeInsets.only(top: 10.0),
+        child: Container(
+            width: MediaQuery.of(context).size.width - 100,
+            child: new Column (
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                      width: MediaQuery.of(context).size.width - 110,
+                      color: Colors.transparent,
+                      child: new Padding(
+                          child: new Text("Add Method", style: TextStyle(color: Colors.black, fontSize: 45, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.left,),
+                          padding: EdgeInsets.only(top: 30, bottom: 25)
+                      )
+                  ),
+                  new DropDownMenu(
+                      value: _methodValue,
+                      hint: "Select Item",
+                      items: methods,
+                      onChanged: (value) {
+                        setState(() {
+                          _methodValue = value;
+                          _materialValue = null;
+                          _ppeValue = null;
+                          _printingChosen = _methodValue == 0;
+                          _sewingChosen = _methodValue == 1;
+                          _laserCuttingChosen = _methodValue == 2;
+                          _handCuttingChosen = _methodValue == 3;
+                        });
+                      }
+                  ),
+                  if (_handCuttingChosen || _laserCuttingChosen) new DropDownMenu(
+                      value: _materialValue,
+                      hint: "Select Material",
+                      items: cuttingMaterials,
+                      onChanged: (value) {
+                        setState(() {
+                          _materialValue = value;
+                        });
+                      }
+                  ),
+                  if (_handCuttingChosen) new DropDownMenu(
+                      value: _ppeValue,
+                      hint: "Type of PPE",
+                      items: handCuttingPPE,
+                      onChanged: (value) {
+                        setState(() {
+                          _ppeValue = value;
+                        });
+                      }
+                  ),
+                  if (_laserCuttingChosen) new DropDownMenu(
+                      value: _ppeValue,
+                      hint: "Type of PPE",
+                      items: laserCuttingPPE,
+                      onChanged: (value) {
+                        setState(() {
+                          _ppeValue = value;
+                        });
+                      }
+                  ),
+                  if (_sewingChosen) new DropDownMenu(
+                      value: _materialValue,
+                      hint: "Select Material",
+                      items: sewingMaterials,
+                      onChanged: (value) {
+                        setState(() {
+                          _materialValue = value;
+                        });
+                      }
+                  ),
+                  if (_sewingChosen) new DropDownMenu(
+                      value: _ppeValue,
+                      hint: "Type of PPE",
+                      items: sewingPPE,
+                      onChanged: (value) {
+                        setState(() {
+                          _ppeValue = value;
+                        });
+                      }
+                  ),
+                  if (_printingChosen) new DropDownMenu(
+                      value: _materialValue,
+                      hint: "Select Material",
+                      items: printingMaterials,
+                      onChanged: (value) {
+                        setState(() {
+                          _materialValue = value;
+                        });
+                      }
+                  ),
+                  if (_printingChosen) new DropDownMenu(
+                      value: _ppeValue,
+                      hint: "Type of PPE",
+                      items: printingPPE,
+                      onChanged: (value) {
+                        setState(() {
+                          _ppeValue = value;
+                        });
+                      }
+                  ),
+                  if (_handCuttingChosen || _laserCuttingChosen || _sewingChosen || _printingChosen) new Container(
+                    width: MediaQuery.of(context).size.width - 110,
+                    child: Column (
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          new Container (
+                            child: new TextField(
+                              style: TextStyle(color: Colors.black),
+                              textAlign: TextAlign.left,
+                              scrollPadding: EdgeInsets.symmetric(horizontal: 16),
+                              maxLines: 1,
+                              autofocus: false,
+                              decoration: new InputDecoration(
+                                  labelText: "Estimated Weekly Output",
+                                  labelStyle: TextStyle(fontSize: 15,
+                                      color: Color(0xFFB3B3B3)
+                                  ),
+                                  enabledBorder: new UnderlineInputBorder(
+                                      borderSide: new BorderSide(color: Colors.black, width: 1,)
+                                  ),
+                                  focusedBorder: new UnderlineInputBorder(
+                                      borderSide: new BorderSide(color: Colors.black, width: 1,)
+                                  )
+                              ),
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                WhitelistingTextInputFormatter.digitsOnly
+                              ],
+                              onChanged: (value) {
+                                _newQuantity = int.parse(value);
+                              },
+                            ),
+                          ),
+                        ]
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Container(
+                    height: MediaQuery.of(context).size.height / 12,
+                    width: MediaQuery.of(context).size.width - 110,
+                    color: Colors.transparent,
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: Color(0xFF283568),
+                            borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                        child: new FlatButton(
+                          child: new Text("Save Method",
+                            style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Roboto', fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,),
+                          onPressed: null,
+                        )
+                    ),
+                  )
+                ]
+            )
+        )
+    );
+  }
+}
