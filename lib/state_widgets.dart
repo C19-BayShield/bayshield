@@ -1035,6 +1035,15 @@ class _PickupPageState extends State<PickupPage>{
                                 initialDate: DateTime.now(),
                                 firstDate: DateTime.now().subtract(Duration(days: 1)),
                                 lastDate: DateTime(DateTime.now().year + 1),
+                                builder: (BuildContext context, Widget child) {
+                                  return Theme(
+                                    data: ThemeData.light().copyWith(
+                                      primaryColor: Color(0xFF283568),
+                                      accentColor: Color(0xFF283568)
+                                    ),
+                                    child: child,
+                                  );
+                                },
                               ).then((date) {
                                 setState(() {
                                   DateTime unformatted = DateTime.parse(date.toString());
@@ -1064,6 +1073,15 @@ class _PickupPageState extends State<PickupPage>{
                             showTimePicker(
                               context: context,
                               initialTime: TimeOfDay.now(),
+                              builder: (BuildContext context, Widget child) {
+                                return Theme(
+                                  data: ThemeData.light().copyWith(
+                                      primaryColor: Color(0xFF283568),
+                                      accentColor: Color(0xFF283568)
+                                  ),
+                                  child: child,
+                                );
+                              },
                             ).then((time) {
                               setState(() {
                                 _time = time.format(context).toString();
