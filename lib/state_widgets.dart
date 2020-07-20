@@ -1035,6 +1035,15 @@ class _PickupPageState extends State<PickupPage>{
                                 initialDate: DateTime.now(),
                                 firstDate: DateTime.now().subtract(Duration(days: 1)),
                                 lastDate: DateTime(DateTime.now().year + 1),
+                                builder: (BuildContext context, Widget child) {
+                                  return Theme(
+                                    data: ThemeData.light().copyWith(
+                                      primaryColor: Color(0xFF283568),
+                                      accentColor: Color(0xFF283568)
+                                    ),
+                                    child: child,
+                                  );
+                                },
                               ).then((date) {
                                 setState(() {
                                   DateTime unformatted = DateTime.parse(date.toString());
@@ -1064,6 +1073,15 @@ class _PickupPageState extends State<PickupPage>{
                             showTimePicker(
                               context: context,
                               initialTime: TimeOfDay.now(),
+                              builder: (BuildContext context, Widget child) {
+                                return Theme(
+                                  data: ThemeData.light().copyWith(
+                                      primaryColor: Color(0xFF283568),
+                                      accentColor: Color(0xFF283568)
+                                  ),
+                                  child: child,
+                                );
+                              },
                             ).then((time) {
                               setState(() {
                                 _time = time.format(context).toString();
@@ -1271,6 +1289,8 @@ class _AddMethodPageState extends State<AddMethodPage>{
   int _materialValue;
   int _ppeValue;
   int _newQuantity;
+  int _length;
+  int _width;
 
   bool _printingChosen = false;
   bool _sewingChosen = false;
@@ -1497,6 +1517,81 @@ class _AddMethodPageState extends State<AddMethodPage>{
                         });
                       }
                   ),
+                  if (_laserCuttingChosen) Container(
+                      width: MediaQuery.of(context).size.width - 110,
+                      color: Colors.transparent,
+                      child: new Padding(
+                          child: new Text("Laser Cutting Bed Size", style: TextStyle(color: Color(0xFFB3B3B3), fontSize: 15, fontFamily: 'Roboto'),
+                            textAlign: TextAlign.left,),
+                          padding: EdgeInsets.only(top: 15)
+                      )
+                  ),
+                  if (_laserCuttingChosen) new Container(
+                    width: MediaQuery.of(context).size.width - 110,
+                    child: new Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        new Container (
+                          width: (MediaQuery.of(context).size.width - 150) / 2,
+                          child: new TextField(
+                            style: TextStyle(color: Colors.black),
+                            scrollPadding: EdgeInsets.symmetric(horizontal: 16),
+                            maxLines: 1,
+                            autofocus: false,
+                            decoration: new InputDecoration(
+                                labelText: "Length",
+                                labelStyle: TextStyle(fontSize: 15,
+                                    color: Color(0xFFB3B3B3),
+                                ),
+                                enabledBorder: new UnderlineInputBorder(
+                                    borderSide: new BorderSide(color: Colors.black, width: 1,)
+                                ),
+                                focusedBorder: new UnderlineInputBorder(
+                                    borderSide: new BorderSide(color: Colors.black, width: 1,)
+                                )
+                            ),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: <TextInputFormatter>[
+                              WhitelistingTextInputFormatter.digitsOnly
+                            ],
+                            onChanged: (value) {
+                              _length = int.parse(value);
+                            },
+                          ),
+                        ),
+                        new Text("   x   ", style: TextStyle(color: Color(0xFFB3B3B3), fontSize: 15, fontFamily: 'Roboto'),
+                          textAlign: TextAlign.left,),
+                        new Container (
+                          width: (MediaQuery.of(context).size.width - 150) / 2,
+                          child: new TextField(
+                            style: TextStyle(color: Colors.black),
+                            scrollPadding: EdgeInsets.symmetric(horizontal: 16),
+                            maxLines: 1,
+                            autofocus: false,
+                            decoration: new InputDecoration(
+                                labelText: "Width",
+                                labelStyle: TextStyle(fontSize: 15,
+                                    color: Color(0xFFB3B3B3)
+                                ),
+                                enabledBorder: new UnderlineInputBorder(
+                                    borderSide: new BorderSide(color: Colors.black, width: 1,)
+                                ),
+                                focusedBorder: new UnderlineInputBorder(
+                                    borderSide: new BorderSide(color: Colors.black, width: 1,)
+                                )
+                            ),
+                            keyboardType: TextInputType.number,
+                            inputFormatters: <TextInputFormatter>[
+                              WhitelistingTextInputFormatter.digitsOnly
+                            ],
+                            onChanged: (value) {
+                              _width = int.parse(value);
+                            },
+                          ),
+                        ),
+                      ]
+                    )
+                  ),
                   if (_handCuttingChosen || _laserCuttingChosen || _sewingChosen || _printingChosen) new Container(
                     width: MediaQuery.of(context).size.width - 110,
                     child: Column (
@@ -1549,7 +1644,8 @@ class _AddMethodPageState extends State<AddMethodPage>{
                           onPressed: null,
                         )
                     ),
-                  )
+                  ),
+                  SizedBox(height: 20),
                 ]
             )
         )
