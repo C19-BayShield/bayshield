@@ -1644,7 +1644,8 @@ class _AddMethodPageState extends State<AddMethodPage>{
                           onPressed: null,
                         )
                     ),
-                  )
+                  ),
+                  SizedBox(height: 20),
                 ]
             )
         )
